@@ -5,16 +5,15 @@
   <title>Stage Finder – Trouve un stage qui te ressemble</title>
   <meta name="description" content="Stage Finder t'aide à trouver un stage qui colle à tes envies, ton profil et ta ville."/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet"/>
   <style>
     :root {
       --white: #ffffff;
       --rose: #a2d766;
       --dark: #1a1a2e;
       --rose-light: #dcfac9;
-      --rose-border: rgba(232,68,122,.12);
-      --text-muted: #7a7a8e;
+      --rose-border: rgba(235, 41, 106, 0.12);
+      --rose-body :rgba(226, 37, 100, 0.422);
+      --text-muted: #484853;
       --vert-foncé: #4e9a4e;
       --r: 1.1rem;
     }
@@ -29,7 +28,7 @@
     /* ── Header ── */
     header {
       display: flex; align-items: center; justify-content: space-between;
-      padding: .6rem 0; border-bottom: 1px solid var(--rose-border);
+      padding: .6rem 0; border-bottom: 1px solid var(--rose-body);
     }
     .logo { display: flex; align-items: center; gap: .5rem; }
     .logo-icon {
@@ -39,7 +38,7 @@
       display: grid; place-items: center;
     }
     .logo-name { font-weight: 700; font-size: .95rem; }
-    nav { display: none; gap: 1.5rem; font-size: .78rem; font-weight: 500; color: var(--text-muted); }
+    nav { display: none; gap: 1.5rem; font-size: .78rem; font-weight: 500; color: #1a1a2e; }
     nav a:hover { color: var(--rose); }
     @media(min-width:768px) { nav { display: flex; } }
     .hdr-btns { display: flex; gap: .5rem; }
@@ -53,11 +52,11 @@
     }
     .btn-fill { background: var(--rose); color: var(--white); border: none; }
     .btn-fill:hover { opacity: .88; transform: translateY(-1px); }
-    .btn-outline { border: 1.5px solid var(--rose-border); background: transparent; color: var(--dark); }
+    .btn-outline { border: 1.5px solid var(--rose-body); background: transparent; color: var(--dark); }
     .btn-outline:hover { border-color: var(--rose); color: var(--rose); }
     .btn-dark { background: var(--dark); color: var(--white); border: none; }
     .btn-dark:hover { opacity: .9; transform: translateY(-1px); }
-    .btn-ghost { border: 1.5px solid var(--rose-border); background: transparent; color: var(--text-muted); }
+    .btn-ghost { border: 1.5px solid var(--rose-body); background: transparent; color: var(--text-muted); }
     .btn-ghost:hover { border-color: var(--rose); color: var(--rose); }
     @media(max-width:640px) { .hdr-btns .btn-outline { display: none; } }
 
@@ -94,16 +93,19 @@
     }
     .pill-r { background: var(--rose-light); color: var(--dark); }
     .pill-g { background: #f0faf4; color: #2a7d5b; }
-    .field label { display: block; font-size: .62rem; font-weight: 600; color: var(--text-muted); margin-bottom: .2rem; }
+    .field label { display: block; font-size: .62rem; font-weight: 600; color: var(--text-muted); margin-bottom: .2rem; margin-top: 0.2rem; }
     .field-input {
-      padding: .5rem .7rem; border-radius: .7rem;
+      padding: .5rem 0.7rem; border-radius: .7rem;
       border: 1.5px solid var(--rose-border); background: var(--white);
       font-size: .72rem; color: var(--dark);
     }
     .field-row { display: flex; justify-content: space-between; align-items: center; }
     .field-row .edit { font-size: .6rem; color: var(--text-muted); }
     .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; }
-    .search-card .btn-fill { width: 100%; justify-content: center; margin-top: .2rem; }
+    .search-card .btn-fill { width: 100%; justify-content: center; margin-top: 1.2rem; }
+    .cases { border : none ; }
+    input:focus { border :none; outline:none;}
+
 
     /* mini highlights */
     .minis { display: grid; gap: .5rem; margin-top: .2rem; }
@@ -119,7 +121,7 @@
     /* ── Stats ── */
     .stats {
       margin-top: 3rem; padding: 1.2rem 0;
-      border-top: 1px solid var(--rose-border); border-bottom: 1px solid var(--rose-border);
+      border-top: 1px solid var(--rose-body); border-bottom: 1px solid var(--rose-body);
       display: grid; gap: 1rem;
     }
     @media(min-width:640px) { .stats { grid-template-columns: 1.3fr 1fr 1fr; align-items: center; } }
@@ -214,7 +216,7 @@
     /* ── Footer ── */
     footer {
       margin-top: 2.5rem; padding-top: .8rem;
-      border-top: 1px solid var(--rose-border);
+      border-top: 1px solid var(--rose-body);
       display: flex; flex-direction: column; gap: .4rem;
       font-size: .7rem; color: var(--text-muted);
     }
@@ -231,7 +233,7 @@
     .sec:nth-of-type(2) { animation-delay: .14s; }
     .sec:nth-of-type(3) { animation-delay: .18s; }
     .cta { animation-delay: .22s; }
-  </style>
+    </style>
 </head>
 <body>
 <div class="page">
@@ -267,26 +269,36 @@
       <div class="search-card">
         <div class="search-head">
           <span class="pill pill-r">Recherche de stage</span>
-          <span class="pill pill-g">12 résultats</span>
         </div>
+        <form action="#" method="post">
         <div class="field">
           <label>Domaine</label>
-          <div class="field-input field-row"><span>Design UX / UI</span><span class="edit">Modifier</span></div>
+          <div class="field-input field-row">
+          <input type="text" class="cases" placeholder=" UX / UI">
+          </div>
         </div>
         <div class="field-grid">
-          <div class="field"><label>Ville</label><div class="field-input">Paris, Lyon...</div></div>
-          <div class="field"><label>Durée</label><div class="field-input">2 à 6 mois</div></div>
+          <div class="field"><label>Ville</label>
+            <div class="field-input">
+            <input type="text" class="cases"  placeholder="Paris, Lyon...">
+            </div>
+          </div>
+          <div class="field"><label>Durée</label>
+            <div class="field-input">
+            <input type="text"  class="cases" placeholder="2 à 6 mois">
+            </div>
         </div>
         <div class="field-grid">
-          <div class="field"><label>Niveau</label><div class="field-input">Licence</div></div>
-          <div class="field"><label>Rythme</label><div class="field-input">Temps plein</div></div>
+          <div class="field"><label>Niveau</label><div class="field-input">
+            <input class="cases" placeholder="Licence">  
+          </div></div>
+          <div class="field"><label>Rythme</label><div class="field-input">
+            <input class="cases" placeholder="Temps plein">   
+          </div></div>
         </div>
-        <a href="#stages" class="btn btn-fill">Lancer une recherche</a>
+        <a href="stages.html" class="btn btn-fill">Lancer une recherche</a>
       </div>
-      <div class="minis">
-        <div class="mini"><h4>Match profil</h4><p>Filtre par compétences, école et disponibilités.</p></div>
-        <div class="mini accent"><h4>Suivi candidatures</h4><p>Envoyée, en attente, relancée, acceptée.</p></div>
-      </div>
+      </form>
     </div>
   </section>
 
@@ -333,7 +345,7 @@
   <section id="reviews" class="sec">
     <div class="sec-head">
       <p class="eyebrow">Témoignages</p>
-      <h2 class="sec-title">Des étudiant·e·s comme toi</h2>
+      <h2 class="sec-title">Des étudiants comme toi</h2>
     </div>
     <div class="grid3">
       <article class="testi">
@@ -371,8 +383,6 @@
     <p>© 2026 Stage Finder. Tous droits réservés.</p>
     <div class="foot-links">
       <a href="#hero">Accueil</a>
-      <a href="#stages">Stages</a>
-      <a href="#how">Fonctionnement</a>
     </div>
   </footer>
 
