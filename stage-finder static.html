@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Stage Finder – Trouve un stage qui te ressemble</title>
+  <meta name="description" content="Stage Finder t'aide à trouver un stage qui colle à tes envies, ton profil et ta ville."/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <div class="logo">
+      <div class="logo-icon">SF</div>
+      <span class="logo-name">Stage Finder</span>
+    </div>
+    <nav>
+      <a href="#hero">Accueil</a>
+      <a href="#stages">Stages</a>
+      <a href="#how">Fonctionnement</a>
+      <a href="#reviews">Témoignages</a>
+    </nav>
+    <div class="hdr-btns">
+      <a href="#" class="btn btn-outline">Se connecter</a>
+      <a href="#cta" class="btn btn-fill">Créer un compte</a>
+    </div>
+  </header>
+
+  <section id="hero" class="hero">
+    <div class="hero-left">
+      <div class="chip">Trouve ton stage en quelques clics</div>
+      <h1>Un stage qui colle enfin à tes envies</h1>
+      <p class="hero-text">Repère rapidement des opportunités qui correspondent à ton profil, tes études et tes ambitions.</p>
+      <div class="hero-actions">
+        <a href="#stages" class="btn btn-dark">Commencer ma recherche →</a>
+        <a href="#how" class="btn btn-ghost">Comment ça marche</a>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:.8rem">
+      <div class="search-card">
+        <div class="search-head">
+          <span class="pill pill-r">Recherche de stage</span>
+        </div>
+        <form action="#" method="post">
+        <div class="field">
+          <label>Domaine</label>
+          <div class="field-input field-row">
+          <input type="text" class="cases" placeholder=" UX / UI">
+          </div>
+        </div>
+        <div class="field-grid">
+          <div class="field"><label>Ville</label>
+            <div class="field-input">
+            <input type="text" class="cases"  placeholder="Paris, Lyon...">
+            </div>
+          </div>
+          <div class="field"><label>Durée</label>
+            <div class="field-input">
+            <input type="text"  class="cases" placeholder="2 à 6 mois">
+            </div>
+        </div>
+        <div class="field-grid">
+          <div class="field"><label>Niveau</label><div class="field-input">
+            <input class="cases" placeholder="Licence">  
+          </div></div>
+          <div class="field"><label>Rythme</label><div class="field-input">
+            <input class="cases" placeholder="Temps plein">   
+          </div></div>
+        </div>
+        <a href="stages.html" class="btn btn-fill">Lancer une recherche</a>
+      </div>
+      </form>
+    </div>
+  </section>
+
+  <div class="stats">
+    <div><p class="eyebrow">En un coup d'œil</p><p class="sub">Ta recherche, simplifiée.</p></div>
+    <div><p class="stat-num">+500</p><p class="stat-label">offres de stage actives</p></div>
+    <div><p class="stat-num">3 semaines</p><p class="stat-label">délai moyen pour un entretien</p></div>
+  </div>
+
+  <section id="stages" class="sec">
+    <div class="sec-head">
+      <p class="eyebrow">Domaines</p>
+      <h2 class="sec-title">Les univers les plus recherchés</h2>
+      <p class="sec-desc">Des dizaines d'offres dans les secteurs qui recrutent.</p>
+    </div>
+    <div class="grid3">
+      <article class="card">
+        <div><h3>Product &amp; UX Design</h3><p class="txt">Conçois des expériences utilisateur mémorables au cœur de produits numériques.</p></div>
+        <div class="card-foot"><span>45 stages</span><span class="tag">Créatif</span></div>
+      </article>
+      <article class="card featured">
+        <div><h3>Développement web</h3><p class="txt">Rejoins des équipes tech et code sur de vrais projets.</p></div>
+        <div class="card-foot"><span>62 stages</span><span class="tag">Très demandé</span></div>
+      </article>
+      <article class="card">
+        <div><h3>Marketing &amp; communication</h3><p class="txt">Construis une marque, gère les réseaux et mesure l'impact.</p></div>
+        <div class="card-foot"><span>38 stages</span><span class="tag">Polyvalent</span></div>
+      </article>
+    </div>
+  </section>
+
+  <section id="how" class="sec">
+    <div class="sec-head">
+      <p class="eyebrow">Fonctionnement</p>
+      <h2 class="sec-title">Trois étapes, c'est tout</h2>
+    </div>
+    <div class="grid3">
+      <article class="step"><div class="step-num">1</div><h3>Crée ton profil</h3><p class="txt">Parcours, compétences, envies de secteur et de ville.</p></article>
+      <article class="step accent"><div class="step-num">2</div><h3>Explore les offres</h3><p class="txt">Découvre les stages qui matchent et sauvegarde tes favoris.</p></article>
+      <article class="step"><div class="step-num">3</div><h3>Suis tes candidatures</h3><p class="txt">Une vue claire, des rappels pour relancer au bon moment.</p></article>
+    </div>
+  </section>
+
+  <section id="reviews" class="sec">
+    <div class="sec-head">
+      <p class="eyebrow">Témoignages</p>
+      <h2 class="sec-title">Des étudiant·e·s comme toi</h2>
+    </div>
+    <div class="grid3">
+      <article class="testi">
+        <blockquote>« En une soirée, j'avais repéré 5 stages. Entretien décroché la semaine suivante. »</blockquote>
+        <div class="testi-meta"><strong>Lina, 22 ans</strong><span>Licence design graphique</span></div>
+      </article>
+      <article class="testi">
+        <blockquote>« Tout visualiser au même endroit m'a enlevé un gros stress. »</blockquote>
+        <div class="testi-meta"><strong>Yanis, 21 ans</strong><span>BUT informatique</span></div>
+      </article>
+      <article class="testi">
+        <blockquote>« Le filtrage par durée et ville m'a permis de trouver un stage compatible avec mon job étudiant. »</blockquote>
+        <div class="testi-meta"><strong>Zoé, 23 ans</strong><span>Master marketing digital</span></div>
+      </article>
+    </div>
+  </section>
+
+  <section id="cta" class="cta">
+    <div>
+      <p class="eyebrow">Prêt·e ?</p>
+      <h2 class="cta-title">Ton futur stage est à quelques clics</h2>
+      <p class="cta-text">Crée ton espace gratuitement et garde une trace claire de toutes tes candidatures.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:.6rem;align-items:center">
+        <a href="#" class="btn btn-dark">Créer mon compte</a>
+        <span class="cta-note">Aucun engagement · Annulation à tout moment</span>
+      </div>
+    </div>
+    <figure class="cta-side">
+      <img src="https://pub-cdn.sider.ai/u/U0L5HA3JLXA/web-coder/6989a17af8bf8282ae2ffc7c/resource/682d9868-7089-44b7-b0fe-9ec8196f081f.jpg" alt="Étudiant·e·s travaillant"/>
+      <figcaption>Une interface pensée pour l'essentiel : trouver un stage où tu te sentiras bien.</figcaption>
+    </figure>
+  </section>
+
+  <footer>
+    <p>© 2026 Stage Finder. Tous droits réservés.</p>
+    <div class="foot-links">
+      <a href="#hero">Accueil</a>
+    </div>
+  </footer>
+
+</div>
+</body>
+</html>
