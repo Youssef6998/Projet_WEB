@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Stage Finder – Tous les stages</title>
+  <meta name="description" content="Explore toutes les offres de stage disponibles sur Stage Finder."/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --white: #ffffff;
+      --rose: #a2d766;
+      --dark: #1a1a2e;
+      --rose-light: #dcfac9;
+      --rose-border: rgba(235, 41, 106, 0.12);
+      --rose-body: rgba(226, 37, 100, 0.422);
+      --text-muted: #484853;
+      --vert-foncé: #4e9a4e;
+      --r: 1.1rem;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; }
+    body {
+      font-family: 'DM Sans', sans-serif; background: #efeeee;
+      color: var(--dark); min-height: 100vh;
+    }
+    a { text-decoration: none; color: inherit; }
+    .page { max-width: 1060px; margin: 0 auto; padding: 1.8rem 1.25rem 2.5rem; }
+
+    /* ── Header ── */
+    header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: .6rem 0; border-bottom: 1px solid var(--rose-body);
+    }
+    .logo { display: flex; align-items: center; gap: .5rem; }
+    .logo-icon {
+      width: 2rem; height: 2rem; border-radius: 50%;
+      background: var(--rose); color: var(--white);
+      font-weight: 700; font-size: .75rem;
+      display: grid; place-items: center;
+    }
+    .logo-name { font-weight: 700; font-size: .95rem; }
+    nav { display: none; gap: 1.5rem; font-size: .78rem; font-weight: 500; color: #1a1a2e; }
+    nav a:hover { color: var(--rose); }
+    nav a.active { color: var(--vert-foncé); font-weight: 700; }
+    @media(min-width:768px) { nav { display: flex; } }
+    .hdr-btns { display: flex; gap: .5rem; }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex; align-items: center; gap: .3rem;
+      font: 600 .75rem/1 'DM Sans', sans-serif; border-radius: 999px;
+      padding: .55rem 1.1rem; cursor: pointer; white-space: nowrap;
+      transition: transform .15s, opacity .15s;
+    }
+    .btn-fill { background: var(--rose); color: var(--white); border: none; }
+    .btn-fill:hover { opacity: .88; transform: translateY(-1px); }
+    .btn-outline { border: 1.5px solid var(--rose-border); background: transparent; color: var(--dark); }
+    .btn-outline:hover { border-color: var(--rose); color: var(--rose); }
+    .btn-dark { background: var(--dark); color: var(--white); border: none; }
+    .btn-dark:hover { opacity: .9; transform: translateY(-1px); }
+    .btn-ghost { border: 1.5px solid var(--rose-border); background: transparent; color: var(--text-muted); }
+    .btn-ghost:hover { border-color: var(--rose); color: var(--rose); }
+    @media(max-width:640px) { .hdr-btns .btn-outline { display: none; } }
+
+    /* ── Search bar (white rectangle) ── */
+    .search-card {
+      margin-top: 2rem;
+      border-radius: 1.25rem; border: 1.5px solid var(--rose-border);
+      background: var(--white); padding: 1rem 1.1rem 1.1rem;
+      display: flex; flex-direction: column; gap: .6rem;
+      box-shadow: 0 20px 60px rgba(232,68,122,.07);
+    }
+    .search-head { display: flex; justify-content: space-between; align-items: center; }
+    .pill {
+      font-size: .58rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em;
+      padding: .22rem .55rem; border-radius: 999px;
+    }
+    .pill-r { background: var(--rose-light); color: var(--dark); }
+    .pill-count { background: #fef9c3; color: #92400e; }
+    .field label { display: block; font-size: .62rem; font-weight: 600; color: var(--text-muted); margin-bottom: .2rem; }
+    .field-input {
+      padding: .5rem .7rem; border-radius: .7rem;
+      border: 1.5px solid var(--rose-border); background: var(--white);
+      font-size: .72rem; color: var(--dark);
+    }
+    .field-row { display: flex; justify-content: space-between; align-items: center; }
+    .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; }
+    @media(min-width:768px) {
+      .field-grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: .5rem; }
+    }
+    @media(max-width:767px) {
+      .field-grid-4 { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; }
+    }
+    .search-card .btn-fill { justify-content: center; margin-top: .2rem; }
+    .cases { border: none; background: transparent; font-family: 'DM Sans', sans-serif; font-size: .72rem; color: var(--dark); width: 100%; }
+    input:focus { border: none; outline: none; }
+    .search-actions { display: flex; gap: .5rem; align-items: center; margin-top: .2rem; }
+    @media(min-width:768px) { .search-actions .btn-fill { width: auto; } }
+    @media(max-width:767px) { .search-actions { flex-direction: column; } .search-actions .btn-fill { width: 100%; } }
+
+    /* ── Page title area ── */
+    .page-intro { margin-top: 2rem; margin-bottom: 1.5rem; }
+    .page-intro .eyebrow {
+      font-size: .6rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .14em; color: var(--vert-foncé);
+    }
+    .page-title {
+      font-family: 'Instrument Serif', serif; font-weight: 400;
+      font-size: 1.5rem; letter-spacing: -.02em; margin: .2rem 0;
+    }
+    .page-subtitle { font-size: .82rem; color: var(--text-muted); }
+    .result-bar {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 1rem; flex-wrap: wrap; gap: .5rem;
+    }
+    .result-count { font-size: .78rem; color: var(--text-muted); }
+    .result-count strong { color: var(--dark); }
+    .sort-btns { display: flex; gap: .35rem; }
+    .sort-btn {
+      font: 500 .65rem/1 'DM Sans', sans-serif; padding: .35rem .7rem;
+      border-radius: 999px; border: 1.5px solid var(--rose-border);
+      background: var(--white); color: var(--text-muted); cursor: pointer;
+      transition: all .15s;
+    }
+    .sort-btn:hover, .sort-btn.active { background: var(--rose-light); color: var(--dark); border-color: transparent; }
+
+    /* ── Stage listing cards ── */
+    .stages-list { display: flex; flex-direction: column; gap: .75rem; }
+
+    .stage-card {
+      display: grid; gap: 1rem; padding: 1rem 1.2rem;
+      border-radius: var(--r); background: var(--white);
+      border: 1.5px solid var(--rose-border);
+      transition: transform .15s, box-shadow .15s;
+    }
+    @media(min-width:768px) {
+      .stage-card { grid-template-columns: 1fr auto; align-items: center; }
+    }
+    .stage-card:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,0,0,.06); }
+
+    .stage-info { display: flex; flex-direction: column; gap: .35rem; }
+    .stage-top { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+    .stage-company {
+      font-size: .65rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .08em; color: var(--vert-foncé);
+    }
+    .stage-type {
+      font-size: .55rem; font-weight: 600; padding: .15rem .45rem;
+      border-radius: 999px; background: var(--rose-light); color: var(--dark);
+    }
+    .stage-title { font-size: .92rem; font-weight: 600; }
+    .stage-desc { font-size: .72rem; color: var(--text-muted); line-height: 1.55; }
+    .stage-tags { display: flex; flex-wrap: wrap; gap: .3rem; margin-top: .15rem; }
+    .stage-tag {
+      font-size: .58rem; font-weight: 500; padding: .18rem .5rem;
+      border-radius: 999px; border: 1px solid var(--rose-border);
+      color: var(--text-muted);
+    }
+    .stage-right {
+      display: flex; flex-direction: column; align-items: flex-end; gap: .4rem;
+      min-width: 130px;
+    }
+    @media(max-width:767px) {
+      .stage-right { flex-direction: row; align-items: center; justify-content: space-between; width: 100%; }
+    }
+    .stage-location { font-size: .7rem; color: var(--text-muted); display: flex; align-items: center; gap: .25rem; }
+    .stage-duration { font-size: .65rem; color: var(--text-muted); }
+    .stage-date { font-size: .6rem; color: #9ca3af; }
+
+    /* ── Pagination ── */
+    .pagination {
+      display: flex; justify-content: center; align-items: center;
+      gap: .3rem; margin-top: 2rem;
+    }
+    .page-btn {
+      width: 2rem; height: 2rem; border-radius: 50%; border: 1.5px solid var(--rose-border);
+      background: var(--white); color: var(--text-muted); font: 600 .7rem 'DM Sans', sans-serif;
+      cursor: pointer; display: grid; place-items: center; transition: all .15s;
+    }
+    .page-btn:hover { background: var(--rose-light); color: var(--dark); }
+    .page-btn.active { background: var(--rose); color: var(--white); border-color: transparent; }
+    .page-btn.arrow { font-size: .85rem; }
+
+    /* ── Footer ── */
+    footer {
+      margin-top: 2.5rem; padding-top: .8rem;
+      border-top: 1px solid var(--rose-border);
+      display: flex; flex-direction: column; gap: .4rem;
+      font-size: .7rem; color: var(--text-muted);
+    }
+    @media(min-width:640px) { footer { flex-direction: row; justify-content: space-between; align-items: center; } }
+    .foot-links { display: flex; gap: .8rem; }
+    footer a { color: var(--text-muted); }
+    footer a:hover { color: var(--rose); }
+
+    /* fade-in */
+    @keyframes up { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+    .search-card { animation: up .4s ease both; }
+    .page-intro { animation: up .4s ease .06s both; }
+    .stages-list { animation: up .4s ease .12s both; }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header (identique à l'accueil) -->
+  <header>
+    <a href="stage-finder_static.html" class="logo">
+      <div class="logo-icon">SF</div>
+      <span class="logo-name">Stage Finder</span>
+    </a>
+    <nav>
+      <a href="stage-finder_static.html">Accueil</a>
+      <a href="stages.html" class="active">Stages</a>
+      <a href="stage-finder_static.html#how">Fonctionnement</a>
+      <a href="stage-finder_static.html#reviews">Témoignages</a>
+    </nav>
+    <div class="hdr-btns">
+      <a href="#" class="btn btn-outline">Se connecter</a>
+      <a href="#" class="btn btn-fill">Créer un compte</a>
+    </div>
+  </header>
+
+  <!-- Search card (rectangle blanc) -->
+  <div class="search-card">
+    <div class="search-head">
+      <span class="pill pill-r">Recherche de stage</span>
+      <span class="pill pill-count">18 résultats</span>
+    </div>
+    <form action="#" method="post">
+      <div class="field-grid-4">
+        <div class="field">
+          <label>Domaine</label>
+          <div class="field-input"><input type="text" class="cases" placeholder="UX / UI, Dev, Marketing..."></div>
+        </div>
+        <div class="field">
+          <label>Ville</label>
+          <div class="field-input"><input type="text" class="cases" placeholder="Paris, Lyon..."></div>
+        </div>
+        <div class="field">
+          <label>Durée</label>
+          <div class="field-input"><input type="text" class="cases" placeholder="2 à 6 mois"></div>
+        </div>
+        <div class="field">
+          <label>Niveau</label>
+          <div class="field-input"><input type="text" class="cases" placeholder="Licence, Master..."></div>
+        </div>
+      </div>
+      <div class="search-actions">
+        <a href="#" class="btn btn-fill">Rechercher</a>
+        <a href="#" class="btn btn-ghost" style="font-size:.68rem;">Réinitialiser les filtres</a>
+      </div>
+    </form>
+  </div>
+
+  <!-- Résultats -->
+  <div class="page-intro">
+    <p class="eyebrow">Explorer</p>
+    <h1 class="page-title">Tous les stages disponibles</h1>
+    <p class="page-subtitle">18 offres correspondent à ta recherche.</p>
+  </div>
+
+  <div class="result-bar">
+    <p class="result-count">Triés par <strong>pertinence</strong></p>
+    <div class="sort-btns">
+      <button class="sort-btn active">Pertinence</button>
+      <button class="sort-btn">Date</button>
+      <button class="sort-btn">Durée</button>
+    </div>
+  </div>
+
+  <!-- Liste des stages -->
+  <div class="stages-list">
+
+    <article class="stage-card">
+      <div class="stage-info">
+        <div class="stage-top">
+          <span class="stage-company">Figma France</span>
+          <span class="stage-type">Stage</span>
+        </div>
+        <h3 class="stage-title">Stage UX Designer – Design System</h3>
+        <p class="stage-desc">Participe à la refonte du design system interne et contribue à améliorer l'expérience utilisateur de nos outils collaboratifs.</p>
+        <div class="stage-tags">
+          <span class="stage-tag">UX Design</span>
+          <span class="stage-tag">Figma</span>
+          <span class="stage-tag">Design System</span>
+        </div>
+      </div>
+      <div class="stage-right">
+        <span class="stage-location">📍 Paris</span>
+        <span class="stage-duration">6 mois</span>
+        <span class="stage-date">Publiée il y a 2 jours</span>
+        <a href="#" class="btn btn-dark" style="font-size:.65rem;padding:.4rem .85rem;">Voir l'offre</a>
+      </div>
+    </article>
+
+    <article class="stage-card">
+      <div class="stage-info">
+        <div class="stage-top">
+          <span class="stage-company">Doctolib</span>
+          <span class="stage-type">Stage</span>
+        </div>
+        <h3 class="stage-title">Développeur·se Front-End React</h3>
+        <p class="stage-desc">Rejoins l'équipe produit pour développer de nouvelles fonctionnalités sur la plateforme de prise de rendez-vous médicaux.</p>
+        <div class="stage-tags">
+          <span class="stage-tag">React</span>
+          <span class="stage-tag">TypeScript</span>
+          <span class="stage-tag">API REST</span>
+        </div>
+      </div>
+      <div class="stage-right">
+        <span class="stage-location">📍 Paris</span>
+        <span class="stage-duration">4 à 6 mois</span>
+        <span class="stage-date">Publiée il y a 3 jours</span>
+        <a href="#" class="btn btn-dark" style="font-size:.65rem;padding:.4rem .85rem;">Voir l'offre</a>
+      </div>
+    </article>
+
+    <article class="stage-card">
+      <div class="stage-info">
+        <div class="stage-top">
+          <span class="stage-company">BlaBlaCar</span>
+          <span class="stage-type">Stage</span>
+        </div>
+        <h3 class="stage-title">Stage Marketing Digital & Growth</h3>
+        <p class="stage-desc">Contribue aux campagnes d'acquisition et analyse les performances marketing sur les canaux digitaux.</p>
+        <div class="stage-tags">
+          <span class="stage-tag">SEO / SEA</span>
+          <span class="stage-tag">Analytics</span>
+          <span class="stage-tag">Growth</span>
+        </div>
+      </div>
+      <div class="stage-right">
+        <span class="stage-location">📍 Paris</span>
+        <span class="stage-duration">6 mois</span>
+        <span class="stage-date">Publiée il y a 4 jours</span>
+        <a href="#" class="btn btn-dark" style="font-size:.65rem;padding:.4rem .85rem;">Voir l'offre</a>
+      </div>
+    </article>
+
+    <article class="stage-card">
+      <div class="stage-info">
+        <div class="stage-top">
+          <span class="stage-company">OVHcloud</span>
+          <span class="stage-type">Stage</span>
+        </div>
+        <h3 class="stage-title">Stage Développeur·se Back-End Python</h3>
+        <p class="stage-desc">Intègre l'équipe infrastructure et participe au développement des API internes et outils d'automatisation cloud.</p>
+        <div class="stage-tags">
+          <span class="stage-tag">Python</span>
+          <span class="stage-tag">Django</span>
+          <span class="stage-tag">Cloud</span>
+        </div>
+      </div>
+      <div class="stage-right">
+        <span class="stage-location">📍 Roubaix</span>
+        <span class="stage-duration">4 à 6 mois</span>
+        <span class="stage-date">Publiée il y a 5 jours</span>
+        <a href="#" class="btn btn-dark" style="font-size:.65rem;padding:.4rem .85rem;">Voir l'offre</a>
+      </div>
+    </article>
+
+    <article class="stage-card">
+      <div class="stage-info">
+        <div class="stage-top">
+          <span class="stage-company">Deezer</span>
+          <span class="stage-type">Stage</span>
+        </div>
+        <h3 class="stage-title">UI Designer – Application Mobile</h3>
+        <p class="stage-desc">Travaille sur les parcours utilisateurs de l'app mobile et propose des améliorations visuelles sur les écrans clés.</p>
+        <div class="stage-tags">
+          <span class="stage-tag">UI Design</span>
+          <span class="stage-tag">Mobile</span>
+          <span class="stage-tag">Prototypage</span>
+        </div>
+      </div>
+      <div class="stage-right">
+        <span class="stage-location">📍 Paris</span>
+        <span class="stage-duration">5 mois</span>
+        <span class="stage-date">Publiée il y a 1 semaine</span>
+        <a href="#" class="btn btn-dark" style="font-size:.65rem;padding:.4rem .85rem;">Voir l'offre</a>
+      </div>
+    </article>
+
+    <article class="stage-card">
+      <div class="stage-info">
+        <div class="stage-top">
+          <span class="stage-company">L'Oréal</span>
+          <span class="stage-type">Stage</span>
+        </div>
+        <h3 class="stage-title">Stage Chef·fe de Projet Communication</h3>
+        <p class="stage-desc">Accompagne l'équipe communication corporate dans la gestion de campagnes internes et la production de contenus.</p>
+        <div class="stage-tags">
+          <span class="stage-tag">Communication</span>
+          <span class="stage-tag">Rédaction</span>
+          <span class="stage-tag">Événementiel</span>
+        </div>
+      </div>
+      <div class="stage-right">
+        <span class="stage-location">📍 Clichy</span>
+        <span class="stage-duration">6 mois</span>
+        <span class="stage-date">Publiée il y a 1 semaine</span>
+        <a href="#" class="btn btn-dark" style="font-size:.65rem;padding:.4rem .85rem;">Voir l'offre</a>
+      </div>
+    </article>
+
+    <article class="stage-card">
+      <div class="stage-info">
+        <div class="stage-top">
+          <span class="stage-company">Alan</span>
+          <span class="stage-type">Stage</span>
+        </div>
+        <h3 class="stage-title">Stage Product Manager – Parcours Santé</h3>
+        <p class="stage-desc">Aide à prioriser la roadmap produit, rédige des specs fonctionnelles et collabore avec les équipes tech et design.</p>
+        <div class="stage-tags">
+          <span class="stage-tag">Product</span>
+          <span class="stage-tag">Agile</span>
+          <span class="stage-tag">Healthtech</span>
+        </div>
+      </div>
+      <div class="stage-right">
+        <span class="stage-location">📍 Paris</span>
+        <span class="stage-duration">6 mois</span>
+        <span class="stage-date">Publiée il y a 1 semaine</span>
+        <a href="#" class="btn btn-dark" style="font-size:.65rem;padding:.4rem .85rem;">Voir l'offre</a>
+      </div>
+    </article>
+
+    <article class="stage-card">
+      <div class="stage-info">
+        <div class="stage-top">
+          <span class="stage-company">ManoMano</span>
+          <span class="stage-type">Stage</span>
+        </div>
+        <h3 class="stage-title">Stage Data Analyst – Marketplace</h3>
+        <p class="stage-desc">Analyse les données de la marketplace pour améliorer le référencement produit et optimiser le parcours d'achat.</p>
+        <div class="stage-tags">
+          <span class="stage-tag">SQL</span>
+          <span class="stage-tag">Python</span>
+          <span class="stage-tag">Data Viz</span>
+        </div>
+      </div>
+      <div class="stage-right">
+        <span class="stage-location">📍 Bordeaux</span>
+        <span class="stage-duration">4 à 6 mois</span>
+        <span class="stage-date">Publiée il y a 9 jours</span>
+        <a href="#" class="btn btn-dark" style="font-size:.65rem;padding:.4rem .85rem;">Voir l'offre</a>
+      </div>
+    </article>
+
+    <article class="stage-card">
+      <div class="stage-info">
+        <div class="stage-top">
+          <span class="stage-company">Décathlon Digital</span>
+          <span class="stage-type">Stage</span>
+        </div>
+        <h3 class="stage-title">Développeur·se Full-Stack – E-commerce</h3>
+        <p class="stage-desc">Développe de nouvelles features sur la plateforme e-commerce et participe aux rituels agiles de l'équipe.</p>
+        <div class="stage-tags">
+          <span class="stage-tag">Node.js</span>
+          <span class="stage-tag">Vue.js</span>
+          <span class="stage-tag">E-commerce</span>
+        </div>
+      </div>
+      <div class="stage-right">
+        <span class="stage-location">📍 Lille</span>
+        <span class="stage-duration">6 mois</span>
+        <span class="stage-date">Publiée il y a 10 jours</span>
+        <a href="#" class="btn btn-dark" style="font-size:.65rem;padding:.4rem .85rem;">Voir l'offre</a>
+      </div>
+    </article>
+
+    <article class="stage-card">
+      <div class="stage-info">
+        <div class="stage-top">
+          <span class="stage-company">Swile</span>
+          <span class="stage-type">Stage</span>
+        </div>
+        <h3 class="stage-title">Stage Community Manager</h3>
+        <p class="stage-desc">Anime les réseaux sociaux, crée du contenu engageant et mesure l'impact des publications sur la communauté.</p>
+        <div class="stage-tags">
+          <span class="stage-tag">Social Media</span>
+          <span class="stage-tag">Création</span>
+          <span class="stage-tag">KPIs</span>
+        </div>
+      </div>
+      <div class="stage-right">
+        <span class="stage-location">📍 Montpellier</span>
+        <span class="stage-duration">4 mois</span>
+        <span class="stage-date">Publiée il y a 2 semaines</span>
+        <a href="#" class="btn btn-dark" style="font-size:.65rem;padding:.4rem .85rem;">Voir l'offre</a>
+      </div>
+    </article>
+
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination">
+    <button class="page-btn arrow">←</button>
+    <button class="page-btn active">1</button>
+    <button class="page-btn">2</button>
+    <button class="page-btn arrow">→</button>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2026 Stage Finder. Tous droits réservés.</p>
+    <div class="foot-links">
+      <a href="stage-finder_static.html">Accueil</a>
+      <a href="stages.html">Stages</a>
+      <a href="stage-finder_static.html#how">Fonctionnement</a>
+    </div>
+  </footer>
+
+</div>
+</body>
+</html>
