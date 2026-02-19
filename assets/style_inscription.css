@@ -1,14 +1,13 @@
 :root {
-  --vert-clair: #a2d766;
-  --vert-foncé: #4e9a4e;
-  --rose-border: rgba(235, 41, 106, 0.12);
-  --rose-light: #dcfac9;
-  --text-muted: #484853;
+  --vert-clair: yellowgreen;
+  --vert-foncé: green;
+  --rose-border: pink;
+  --rose-light: palegreen;
+  --text-muted: darkslategray;
   --background: white;
   --text-color: black;
 }
 
-/* ── Base ── */
 body {
   font-family: 'Times New Roman', Times, serif;
   background-color: var(--background);
@@ -23,7 +22,6 @@ body {
   margin: auto;
 }
 
-/* ── Intro ── */
 .intro-page {
   margin-top: 2rem;
   margin-bottom: 1.5rem;
@@ -49,14 +47,12 @@ body {
   color: var(--text-muted);
 }
 
-/* ── Carte formulaire (cadre ROSE) ── */
 .formulaire-carte {
   border: 1.5px solid var(--rose-border);
   border-radius: 8px;
   padding: 1rem;
 }
 
-/* ── Formulaire ── */
 .formulaire-carte form {
   display: flex;
   flex-direction: column;
@@ -75,14 +71,12 @@ body {
   font-size: 0.85rem;
 }
 
-/* Focus VERT CLAIR */
-.champ-input:focus {
+champ-input:focus {
   outline: none;
   border-color: var(--vert-clair);
   box-shadow: 0 0 0 2px rgba(162, 215, 102, 0.3);
 }
 
-/* ── Actions ── */
 .actions-formulaire {
   display: flex;
   justify-content: center;
@@ -141,3 +135,4 @@ footer {
 .liens-pied-de-page a:hover {
   color: var(--vert-foncé);
 }
+
