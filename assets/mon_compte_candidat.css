@@ -1,0 +1,205 @@
+/* --- Reset et Base Plein Écran --- */
+* {
+    box-sizing: border-box;
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f2f5;
+}
+
+.main-container {
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    height: 100vh;
+}
+
+/* --- Header --- */
+.header {
+    background: white;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    z-index: 10;
+}
+
+.logo-section {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.logo {
+    height: 40px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #2d6cdf;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+/* --- Zone de Contenu --- */
+.content {
+    flex: 1; /* Prend tout l'espace restant */
+    padding: 40px;
+    overflow-y: auto; /* Permet le scroll si le contenu dépasse en hauteur */
+}
+
+h1 {
+    color: #2d6cdf;
+    margin-top: 0;
+    margin-bottom: 30px;
+    font-size: 28px;
+}
+
+.full-form {
+    background: white;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    min-height: calc(100% - 60px); /* S'étend sur la hauteur */
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- Grille de Formulaire --- */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Deux colonnes égales */
+    gap: 40px;
+    flex: 1;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: #444;
+}
+
+.input-group input, 
+.input-group textarea {
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: 0.3s;
+}
+
+.input-group input:focus {
+    border-color: #2d6cdf;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(45,108,223,0.1);
+}
+
+/* --- Disponibilité et Fichiers --- */
+.file-drop-zone {
+    border: 2px dashed #2d6cdf;
+    padding: 30px;
+    text-align: center;
+    border-radius: 8px;
+    background: #f8fbff;
+    color: #2d6cdf;
+}
+
+.availability-box {
+    margin-top: 20px;
+    padding: 20px;
+    background: #f1f4f9;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.toggle-switch {
+    display: flex;
+    background: white;
+    padding: 5px;
+    border-radius: 50px;
+    border: 1px solid #ddd;
+}
+
+.toggle-switch input { display: none; }
+
+.toggle-switch label {
+    padding: 8px 25px;
+    cursor: pointer;
+    border-radius: 50px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.toggle-switch input:checked + label {
+    background: #2d6cdf;
+    color: white;
+}
+
+/* --- Footer du Formulaire --- */
+.form-footer {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.btn-primary {
+    background: #2d6cdf;
+    color: white;
+    border: none;
+    padding: 15px 40px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
+}
+
+.secondary-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 15px;
+}
+
+.btn-secondary {
+    background: white;
+    border: 1px solid #2d6cdf;
+    color: #2d6cdf;
+    padding: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.btn-danger {
+    background: #fff5f5;
+    border: 1px solid #dc3545;
+    color: #dc3545;
+    padding: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+/* --- Responsive --- */
+@media (max-width: 900px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    .content {
+        padding: 20px;
+    }
+}
