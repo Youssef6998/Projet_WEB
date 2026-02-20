@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Créer un compte Pilote</title>
+    <link rel="stylesheet" href="creer_compte_pilote.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+    <div class="container">
+
+        <div class="register-card">
+            <h1>Créer un compte Pilote</h1>
+
+            <form>
+
+                <div class="row">
+                    <div class="input-group">
+                        <label>Nom</label>
+                        <input type="text" placeholder="Votre nom" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Prénom</label>
+                        <input type="text" placeholder="Votre prénom" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Email</label>
+                    <input type="email" placeholder="Votre email" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Portable</label>
+                    <input type="tel" placeholder="Votre numéro de portable" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Promotion</label>
+                    <select required>
+                        <option value="">-- Sélectionner une promotion --</option>
+                        <option>CPIA1</option>
+                        <option>CPIA2</option>
+                        <option>FISA A3</option>
+                        <option>FISE A3</option>
+                        <option>FISA A4</option>
+                        <option>FISE A4</option>
+                        <option>FISE A5</option>
+                        <option>FISA A5</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>Mot de passe</label>
+                    <input type="password" placeholder="Créer un mot de passe" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Confirmer le mot de passe</label>
+                    <input type="password" placeholder="Confirmer le mot de passe" required>
+                </div>
+
+                <div class="terms">
+                    <label>
+                        <input type="checkbox" required>
+                        J'accepte les conditions générales
+                    </label>
+                </div>
+
+                <button type="submit" class="btn-primary">Créer le compte</button>
+
+                <p class="login-link">
+                    Déjà un compte ? <a href="#">Se connecter</a>
+                </p>
+
+            </form>
+        </div>
+
+    </div>
+
+</body>
+</html>
