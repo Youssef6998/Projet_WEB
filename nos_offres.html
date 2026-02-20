@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion de l'Offre d'Emploi</title>
+    <link rel="stylesheet" href="nos_offres.css">
+</head>
+<body>
+
+    <div class="main-container">
+        <header class="header">
+            <div class="logo-section">
+                <img src="logo.png" alt="Logo" class="logo"> <nav class="nav-links">
+                    <a href="#">Publier une offre</a> <span>|</span>
+                    <a href="#">Recherche CV</a> </nav>
+            </div>
+            <div class="page-title">Nos offres</div> </header>
+
+        <main class="content">
+            <div class="top-actions">
+                <h1>Modifier l'offre d'emploi</h1> <div class="stats-bar">
+                    <div class="stat-item"><strong>Vues :</strong> 120</div> <div class="stat-item"><strong>Candidatures :</strong> 12</div> </div>
+            </div>
+
+            <form class="full-form">
+                <div class="form-grid">
+                    <div class="column">
+                        <div class="input-group">
+                            <label>Nom de l'entreprise</label> <div class="row">
+                                <input type="text" value="Entreprise Tech" readonly>
+                                <button type="button" class="btn-modifier">Modifier</button> </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Intitulé du poste</label> <div class="row">
+                                <input type="text" value="Développeur Fullstack">
+                                <button type="button" class="btn-modifier">Modifier</button> </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Type de contrat (Stage, Alter, CDI, CDD)</label> <select>
+                                <option>CDI</option>
+                                <option>CDD</option>
+                                <option>Stage</option>
+                                <option>Alternance</option>
+                            </select>
+                        </div>
+
+                        <div class="row">
+                            <div class="input-group">
+                                <label>Ville</label> <input type="text" value="Paris">
+                            </div>
+                            <div class="input-group">
+                                <label>Code Postal</label> <input type="text" value="75001">
+                            </div>
+                            <button type="button" class="btn-modifier">Modifier</button> </div>
+                    </div>
+
+                    <div class="column">
+                        <div class="input-group">
+                            <label>Description du poste / Mission</label> <textarea rows="4">Description détaillée des missions...</textarea>
+                            <button type="button" class="btn-modifier-small">Modifier mission</button> </div>
+
+                        <div class="row">
+                            <div class="input-group">
+                                <label>Durée</label> <input type="text" value="Indéterminée">
+                            </div>
+                            <div class="input-group">
+                                <label>Niveau / Profil recherché</label> <input type="text" value="Bac +5">
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Compétences requises</label> <textarea rows="3">React, Node.js, SQL...</textarea>
+                            <button type="button" class="btn-modifier-small">Modifier compétences</button> </div>
+                    </div>
+                </div>
+
+                <footer class="form-footer">
+                    <button type="submit" class="btn-primary">Enregistrer les modifications de l'offre</button> <button type="button" class="btn-danger">Supprimer l'offre</button> </footer>
+            </form>
+        </main>
+        
+        <footer class="site-footer">Pied de Page</footer> </div>
+
+</body>
+</html>
