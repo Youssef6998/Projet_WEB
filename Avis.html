@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avis sur les entreprises</title>
+    <link rel="stylesheet" href="Avis.css">
+</head>
+<body>
+
+    <div class="main-container">
+        <header class="header">
+            <div class="logo-section">
+                <div class="logo-placeholder">Logo</div> <nav class="nav-links">
+                    <a href="#">Page d'accueil</a> <a href="#" class="active">Avis sur les entreprises</a> <a href="#">Mes candidatures</a> </nav>
+            </div>
+            <div class="user-actions">
+                <a href="#">Notification</a> <a href="#">Compte</a> </div>
+        </header>
+
+        <main class="content">
+            <div class="page-header">
+                <h1>Donnez votre avis sur une entreprise</h1>
+            </div>
+
+            <div class="search-section">
+                <div class="search-box">
+                    <input type="text" placeholder="Rechercher une entreprise..."> <button class="btn-search">Rechercher</button> </div>
+            </div>
+
+            <form class="review-form full-form">
+                <div class="form-grid">
+                    <div class="column">
+                        <div class="input-group">
+                            <label for="nom-entreprise">Nom de l'entreprise</label> <input type="text" id="nom-entreprise" placeholder="Ex: Tech Solutions">
+                        </div>
+
+                        <div class="rating-group">
+                            <label>Votre Note (Avis ☆)</label> <div class="stars">
+                                <span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="column">
+                        <div class="input-group">
+                            <label for="commentaire">Votre commentaire</label> <textarea id="commentaire" placeholder="Partagez votre expérience au sein de cette entreprise..." rows="6"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <footer class="form-footer">
+                    <button type="submit" class="btn-primary">Envoyer l'avis</button> </footer>
+            </form>
+        </main>
+    </div>
+
+</body>
+</html>
