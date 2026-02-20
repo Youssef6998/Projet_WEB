@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Publier une Offre d'Emploi</title>
+    <link rel="stylesheet" href="publier_offre.css">
+</head>
+<body>
+
+    <div class="main-container">
+        <header class="header">
+            <div class="logo-section">
+                <div class="logo-placeholder">Logo</div> <nav class="nav-links">
+                    <a href="#" class="active">Publier une offre</a> <span>|</span>
+                    <a href="#">Rechercher un CV</a> <span>|</span>
+                    <a href="#">Nos offres</a> </nav>
+            </div>
+        </header>
+
+        <main class="content">
+            <div class="page-header">
+                <h1>Publier une nouvelle offre</h1>
+            </div>
+
+            <form class="full-form">
+                <div class="form-grid">
+                    
+                    <div class="column">
+                        <div class="input-group">
+                            <label for="nom-ent">Nom de l'entreprise</label> <input type="text" id="nom-ent" placeholder="Ex: Ma Société SAS">
+                        </div>
+
+                        <div class="input-group">
+                            <label for="intitule">Intitulé du poste</label> <input type="text" id="intitule" placeholder="Ex: Développeur Front-end">
+                        </div>
+
+                        <div class="input-group">
+                            <label for="contrat">Type de contrat</label> <select id="contrat">
+                                <option value="" disabled selected>Sélectionnez une option (Stage, CDD, CDI, Alternance)</option> <option value="stage">Stage</option>
+                                <option value="cdd">CDD</option>
+                                <option value="cdi">CDI</option>
+                                <option value="alternance">Alternance</option>
+                            </select>
+                        </div>
+
+                        <div class="location-box">
+                            <label>Localisation</label> <div class="row">
+                                <input type="text" placeholder="Ville" style="flex: 2;"> <input type="text" placeholder="Code Postal" style="flex: 1;"> </div>
+                        </div>
+                    </div>
+
+                    <div class="column">
+                        <div class="input-group">
+                            <label>Description du poste</label> <textarea placeholder="Missions et objectifs du poste..." rows="4"></textarea> </div>
+
+                        <div class="row">
+                            <div class="input-group">
+                                <label for="duree">Durée</label> <input type="text" id="duree" placeholder="Ex: 6 mois">
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Profil recherché</label> <input type="text" placeholder="Niveau d'étude requis" style="margin-bottom: 10px;"> <textarea placeholder="Compétences requises..." rows="3"></textarea> </div>
+                    </div>
+                </div>
+
+                <footer class="form-footer">
+                    <button type="submit" class="btn-primary">Publier l'offre</button>
+                    
+                    <div class="stats-preview">
+                        <span>Statistiques de l'offre (aperçu) :</span> <small>Nb de vues : 0 | Nb de candidatures : 0</small> </div>
+                </footer>
+            </form>
+        </main>
+    </div>
+
+</body>
+</html>
