@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Compte Candidat - Plein Écran</title>
+    <link rel="stylesheet" href="mon_compte_candidat.css">
+</head>
+<body>
+
+    <div class="main-container">
+        <header class="header">
+            <div class="logo-section">
+                <img src="logo.png" alt="Logo" class="logo">
+                <nav class="nav-links">
+                    <a href="#">Page d'accueil</a>
+                    <span>|</span>
+                    <a href="#">Avis</a>
+                </nav>
+            </div>
+            <div class="user-status">
+                Compte Candidat
+            </div>
+        </header>
+
+        <main class="content">
+            <h1>Mon Compte</h1>
+
+            <form class="full-form">
+                <div class="form-grid">
+                    <div class="column">
+                        <div class="input-group">
+                            <label>Nom & Prénom</label>
+                            <input type="text" placeholder="Jean Dupont">
+                        </div>
+                        <div class="input-group">
+                            <label>Email</label>
+                            <input type="email" placeholder="jean@exemple.com">
+                        </div>
+                        <div class="input-group">
+                            <label>Téléphone</label>
+                            <input type="tel" placeholder="06 00 00 00 00">
+                        </div>
+                        <div class="input-group">
+                            <label>Localisation (Loc)</label>
+                            <input type="text" placeholder="Paris, France">
+                        </div>
+                    </div>
+
+                    <div class="column">
+                        <div class="input-group">
+                            <label>Mon CV (PDF)</label>
+                            <div class="file-drop-zone">
+                                <input type="file">
+                                <span>Cliquez ou glissez votre CV ici</span>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label>Compétences</label>
+                            <textarea placeholder="Listez vos compétences techniques..." rows="5"></textarea>
+                        </div>
+                        
+                        <div class="availability-box">
+                            <span class="label">Disponible :</span>
+                            <div class="toggle-switch">
+                                <input type="radio" name="dispo" id="oui" checked>
+                                <label for="oui">OUI</label>
+                                <input type="radio" name="dispo" id="non">
+                                <label for="non">NON</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <footer class="form-footer">
+                    <button type="submit" class="btn-primary">Enregistrer les modifications</button>
+                    <div class="secondary-actions">
+                        <button type="button" class="btn-secondary">Notifications</button>
+                        <button type="button" class="btn-danger">Supprimer le compte</button>
+                    </div>
+                </footer>
+            </form>
+        </main>
+    </div>
+
+</body>
+</html>
