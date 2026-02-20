@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modifier l'entreprise</title>
+    <link rel="stylesheet" href="modifier_entreprise.css">
+</head>
+<body>
+
+    <div class="register-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <img src="logo.png" alt="Logo" style="height: 40px;"> <div class="nav-links">
+                <a href="#" style="font-size: 13px; color: #666; text-decoration: none;">Page d'accueil</a> <span style="margin: 0 10px;">|</span>
+                <a href="#" style="font-size: 13px; color: #2d6cdf; text-decoration: none;">Connexion</a> </div>
+        </div>
+
+        <h1>Modifier l'entreprise</h1> <div class="input-group">
+            <label for="search">Chercher l'entreprise</label> <input type="text" id="search" placeholder="Entrez le nom de l'entreprise...">
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 25px 0;">
+
+        <form>
+            <div class="input-group">
+                <label for="nom">Nom entreprise</label> <div class="row" style="gap: 10px;">
+                    <input type="text" id="nom" value="Nom actuel" style="flex: 3;">
+                    <button type="button" class="btn-secondary">Modifier nom</button> </div>
+            </div>
+
+            <div class="input-group">
+                <label for="adresse">Adresse</label> <div class="row" style="gap: 10px;">
+                    <input type="text" id="adresse" value="Adresse actuelle" style="flex: 3;">
+                    <button type="button" class="btn-secondary">Modifier adresse</button> </div>
+            </div>
+
+            <div class="input-group">
+                <label for="site">Site</label> <div class="row" style="gap: 10px;">
+                    <input type="text" id="site" value="www.site.com" style="flex: 3;">
+                    <button type="button" class="btn-secondary">Modifier site</button> </div>
+            </div>
+
+            <div class="input-group">
+                <label for="email">Email</label> <div class="row" style="gap: 10px;">
+                    <input type="email" id="email" value="email@exemple.com" style="flex: 3;">
+                    <button type="button" class="btn-secondary">Modifier email</button> </div>
+            </div>
+
+            <div class="input-group">
+                <label for="tel">Téléphone</label> <div class="row" style="gap: 10px;">
+                    <input type="tel" id="tel" value="0102030405" style="flex: 3;">
+                    <button type="button" class="btn-secondary">Modifier tel.</button> </div>
+            </div>
+
+            <div style="margin-top: 30px;">
+                <button type="button" class="btn-danger">Supprimer entreprise</button> </div>
+        </form>
+    </div>
+
+</body>
+</html>
