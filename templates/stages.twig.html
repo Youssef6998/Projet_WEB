@@ -1,9 +1,10 @@
 {% extends "base.twig.html" %}
-
+{% block css %}
+<link rel="stylesheet" href="/assets/style-stage.css">
+{% endblock %}
 {% block title %}Stage Finder – Tous les stages{% endblock %}
 
 {% block content %}
-<!-- Search card DYNAMIQUE -->
 <div class="search-card">
     <div class="search-head">
         <span class="pill pill-r">Recherche de stage</span>
@@ -15,15 +16,12 @@
                 <label>Domaine</label>
                 <div class="field-input"><input name="domaine" value="{{ domaine }}" class="cases"></div>
             </div>
-            <!-- Autres filtres... -->
         </div>
         <div class="search-actions">
             <button type="submit" class="btn btn-fill">Rechercher</button>
         </div>
     </form>
 </div>
-
-<!-- Résultats DYNAMIQUES -->
 <div class="stages-list">
     {% for stage in stages %}
     <article class="stage-card">
@@ -48,5 +46,21 @@
         </div>
     </article>
     {% endfor %}
+</div>
+<div class="pagination">
+    {% if currentPage > 1 %}
+        <a href="/?uri=stages&page={{ currentPage - 1 }}" class="page-btn arrow">←</a>
+    {% endif %}
+    
+    {% for i in range(1, totalPages) %}
+        <a href="/?uri=stages&page={{ i }}" 
+           class="page-btn {{ i == currentPage ? 'active' : '' }}">
+            {{ i }}
+        </a>
+    {% endfor %}
+    
+    {% if currentPage < totalPages %}
+        <a href="/?uri=stages&page={{ totalPages }}" class="page-btn arrow">→</a>
+    {% endif %}
 </div>
 {% endblock %}

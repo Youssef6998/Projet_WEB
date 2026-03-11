@@ -45,7 +45,7 @@
     }
     .btn-fill { background: var(--rose); color: var(--white); border: none; }
     .btn-fill:hover { opacity: .88; transform: translateY(-1px); }
-    .btn-outline { border: 1.5px solid var(--rose-border); background: transparent; color: var(--dark); }
+    .btn-outline { border: 1.5px solid var(--rose-body); background: transparent; color: var(--dark); }
     .btn-outline:hover { border-color: var(--rose); color: var(--rose); }
     .btn-dark { background: var(--dark); color: var(--white); border: none; }
     .btn-dark:hover { opacity: .9; transform: translateY(-1px); }

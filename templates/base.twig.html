@@ -4,21 +4,20 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>{% block title %}Stage Finder{% endblock %}</title>
-    <!-- (CSS spécifique à la page) -->
+
 {% block css %}
 <link rel="stylesheet" href="/assets/style-stage.css">
 {% endblock %}
 </head>
 <body>
 <div class="page">
-    <!-- Header DYNAMIQUE -->
     <header>
-        <a href="/?uri=home" class="logo">
+        <a href="/?uri=cherche-stage" class="logo">
             <div class="logo-icon">SF</div>
             <span class="logo-name">Stage Finder</span>
         </a>
         <nav>
-            <a href="/?uri=home">Accueil</a>
+            <a href="/?uri=cherche-stage" class="{% if uri == 'cherche-stage' %}active{% endif %}">Accueil</a>
             <a href="/?uri=stages" class="{% if uri == 'stages' %}active{% endif %}">Stages</a>
             <a href="/?uri=home#how">Fonctionnement</a>
             <a href="/?uri=home#reviews">Témoignages</a>

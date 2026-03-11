@@ -1,26 +1,31 @@
 <?php
 require 'vendor/autoload.php';
+require 'src/Models/StageModel.php';
+
+ini_set('display_errors',1);
+ini_set('display_startup_errors',1);
+error_reporting(E_ALL);
 
 $loader = new \Twig\Loader\FilesystemLoader('templates');
 $twig = new \Twig\Environment($loader, ['debug' => true]);
 
-// Données DYNAMIQUES stages
-$stages = [
-    ['company' => 'Figma France', 'title' => 'Stage UX Designer', 'description' => '...', 'tags' => ['UX', 'Figma'], 'location' => 'Paris', 'duration' => '6 mois', 'date' => '2 jours'],
-    ['company' => 'Doctolib', 'title' => 'Développeur Front-End React', 'description' => '...', 'tags' => ['React'], 'location' => 'Paris', 'duration' => '4-6 mois', 'date' => '3 jours'],
-    // ... autres stages
-];
+$model = new StageModel();
+$page = max(1, (int)($_GET['page'] ?? 1));
 
-$uri = $_GET['uri'] ?? 'cherche-stage'; 
-$page = match($uri) {
-    'cherche-stage' => 'cherche_stage.twig.html', 
-    'home' => 'index.twig.html',
+$uri = $_GET['uri'] ?? 'stages';
+$pageTemplate = match($uri) {
+    'cherche-stage' => 'cherche_stage.twig.html',
+    'stages' => 'stages.twig.html',
+    'home' => 'cherche_stage.twig.html',
     default => '404.twig.html'
 };
 
+if ($uri === 'stages' || $uri === 'cherche-stage') {
+    $data = $model->getPaginatedStages($page);
+    $data['uri'] = $uri;
+    $data['domaine'] = $_GET['domaine'] ?? '';
+} else {
+    $data = ['uri' => $uri];
+}
 
-echo $twig->render($page, [
-    'uri' => $uri,
-    'stages' => $stages,
-    'domaine' => $_GET['domaine'] ?? ''
-]);
+echo $twig->render($pageTemplate, $data);
