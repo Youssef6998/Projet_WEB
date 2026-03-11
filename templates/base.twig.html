@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>{% block title %}Stage Finder{% endblock %}</title>
+    <!-- (CSS spécifique à la page) -->
+{% block css %}
+<link rel="stylesheet" href="/assets/style-stage.css">
+{% endblock %}
+</head>
+<body>
+<div class="page">
+    <!-- Header DYNAMIQUE -->
+    <header>
+        <a href="/?uri=home" class="logo">
+            <div class="logo-icon">SF</div>
+            <span class="logo-name">Stage Finder</span>
+        </a>
+        <nav>
+            <a href="/?uri=home">Accueil</a>
+            <a href="/?uri=stages" class="{% if uri == 'stages' %}active{% endif %}">Stages</a>
+            <a href="/?uri=home#how">Fonctionnement</a>
+            <a href="/?uri=home#reviews">Témoignages</a>
+        </nav>
+        <div class="hdr-btns">
+            <a href="/?uri=login" class="btn btn-outline">Se connecter</a>
+            <a href="/?uri=register" class="btn btn-fill">Créer un compte</a>
+        </div>
+    </header>
+
+    {% block content %}{% endblock %}
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2026 Stage Finder. Tous droits réservés.</p>
+        <div class="foot-links">
+            <a href="/?uri=home">Accueil</a>
+            <a href="/?uri=stages">Stages</a>
+        </div>
+    </footer>
+</div>
+</body>
+</html>

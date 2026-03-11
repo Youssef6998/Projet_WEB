@@ -1,0 +1,52 @@
+{% extends "base.twig.html" %}
+
+{% block title %}Stage Finder – Tous les stages{% endblock %}
+
+{% block content %}
+<!-- Search card DYNAMIQUE -->
+<div class="search-card">
+    <div class="search-head">
+        <span class="pill pill-r">Recherche de stage</span>
+        <span class="pill pill-count">{{ stages|length }} résultats</span>
+    </div>
+    <form action="/?uri=stages" method="get">
+        <div class="field-grid-4">
+            <div class="field">
+                <label>Domaine</label>
+                <div class="field-input"><input name="domaine" value="{{ domaine }}" class="cases"></div>
+            </div>
+            <!-- Autres filtres... -->
+        </div>
+        <div class="search-actions">
+            <button type="submit" class="btn btn-fill">Rechercher</button>
+        </div>
+    </form>
+</div>
+
+<!-- Résultats DYNAMIQUES -->
+<div class="stages-list">
+    {% for stage in stages %}
+    <article class="stage-card">
+        <div class="stage-info">
+            <div class="stage-top">
+                <span class="stage-company">{{ stage.company }}</span>
+                <span class="stage-type">Stage</span>
+            </div>
+            <h3 class="stage-title">{{ stage.title }}</h3>
+            <p class="stage-desc">{{ stage.description }}</p>
+            <div class="stage-tags">
+                {% for tag in stage.tags %}
+                <span class="stage-tag">{{ tag }}</span>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="stage-right">
+            <span class="stage-location">📍 {{ stage.location }}</span>
+            <span class="stage-duration">{{ stage.duration }}</span>
+            <span class="stage-date">{{ stage.date }}</span>
+            <a href="#" class="btn btn-dark">Voir l'offre</a>
+        </div>
+    </article>
+    {% endfor %}
+</div>
+{% endblock %}

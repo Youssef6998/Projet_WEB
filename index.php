@@ -1,18 +1,26 @@
 <?php
-require 'vendor/autoload.php';  // ← PAS ../vendor
+require 'vendor/autoload.php';
 
-$loader = new \Twig\Loader\FilesystemLoader('templates');  // ← PAS ../templates
+$loader = new \Twig\Loader\FilesystemLoader('templates');
 $twig = new \Twig\Environment($loader, ['debug' => true]);
 
-$uri = $_GET['uri'] ?? 'home';
+// Données DYNAMIQUES stages
+$stages = [
+    ['company' => 'Figma France', 'title' => 'Stage UX Designer', 'description' => '...', 'tags' => ['UX', 'Figma'], 'location' => 'Paris', 'duration' => '6 mois', 'date' => '2 jours'],
+    ['company' => 'Doctolib', 'title' => 'Développeur Front-End React', 'description' => '...', 'tags' => ['React'], 'location' => 'Paris', 'duration' => '4-6 mois', 'date' => '3 jours'],
+    // ... autres stages
+];
+
+$uri = $_GET['uri'] ?? 'cherche-stage'; 
 $page = match($uri) {
+    'cherche-stage' => 'cherche_stage.twig.html', 
     'home' => 'index.twig.html',
-    'test' => 'test.twig.html',
     default => '404.twig.html'
 };
 
-echo $twig->render($page, [
-    'title' => 'Projet_WEB Dynamique',
-    'tasks' => ['Tâche 1', 'Tâche 2']
-]);
 
+echo $twig->render($page, [
+    'uri' => $uri,
+    'stages' => $stages,
+    'domaine' => $_GET['domaine'] ?? ''
+]);
