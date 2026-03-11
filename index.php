@@ -1,10 +1,9 @@
 <?php
-require '../vendor/autoload.php';
+require 'vendor/autoload.php';  // ← PAS ../vendor
 
-$loader = new \Twig\Loader\FilesystemLoader('../templates');
+$loader = new \Twig\Loader\FilesystemLoader('templates');  // ← PAS ../templates
 $twig = new \Twig\Environment($loader, ['debug' => true]);
 
-// Routeur simple
 $uri = $_GET['uri'] ?? 'home';
 $page = match($uri) {
     'home' => 'index.twig.html',
@@ -13,6 +12,7 @@ $page = match($uri) {
 };
 
 echo $twig->render($page, [
-    'title' => 'Projet_WEB',
-    'tasks' => ['Tâche 1', 'Tâche 2'] // Données dynamiques
+    'title' => 'Projet_WEB Dynamique',
+    'tasks' => ['Tâche 1', 'Tâche 2']
 ]);
+

@@ -1,19 +1,9 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>{{ title }}</title>
-    <meta charset="utf-8">
-</head>
+<head><title>{{ title }}</title><meta charset="utf-8"></head>
 <body>
-    <h1>🚀 {{ title }} - Dynamique !</h1>
-    <nav>
-        <a href="?uri=home">Accueil</a>
-        <a href="?uri=test">Test</a>
-    </nav>
-    <ul>
-        {% for task in tasks %}
-            <li>{{ task }}</li>
-        {% endfor %}
-    </ul>
+    <h1> {{ title }}</h1>
+    <nav><a href="?uri=home">Accueil</a> | <a href="?uri=test">Test</a></nav>
+    <ul>{% for task in tasks %}<li>{{ task }}</li>{% endfor %}</ul>
 </body>
 </html>
