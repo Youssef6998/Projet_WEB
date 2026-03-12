@@ -63,12 +63,42 @@ a { text-decoration: none; color: inherit; }
 .formulaire-carte {
     background: white;
     width: 100%;
-    max-width: 440px;
-    padding: 2.5rem 2.5rem 2rem;
+    max-width: 400px;
+    padding: 60px 40px 20px 40px;
     border-radius: 15px;
     box-shadow: 0 15px 35px rgba(0,0,0,0.1);
     animation: fadeIn 0.5s ease-in-out;
     margin-bottom: 1.5rem;
+    position: relative;
+}
+
+/* Bouton retour */
+.back-btn-container {
+    position: absolute;
+    top: 15px;
+    left: 20px;
+}
+
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.8rem;
+    background: white;
+    border: 1.5px solid var(--rose-border);
+    color: var(--dark);
+    font-size: 0.8rem;
+    font-weight: 500;
+    border-radius: 8px;
+    text-decoration: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: all 0.2s ease;
+}
+
+.btn-back:hover {
+    border-color: var(--vert);
+    color: var(--vert);
+    transform: translateY(-1px);
 }
 
 /* Champs */
@@ -178,7 +208,17 @@ footer {
     }
 
     .formulaire-carte {
-        padding: 2rem 1.25rem 1.5rem;
+        padding: 50px 20px 15px 20px;
+    }
+
+    .back-btn-container {
+        top: 15px;
+        left: 15px;
+    }
+
+    .btn-back {
+        padding: 0.4rem 0.7rem;
+        font-size: 0.75rem;
     }
 
     .titre-principal {
