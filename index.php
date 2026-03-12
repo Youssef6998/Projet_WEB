@@ -18,6 +18,7 @@ $pageTemplate = match($uri) {
     'stages' => 'stages.twig.html',
     'home' => 'cherche_stage.twig.html',
     'login' => 'connexion.twig.html',
+    'register' => 'inscription.twig.html',
     default => '404.twig.html'
 };
 
