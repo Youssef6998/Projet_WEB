@@ -1,0 +1,91 @@
+{% extends "base.twig.html" %}
+
+{% block title %}Stage Finder – À propos{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="/assets/style-stage.css">
+<link rel="stylesheet" href="/assets/nous.css">
+{% endblock %}
+
+{% block content %}
+<div class="card">
+<div class="about-hero">
+    <h1>À propos de Stage Finder</h1>
+    <p>Nous aidons les étudiants à trouver <strong>LE</strong> stage qui changera leur carrière.</p>
+</div>
+
+
+<section class="mission">
+    <h2>Notre mission</h2>
+    <p>
+        Stage Finder est né d'un constat simple : <strong>trouver un stage pertinent n'est pas une sinécure</strong>. 
+        Entre les offres génériques et les processus de candidature interminables, les étudiants perdent un temps précieux.
+    </p>
+    <p>
+        Nous avons créé une plateforme intuitive qui met en relation <strong>étudiants motivés</strong> et 
+        <strong>entreprises innovantes</strong> grâce à un algorithme intelligent et une interface claire.
+    </p>
+</section>
+
+
+<section class="stats">
+    <div class="stat-item">
+        <span class="stat-number">+500</span>
+        <p>Stages disponibles</p>
+    </div>
+    <div class="stat-item">
+        <span class="stat-number">150+</span>
+        <p>Entreprises partenaires</p>
+    </div>
+    <div class="stat-item">
+        <span class="stat-number">98%</span>
+        <p>Taux de satisfaction</p>
+    </div>
+</section>
+
+
+<section class="team-grid">
+    <div class="team-card">
+        <div class="team-photo">JD</div>
+        <h3>Youssef Najib</h3>
+        <p>CEO & Fondateur</p>
+        <p>10+ ans en RH et recrutement tech</p>
+    </div>
+    <div class="team-card">
+        <div class="team-photo">ML</div>
+        <h3>Kraiss Ryad</h3>
+        <p>CTO</p>
+        <p>Expertise IA & développement web</p>
+    </div>
+    <div class="team-card">
+        <div class="team-photo">PB</div>
+        <h3>Vellaissamy-Le Corneur Nathan</h3>
+        <p>Head of Partnerships</p>
+        <p>500+ entreprises accompagnées</p>
+    </div>
+</section>
+
+
+<section class="values">
+    <h2 style="text-align: center; color: var(--vert-foncé); margin-bottom: 2rem;">Nos valeurs</h2>
+    <div class="values-grid">
+        <div class="value-item">
+            <div class="value-icon">🚀</div>
+            <h3>Simplicité</h3>
+            <p>Une interface claire pour des résultats immédiats</p>
+        </div>
+        <div class="value-item">
+            <div class="value-icon">🎯</div>
+            <h3>Précision</h3>
+            <p>Matching intelligent entre étudiants et entreprises</p>
+        </div>
+        <div class="value-item">
+            <div class="value-icon">🤝</div>
+            <h3>Confiance</h3>
+            <p>Processus transparents et sécurisés</p>
+        </div>
+    </div>
+</section>
+
+</div>
+{% endblock %}

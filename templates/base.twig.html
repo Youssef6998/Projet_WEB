@@ -4,7 +4,6 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>{% block title %}Stage Finder{% endblock %}</title>
-
 {% block css %}
 <link rel="stylesheet" href="/assets/style-stage.css">
 {% endblock %}
@@ -19,8 +18,8 @@
         <nav>
             <a href="/?uri=cherche-stage" class="{% if uri == 'cherche-stage' or uri == 'home' %}active{% endif %}">Accueil</a>
             <a href="/?uri=stages" class="{% if uri == 'stages' %}active{% endif %}">Stages</a>
-            <a href="/?uri=home#how">Fonctionnement</a>
-            <a href="/?uri=home#reviews">Témoignages</a>
+            <a href="/?uri=entreprises" class="{% if uri == 'entreprises' %}active{% endif %}" >Entreprises</a>
+            <a href="/?uri=nous" class="{% if uri == 'nous' %}active{% endif %}"  >A propos de nous</a>
         </nav>
         <div class="hdr-btns">
             <a href="/?uri=login" class="btn btn-outline">Se connecter</a>
@@ -34,8 +33,7 @@
     <footer>
         <p>© 2026 Stage Finder. Tous droits réservés.</p>
         <div class="foot-links">
-            <a href="/?uri=home">Accueil</a>
-            <a href="/?uri=stages">Stages</a>
+            <a href="/?uri=mentions">Mentions légales</a>
         </div>
     </footer>
 </div>

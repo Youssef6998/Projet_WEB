@@ -1,0 +1,156 @@
+:root {
+  --white: #ffffff;
+  --rose: #a2d766;
+  --dark: #1a1a2e;
+  --rose-light: #dcfac9;
+  --rose-border: rgba(235, 41, 106, 0.12);
+  --rose-body: rgba(226, 37, 100, 0.422);
+  --text-muted: #484853;
+  --vert-foncé: #4e9a4e;
+  --r: 1.1rem;
+}
+
+
+
+.card{
+background:white;
+border-radius:18px;
+margin-top: 40px;
+margin-bottom: 40px;
+padding:40px;
+box-shadow:0 8px 20px rgba(0,0,0,0.03);
+border:1px solid var(--rose-border);
+}
+
+
+.about-hero {
+    background: linear-gradient(135deg, var(--rose-light) 0%, #f8f9ff 100%);
+    padding: 4rem 1rem 3rem;
+    text-align: center;
+    border-radius: var(--r);
+    margin: 2rem auto 3rem;
+    max-width: 900px;
+    border: 1.5px solid var(--rose-border);
+}
+
+.about-hero h1 {
+    color: var(--dark);
+    font-size: clamp(2rem, 5vw, 3rem);
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.mission {
+    max-width: 900px;
+    margin: 0 auto 4rem;
+    padding: 0 1rem;
+}
+
+.mission h2 {
+    color: var(--vert-foncé);
+    font-size: 1.8rem;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    max-width: 1000px;
+    margin: 3rem auto;
+    padding: 0 1rem;
+}
+
+.team-card {
+    background: var(--white);
+    padding: 2rem;
+    border-radius: var(--r);
+    border: 1.5px solid var(--rose-border);
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+}
+
+.team-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+}
+
+.team-photo {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: var(--rose-light);
+    margin: 0 auto 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: var(--rose);
+    border: 3px solid var(--rose-border);
+}
+
+.values {
+    background: var(--white);
+    margin: 4rem auto;
+    max-width: 900px;
+    padding: 3rem;
+    border-radius: var(--r);
+    border: 1.5px solid var(--rose-border);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+}
+
+.values-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.value-item {
+    text-align: center;
+    padding: 1.5rem;
+}
+
+.value-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, var(--rose) 0%, var(--rose-light) 100%);
+    border-radius: 50%;
+    margin: 0 auto 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+    margin: 3rem auto;
+    max-width: 900px;
+    padding: 0 1rem;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 2rem;
+    background: var(--rose-light);
+    border-radius: var(--r);
+    border: 1px solid var(--rose-border);
+}
+
+.stat-number {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--vert-foncé);
+    display: block;
+}
+    /* fade-in */
+    @keyframes up { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+    .card { animation: up .4s ease both; }
+    .about-hero { animation: up .4s ease .06s both; }
+    .stats { animation: up .4s ease .12s both; }

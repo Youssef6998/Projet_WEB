@@ -1,0 +1,45 @@
+{% extends "base.twig.html" %}
+{% block css %}
+<link rel="stylesheet" href="/assets/style-stage.css">
+
+{% endblock %}
+{% block title %}Stage Finder – Toutes les entreprises{% endblock %}
+
+{% block content %}
+<div class="search-card">
+    <div class="search-head">
+        <span class="pill pill-r">Recherche d'entreprises</span>
+        <span class="pill pill-count">{{ stages|length }} résultats</span>
+    </div>
+    <form action="/?uri=entrprises" method="get">
+        <div class="field-grid-4">
+            <div class="field">
+                <label>Lieu</label>
+                <div class="field-input"><input name="Lieu" value="{{ lieu }}" class="cases"></div>
+            </div>
+        </div>
+        <div class="search-actions">
+            <button type="submit" class="btn btn-fill">Rechercher</button>
+        </div>
+    </form>
+</div>
+<div class="stages-list">
+   
+</div>
+<div class="pagination">
+    {% if currentPage > 1 %}
+        <a href="/?uri=stages&page={{ currentPage - 1 }}" class="page-btn arrow">←</a>
+    {% endif %}
+    
+    {% for i in range(1, totalPages) %}
+        <a href="/?uri=stages&page={{ i }}" 
+           class="page-btn {{ i == currentPage ? 'active' : '' }}">
+            {{ i }}
+        </a>
+    {% endfor %}
+    
+    {% if currentPage < totalPages %}
+        <a href="/?uri=stages&page={{ totalPages }}" class="page-btn arrow">→</a>
+    {% endif %}
+</div>
+{% endblock %}
