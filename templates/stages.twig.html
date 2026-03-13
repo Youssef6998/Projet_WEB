@@ -31,10 +31,10 @@
                 <span class="stage-type">Stage</span>
             </div>
             <h3 class="stage-title">{{ stage.title }}</h3>
-            <p class="stage-desc">{{ stage.description }}</p>
+            <p class="stage-desc">{{ stage.entreprise_name }} • {{ stage.location }}</p>
             <div class="stage-tags">
                 {% for tag in stage.tags %}
-                <span class="stage-tag">{{ tag }}</span>
+                <span class="stage-tag">{{ stage.tags }}</span>
                 {% endfor %}
             </div>
         </div>
