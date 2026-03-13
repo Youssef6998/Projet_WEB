@@ -174,10 +174,14 @@
 
     /* ── Footer ── */
     footer {
-      margin-top: 2.5rem; padding-top: .8rem;
-      border-top: 1px solid var(--rose-border);
-      display: flex; flex-direction: column; gap: .4rem;
-      font-size: .7rem; color: var(--text-muted);
+      margin-top: 2.5rem; 
+      padding-top: .8rem;
+      border-top: 1px solid var(--rose-body);
+      display: flex; 
+      flex-direction: column; 
+      gap: .4rem;
+      font-size: .7rem; 
+      color: var(--text-muted);
     }
     @media(min-width:640px) { footer { flex-direction: row; justify-content: space-between; align-items: center; } }
     .foot-links { display: flex; gap: .8rem; }

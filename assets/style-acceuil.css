@@ -610,7 +610,7 @@ input:focus {
 footer {
   margin-top: 2.5rem; 
   padding-top: .8rem;
-  border-top: 1px solid var(--rose-body);
+  border-top: 1px solid var(--vert-foncé);
   display: flex; 
   flex-direction: column; 
   gap: .4rem;

@@ -40,3 +40,4 @@ if ($uri === 'stages' || $uri === 'cherche-stage') {
 }
 
 echo $twig->render($pageTemplate, $data);
+?>
