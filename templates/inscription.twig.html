@@ -28,36 +28,40 @@
       <a href="/?uri=home" class="btn-back">← Retour</a>
     </div>
 
-    <form>
+    {% if erreur %}
+      <div class="message-erreur">{{ erreur }}</div>
+    {% endif %}
+
+    <form method="POST" action="/?uri=register">
 
       <div class="champ">
         <label for="nom">Nom *</label>
-        <input type="text" id="nom" class="champ-input" required>
+        <input type="text" id="nom" name="nom" class="champ-input" required>
       </div>
 
       <div class="champ">
         <label for="prenom">Prénom *</label>
-        <input type="text" id="prenom" class="champ-input" required>
+        <input type="text" id="prenom" name="prenom" class="champ-input" required>
       </div>
 
       <div class="champ">
         <label for="telephone">Portable *</label>
-        <input type="tel" id="telephone" class="champ-input" required pattern="[0-9]{10}" placeholder="Ex: 0612345678">
+        <input type="tel" id="telephone" name="telephone" class="champ-input" required pattern="[0-9]{10}" placeholder="Ex: 0612345678">
       </div>
 
       <div class="champ">
         <label for="email">Email *</label>
-        <input type="email" id="email" class="champ-input" required placeholder="exemple@email.com">
+        <input type="email" id="email" name="email" class="champ-input" required placeholder="exemple@email.com">
       </div>
 
       <div class="champ">
         <label for="motdepasse">Mot de passe *</label>
-        <input type="password" id="motdepasse" class="champ-input" required minlength="8">
+        <input type="password" id="motdepasse" name="motdepasse" class="champ-input" required minlength="8">
       </div>
 
       <div class="champ">
         <label for="confirmation">Confirmer le mot de passe *</label>
-        <input type="password" id="confirmation" class="champ-input" required minlength="8">
+        <input type="password" id="confirmation" name="confirmation" class="champ-input" required minlength="8">
       </div>
 
       <div class="actions-formulaire">
