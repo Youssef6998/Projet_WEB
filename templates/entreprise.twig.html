@@ -3,149 +3,103 @@
 <link rel="stylesheet" href="/assets/style-stage.css">
 <link rel="stylesheet" href="/assets/offre.css">
 {% endblock %}
-{% block title %}{{ offre.titre }} – Stage Finder{% endblock %}
+{% block title %}{{ entreprise.nom }} – Stage Finder{% endblock %}
 
 {% block content %}
 <div class="offre-page">
 
     {# Breadcrumb #}
     <nav class="breadcrumb">
-        <a href="/?uri=entreprises">← Retour aux entreprise</a>
+        <a href="/?uri=entreprises">← Retour aux entreprises</a>
     </nav>
-
- 
 
     <div class="offre-layout">
 
         {# Colonne principale #}
         <div class="offre-main">
 
-            {# En-tête offre #}
+            {# En-tête entreprise #}
             <div class="offre-header card">
                 <div class="offre-header-top">
                     <div>
-                        <span class="stage-company">{{ offre.company }}</span>
+                        <span class="stage-company">{{ entreprise.nom }}</span>
                         <span class="stage-type">Entreprise</span>
                     </div>
-                    {# Bouton favori (étudiants connectés seulement) #}
-                    {% if session_user and session_user.role == 'etudiant' %}
-                    <form method="post" action="/?uri=wishlist-toggle">
-                        <input type="hidden" name="id_offre" value="{{ offre.id_offre }}">
-                        <input type="hidden" name="redirect" value="/?uri=offre&id={{ offre.id_offre }}">
-                        <button type="submit" class="btn-favori {{ en_favori ? 'actif' : '' }}" title="{{ en_favori ? 'Retirer des favoris' : 'Ajouter aux favoris' }}">
-                            {{ en_favori ? 'Favori' : 'Ajouter aux favoris' }}
-                        </button>
-                    </form>
-                    {% endif %}
                 </div>
-                <h1 class="offre-titre">{{ offre.titre }}</h1>
+                <h1 class="offre-titre">{{ entreprise.nom }}</h1>
                 <div class="offre-meta-row">
-                    {% if offre.duree %}
-                    <span class="meta-chip">{{ offre.duree }}</span>
+                    {% if entreprise.ville %}
+                    <span class="meta-chip">📍 {{ entreprise.ville }}</span>
                     {% endif %}
-                    {% if offre.base_remuneration %}
-                    <span class="meta-chip">{{ offre.base_remuneration|number_format(0, ',', ' ') }} €/mois</span>
-                    {% endif %}
-                    {% if offre.nb_places %}
-                    <span class="meta-chip">{{ offre.nb_places }} place{{ offre.nb_places > 1 ? 's' : '' }}</span>
-                    {% endif %}
-                    {% if offre.date_offre %}
-                    <span class="meta-chip">Début {{ offre.date_offre|date('d/m/Y') }}</span>
-                    {% endif %}
+                    <span class="meta-chip">{{ entreprise.nb_offres }} offre{{ entreprise.nb_offres != 1 ? 's' : '' }}</span>
                 </div>
-                {% if offre.tags %}
-                <div class="stage-tags" style="margin-top:.75rem">
-                    {% for tag in offre.tags %}
-                    <span class="stage-tag">{{ tag }}</span>
-                    {% endfor %}
-                </div>
+                {% if entreprise.adresse %}
+                <p style="margin-top:.5rem;color:var(--text-muted);font-size:.85rem">{{ entreprise.adresse }}{% if entreprise.ville %}, {{ entreprise.ville }}{% endif %}</p>
                 {% endif %}
             </div>
 
             {# Description #}
+            {% if entreprise.description %}
             <div class="card">
-                <h2 class="section-title">Description du poste</h2>
-                <p class="offre-description">{{ offre.description|nl2br }}</p>
+                <h2 class="section-title">À propos de {{ entreprise.nom }}</h2>
+                <p class="offre-description">{{ entreprise.description|nl2br }}</p>
             </div>
+            {% endif %}
 
-            {# Entreprise #}
+            {# Offres de stage #}
+            {% if entreprise.offres %}
             <div class="card">
-                <h2 class="section-title">À propos de {{ offre.company }}</h2>
-                {% if offre.company_desc %}
-                <p class="offre-description">{{ offre.company_desc }}</p>
-                {% endif %}
-                <div class="entreprise-contact">
-                    {% if offre.email_contact %}
-                    <span><a href="mailto:{{ offre.email_contact }}">{{ offre.email_contact }}</a></span>
-                    {% endif %}
-                    {% if offre.telephone_contact %}
-                    <span>{{ offre.telephone_contact }}</span>
-                    {% endif %}
+                <h2 class="section-title">Offres de stage</h2>
+                <div class="stages-list" style="margin-top:1rem">
+                    {% for offre in entreprise.offres %}
+                    <article class="stage-card" style="margin-bottom:.75rem">
+                        <div class="stage-info">
+                            <div class="stage-top">
+                                <span class="stage-company">{{ offre.titre }}</span>
+                            </div>
+                            <div class="offre-meta-row" style="margin-top:.4rem">
+                                {% if offre.duree %}<span class="meta-chip">{{ offre.duree }}</span>{% endif %}
+                                {% if offre.base_remuneration %}<span class="meta-chip">{{ offre.base_remuneration|number_format(0, ',', ' ') }} €/mois</span>{% endif %}
+                                {% if offre.nb_places %}<span class="meta-chip">{{ offre.nb_places }} place{{ offre.nb_places > 1 ? 's' : '' }}</span>{% endif %}
+                                {% if offre.date_offre %}<span class="meta-chip">Début {{ offre.date_offre|date('d/m/Y') }}</span>{% endif %}
+                            </div>
+                        </div>
+                        <div class="stage-right">
+                            <a href="/?uri=offre&id={{ offre.id_offre }}" class="btn btn-dark">Voir l'offre</a>
+                        </div>
+                    </article>
+                    {% endfor %}
                 </div>
             </div>
+            {% else %}
+            <div class="card">
+                <p style="color:var(--text-muted);font-size:.85rem">Aucune offre de stage disponible pour le moment.</p>
+            </div>
+            {% endif %}
 
         </div>
 
         {# Colonne latérale #}
         <aside class="offre-aside">
 
-            {% if not session_user %}
-            {# Non connecté #}
-            <div class="card aside-card">
-                <p class="aside-hint">Connectez-vous pour candidater ou ajouter aux favoris.</p>
-                <a href="/?uri=login" class="btn btn-fill" style="width:100%;justify-content:center">Se connecter</a>
-            </div>
-
-            {% elseif session_user.role != 'etudiant' %}
-            {# Pas étudiant #}
-            <div class="card aside-card">
-                <p class="aside-hint">Seuls les étudiants peuvent candidater.</p>
-            </div>
-
-            {% elseif deja_candidate %}
-            {# Déjà candidaté #}
-            <div class="card aside-card">
-                <div class="badge badge-en_attente" style="margin-bottom:.75rem">Candidature envoyée</div>
-                <p class="aside-hint">Vous avez déjà postulé à cette offre. Suivez l'état depuis votre <a href="/?uri=profil">profil</a>.</p>
-            </div>
-
-            {% else %}
-            {# Formulaire de candidature #}
-            <div class="card aside-card" id="form-candidature">
-                <h2 class="section-title">Candidater</h2>
-                <form method="post" action="/?uri=candidater" enctype="multipart/form-data">
-                    <input type="hidden" name="id_offre" value="{{ offre.id_offre }}">
-
-                    <div class="form-group">
-                        <label for="cv">CV <span class="required">*</span></label>
-                        <input type="file" id="cv" name="cv" accept=".pdf,.doc,.docx" required class="input-file">
-                        <small>Formats acceptés : PDF, DOC, DOCX</small>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="lettre_motivation">Lettre de motivation</label>
-                        <textarea id="lettre_motivation" name="lettre_motivation" rows="6"
-                            placeholder="Expliquez en quelques lignes votre motivation pour ce stage…"
-                            class="input-textarea"></textarea>
-                    </div>
-
-                    <button type="submit" class="btn btn-fill" style="width:100%;justify-content:center">
-                        Envoyer ma candidature
-                    </button>
-                </form>
-            </div>
-            {% endif %}
-
-            {# Infos rapides #}
+            {# Infos de contact #}
             <div class="card aside-card aside-info">
-                <h3>Récapitulatif</h3>
+                <h3>Informations</h3>
                 <ul class="info-list">
-                    <li><span class="info-label">Entreprise</span><span>{{ offre.company }}</span></li>
-                    {% if offre.duree %}<li><span class="info-label">Durée</span><span>{{ offre.duree }}</span></li>{% endif %}
-                    {% if offre.base_remuneration %}<li><span class="info-label">Rémunération</span><span>{{ offre.base_remuneration|number_format(0, ',', ' ') }} €/mois</span></li>{% endif %}
-                    {% if offre.nb_places %}<li><span class="info-label">Places</span><span>{{ offre.nb_places }}</span></li>{% endif %}
-                    {% if offre.date_offre %}<li><span class="info-label">Début</span><span>{{ offre.date_offre|date('d/m/Y') }}</span></li>{% endif %}
-                    {% if offre.date_publication %}<li><span class="info-label">Publié le</span><span>{{ offre.date_publication|date('d/m/Y') }}</span></li>{% endif %}
+                    <li><span class="info-label">Nom</span><span>{{ entreprise.nom }}</span></li>
+                    {% if entreprise.ville %}
+                    <li><span class="info-label">Ville</span><span>{{ entreprise.ville }}</span></li>
+                    {% endif %}
+                    {% if entreprise.adresse %}
+                    <li><span class="info-label">Adresse</span><span>{{ entreprise.adresse }}</span></li>
+                    {% endif %}
+                    {% if entreprise.email_contact %}
+                    <li><span class="info-label">Email</span><span><a href="mailto:{{ entreprise.email_contact }}">{{ entreprise.email_contact }}</a></span></li>
+                    {% endif %}
+                    {% if entreprise.telephone_contact %}
+                    <li><span class="info-label">Téléphone</span><span>{{ entreprise.telephone_contact }}</span></li>
+                    {% endif %}
+                    <li><span class="info-label">Offres</span><span>{{ entreprise.nb_offres }}</span></li>
                 </ul>
             </div>
 

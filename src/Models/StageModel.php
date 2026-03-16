@@ -113,7 +113,7 @@ class StageModel {
         $offset     = ($page - 1) * $perPage;
 
         $sql = "SELECT e.id_entreprise, e.nom, e.description, e.email_contact, e.telephone_contact,
-                       COALESCE(s.nb_offres, 0) AS nb_offres
+                       e.ville, e.adresse, COALESCE(s.nb_offres, 0) AS nb_offres
                 FROM entreprise e
                 LEFT JOIN (SELECT id_entreprise, COUNT(*) AS nb_offres FROM offre GROUP BY id_entreprise) s
                        ON s.id_entreprise = e.id_entreprise
@@ -207,6 +207,30 @@ class StageModel {
         $tagStmt->execute([':id' => $id]);
         $offre['tags'] = $tagStmt->fetchAll(PDO::FETCH_COLUMN);
         return $offre;
+    }
+
+    public function getEntrepriseById(int $id): ?array {
+        $stmt = $this->db->prepare(
+            "SELECT e.id_entreprise, e.nom, e.description, e.email_contact, e.telephone_contact,
+                    e.ville, e.adresse, COALESCE(s.nb_offres, 0) AS nb_offres
+             FROM entreprise e
+             LEFT JOIN (SELECT id_entreprise, COUNT(*) AS nb_offres FROM offre GROUP BY id_entreprise) s
+                    ON s.id_entreprise = e.id_entreprise
+             WHERE e.id_entreprise = :id"
+        );
+        $stmt->execute([':id' => $id]);
+        $entreprise = $stmt->fetch();
+        if (!$entreprise) return null;
+
+        $offresStmt = $this->db->prepare(
+            "SELECT o.id_offre, o.titre, o.duree, o.base_remuneration, o.date_offre, o.nb_places
+             FROM offre o
+             WHERE o.id_entreprise = :id
+             ORDER BY o.date_publication DESC"
+        );
+        $offresStmt->execute([':id' => $id]);
+        $entreprise['offres'] = $offresStmt->fetchAll();
+        return $entreprise;
     }
 
     public function isInWishlist(int $idEtudiant, int $idOffre): bool {

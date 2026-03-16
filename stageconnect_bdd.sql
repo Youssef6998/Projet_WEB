@@ -43,7 +43,9 @@ CREATE TABLE entreprise (
     nom                 VARCHAR(100)    NOT NULL,
     description         TEXT            DEFAULT NULL,
     email_contact       VARCHAR(100)    NOT NULL,
-    telephone_contact   VARCHAR(20)     DEFAULT NULL
+    telephone_contact   VARCHAR(20)     DEFAULT NULL,
+    ville               VARCHAR(100)    DEFAULT NULL,
+    adresse             VARCHAR(255)    DEFAULT NULL
 ) ENGINE=InnoDB;
 
 

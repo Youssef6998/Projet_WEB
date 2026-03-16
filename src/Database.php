@@ -5,8 +5,8 @@ class Database {
 
     private static string $host     = 'localhost';
     private static string $dbname   = 'stageconnect';
-    private static string $user     = 'Ryad';       // ← change ici
-    private static string $password = 'Rkraiss1976.';           // ← change ici
+    private static string $user     = 'Ryad';       
+    private static string $password = 'Rkraiss1976.';           
 
     public static function getConnection(): PDO {
         if (self::$instance === null) {

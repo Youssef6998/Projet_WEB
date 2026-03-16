@@ -113,7 +113,7 @@ $pageTemplate = match($uri) {
     'nous'              => 'nous.twig.html',
     'profil'            => 'profil.twig.html',
     'offre'             => 'offre.twig.html',
-    'entreprise'        => 'entrprise.twig.html',
+    'entreprise'        => 'entreprise.twig.html',
     'entreprise_create' => 'creer_entreprise.twig.html',
     default             => '404.twig.html',
 };
@@ -167,6 +167,23 @@ if ($uri === 'stages' || $uri === 'cherche-stage') {
         'candidatures' => $candidatures,
         'wishlist'     => $wishlist,
     ];
+} elseif ($uri === 'entreprise') {
+    $id = (int)($_GET['id'] ?? 0);
+    if (!$id) {
+        $pageTemplate = '404.twig.html';
+        $data = ['uri' => $uri];
+    } else {
+        $entreprise = $model->getEntrepriseById($id);
+        if (!$entreprise) {
+            $pageTemplate = '404.twig.html';
+            $data = ['uri' => $uri];
+        } else {
+            $data = [
+                'uri'        => $uri,
+                'entreprise' => $entreprise,
+            ];
+        }
+    }
 } elseif ($uri === 'offre') {
     $id = (int)($_GET['id'] ?? 0);
     if (!$id) {
