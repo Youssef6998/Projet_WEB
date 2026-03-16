@@ -113,6 +113,7 @@ $pageTemplate = match($uri) {
     'nous'              => 'nous.twig.html',
     'profil'            => 'profil.twig.html',
     'offre'             => 'offre.twig.html',
+    'entreprise'        => 'entrprise.twig.html',
     'entreprise_create' => 'creer_entreprise.twig.html',
     default             => '404.twig.html',
 };

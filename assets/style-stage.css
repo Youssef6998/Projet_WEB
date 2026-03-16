@@ -161,7 +161,23 @@
 
     /* ── Stage listing cards ── */
     .stages-list { display: flex; flex-direction: column; gap: .75rem; }
+    .stage-actions {
+    display: flex;
+    gap: .4rem;
+    align-items: center;}
 
+    .stage-card .btn-heart {
+    opacity: 0;
+    pointer-events: none;      /* non cliquable tant qu’il est caché */
+    transform: translateX(-4px);
+    transition: opacity .15s, transform .15s; }
+
+  /* au survol de la carte, afficher le cœur */
+    .stage-card:hover .btn-heart {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(0);
+  }
     .stage-card {
       display: grid; gap: 1rem; padding: 1rem 1.2rem;
       border-radius: var(--r);

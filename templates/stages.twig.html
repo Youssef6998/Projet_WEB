@@ -79,20 +79,32 @@
                 {% endfor %}
             </div>
         </div>
-        <div class="stage-right">
+                <div class="stage-right">
             {% if stage.duration %}
-            <span class="stage-duration">{{ stage.duration }}</span>
+                <span class="stage-duration">{{ stage.duration }}</span>
             {% endif %}
             {% if stage.date %}
-            <span class="stage-date">{{ stage.date }}</span>
+                <span class="stage-date"> publié le {{ stage.date }}</span>
             {% endif %}
-            <a href="/?uri=offre&id={{ stage.id }}" class="btn btn-dark">Voir l'offre</a>
+
+            <div class="stage-actions">
+                <a href="/?uri=favori&id={{ stage.id }}" class="btn btn-dark btn-heart">❤️</a>
+                <a href="/?uri=offre&id={{ stage.id }}" class="btn btn-dark">Voir l'offre</a>
+            </div>
         </div>
     </article>
     {% else %}
     <p style="color:var(--text-muted);font-size:.82rem;text-align:center;padding:2rem 0">Aucun stage trouvé.</p>
     {% endfor %}
 </div>
+
+
+
+
+
+
+
+
 
 <div class="pagination">
     {% if currentPage > 1 %}
