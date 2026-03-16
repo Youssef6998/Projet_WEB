@@ -1,0 +1,54 @@
+{% extends "base.twig.html" %}
+{% block css %}
+{{ parent() }}
+<link rel="stylesheet" href="/assets/avis.css">
+{% endblock %}
+{% block title %}Évaluer une entreprise – Stage Finder{% endblock %}
+{% block content %}
+<div class="page">
+    <div class="intro-page">
+        <div class="intro-small-titre">Évaluation</div>
+        <h1 class="titre-principal">Évaluer une entreprise</h1>
+        <p class="sous-titre">Donnez votre avis sur votre expérience en entreprise.</p>
+    </div>
+    <div class="register-card">
+        <div class="back-btn-container">
+            <a href="/?uri=entreprises" class="btn-back">← Retour</a>
+        </div>
+        {% if message %}
+        <div class="alert alert-success">{{ message }}</div>
+        {% endif %}
+        {% if erreur %}
+        <div class="alert alert-error">{{ erreur }}</div>
+        {% endif %}
+        <form method="POST" action="/?uri=avis_create">
+            <input type="hidden" name="id_etudiant" value="{{ session_user.id_etudiant ?? '' }}">
+            <div class="input-group">
+                <label for="id_entreprise">Entreprise évaluée *</label>
+                <select id="id_entreprise" name="id_entreprise" required>
+                    <option value="">-- Sélectionner une entreprise --</option>
+                    {% for entreprise in entreprises %}
+                    <option value="{{ entreprise.id_entreprise }}">{{ entreprise.nom }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Note *</label>
+                <div class="stars">
+                    {% for i in 1..5 %}
+                    <label class="star-label">
+                        <input type="radio" name="note" value="{{ i }}" required>
+                        <span class="star">★</span>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="commentaire">Commentaire</label>
+                <textarea id="commentaire" name="commentaire" rows="5" placeholder="Décrivez votre expérience..."></textarea>
+            </div>
+            <button type="submit" class="btn-primary">Envoyer l'évaluation</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -18,8 +18,27 @@
         <nav>
             <a href="/?uri=cherche-stage" class="{% if uri == 'cherche-stage' or uri == 'home' %}active{% endif %}">Accueil</a>
             <a href="/?uri=stages" class="{% if uri == 'stages' %}active{% endif %}">Stages</a>
-            <a href="/?uri=entreprises" class="{% if uri == 'entreprises' %}active{% endif %}" >Entreprises</a>
-            <a href="/?uri=nous" class="{% if uri == 'nous' %}active{% endif %}"  >A propos de nous</a>
+            <a href="/?uri=entreprises" class="{% if uri == 'entreprises' %}active{% endif %}">Entreprises</a>
+
+            {# Admin + Pilote : gestion entreprises #}
+            {% if session_user and session_user.role in ['admin', 'pilote'] %}
+                <a href="/?uri=entreprise_create" class="{% if uri == 'entreprise_create' %}active{% endif %}">Créer entreprise</a>
+                <a href="/?uri=entreprise_update" class="{% if uri == 'entreprise_update' %}active{% endif %}">Modifier entreprise</a>
+                <a href="/?uri=avis_create" class="{% if uri == 'avis_create' %}active{% endif %}">Évaluer entreprise</a>
+            {% endif %}
+
+            {# Admin + Pilote : gestion étudiants #}
+            {% if session_user and session_user.role in ['admin', 'pilote'] %}
+                <a href="/?uri=etudiant_list" class="{% if uri == 'etudiant_list' %}active{% endif %}">Étudiants</a>
+            {% endif %}
+
+            {# Admin seulement : gestion pilotes #}
+            {% if session_user and session_user.role == 'admin' %}
+                <a href="/?uri=pilote_create" class="{% if uri == 'pilote_create' %}active{% endif %}">Créer pilote</a>
+                <a href="/?uri=pilote_list" class="{% if uri == 'pilote_list' %}active{% endif %}">Pilotes</a>
+            {% endif %}
+
+            <a href="/?uri=nous" class="{% if uri == 'nous' %}active{% endif %}">À propos</a>
         </nav>
         <div class="hdr-btns">
             {% if session_user %}
@@ -33,10 +52,7 @@
             {% endif %}
         </div>
     </header>
-
     {% block content %}{% endblock %}
-
-
     <footer>
         <p>© 2026 Stage Finder. Tous droits réservés.</p>
         <div class="foot-links">

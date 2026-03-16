@@ -1,0 +1,76 @@
+{% extends "base.twig.html" %}
+{% block css %}
+{{ parent() }}
+<link rel="stylesheet" href="/assets/modifier_entreprise.css">
+{% endblock %}
+
+{% block title %}Modifier l'entreprise – Stage Finder{% endblock %}
+
+{% block content %}
+<div class="register-card">
+    <div class="back-btn-container">
+        <a href="/?uri=cherche-stage" class="btn-back">← Retour</a>
+    </div>
+
+    <div class="intro-page">
+        <div class="intro-small-titre">Entreprise</div>
+        <h1 class="titre-principal">Modifier l'entreprise</h1>
+        <p class="sous-titre">Modifiez les informations de votre entreprise.</p>
+    </div>
+
+    <div class="input-group">
+        <label for="search">Chercher l'entreprise</label>
+        <input type="text" id="search" placeholder="Entrez le nom de l'entreprise...">
+    </div>
+
+    <hr class="separator">
+
+    <form method="POST" action="/?uri=entreprise_update">
+        <input type="hidden" name="id" value="">
+
+        <div class="input-group">
+            <label for="nom">Nom entreprise</label>
+            <div class="row">
+                <input type="text" id="nom" name="nom" value="" style="flex:3;">
+                <button type="submit" name="champ" value="nom" class="btn-secondary">Modifier nom</button>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label for="adresse">Adresse</label>
+            <div class="row">
+                <input type="text" id="adresse" name="adresse" value="" style="flex:3;">
+                <button type="submit" name="champ" value="adresse" class="btn-secondary">Modifier adresse</button>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label for="site">Site</label>
+            <div class="row">
+                <input type="text" id="site" name="site" value="" style="flex:3;">
+                <button type="submit" name="champ" value="site" class="btn-secondary">Modifier site</button>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label for="email">Email</label>
+            <div class="row">
+                <input type="email" id="email" name="email" value="" style="flex:3;">
+                <button type="submit" name="champ" value="email" class="btn-secondary">Modifier email</button>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label for="tel">Téléphone</label>
+            <div class="row">
+                <input type="tel" id="tel" name="telephone" value="" style="flex:3;">
+                <button type="submit" name="champ" value="telephone" class="btn-secondary">Modifier tel.</button>
+            </div>
+        </div>
+
+        <div class="danger-zone">
+            <button type="button" class="btn-danger">Supprimer entreprise</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

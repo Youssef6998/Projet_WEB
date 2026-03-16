@@ -1,0 +1,75 @@
+{% extends "base.twig.html" %}
+{% block css %}
+{{ parent() }}
+<link rel="stylesheet" href="/assets/creer_compte_pilote.css">
+{% endblock %}
+{% block title %}Créer un compte Pilote – Stage Finder{% endblock %}
+{% block content %}
+<div class="page">
+    <div class="intro-page">
+        <div class="intro-small-titre">Pilote</div>
+        <h1 class="titre-principal">Créer un compte Pilote</h1>
+        <p class="sous-titre">Renseignez vos informations pour créer votre compte pilote.</p>
+    </div>
+    <div class="register-card">
+        <div class="back-btn-container">
+            <a href="/?uri=pilote_list" class="btn-back">← Retour</a>
+        </div>
+        {% if erreur %}
+        <div class="alert alert-error">{{ erreur }}</div>
+        {% endif %}
+        <form method="POST" action="/?uri=pilote_create">
+            <div class="row">
+                <div class="input-group">
+                    <label>Nom *</label>
+                    <input type="text" name="nom" placeholder="Votre nom" required>
+                </div>
+                <div class="input-group">
+                    <label>Prénom *</label>
+                    <input type="text" name="prenom" placeholder="Votre prénom" required>
+                </div>
+            </div>
+            <div class="input-group">
+                <label>Email *</label>
+                <input type="email" name="email" placeholder="Votre email" required>
+            </div>
+            <div class="input-group">
+                <label>Portable *</label>
+                <input type="tel" name="telephone" placeholder="Votre numéro de portable" required>
+            </div>
+            <div class="input-group">
+                <label>Promotion *</label>
+                <select name="promotion" required>
+                    <option value="">-- Sélectionner une promotion --</option>
+                    <option>CPIA1</option>
+                    <option>CPIA2</option>
+                    <option>FISA A3</option>
+                    <option>FISE A3</option>
+                    <option>FISA A4</option>
+                    <option>FISE A4</option>
+                    <option>FISE A5</option>
+                    <option>FISA A5</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Mot de passe *</label>
+                <input type="password" name="motdepasse" placeholder="Créer un mot de passe" required>
+            </div>
+            <div class="input-group">
+                <label>Confirmer le mot de passe *</label>
+                <input type="password" name="confirmation" placeholder="Confirmer le mot de passe" required>
+            </div>
+            <div class="terms">
+                <label>
+                    <input type="checkbox" required>
+                    J'accepte les conditions générales
+                </label>
+            </div>
+            <button type="submit" class="btn-primary">Créer le compte</button>
+            <p class="login-link">
+                Déjà un compte ? <a href="/?uri=login">Se connecter</a>
+            </p>
+        </form>
+    </div>
+</div>
+{% endblock %}
