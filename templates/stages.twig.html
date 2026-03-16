@@ -5,6 +5,11 @@
 {% block title %}Stage Finder – Tous les stages{% endblock %}
 
 {% block content %}
+
+
+
+
+
 <div class="search-card">
     <div class="search-head">
         <span class="pill pill-r">Recherche de stage</span>
@@ -14,15 +19,47 @@
         <input type="hidden" name="uri" value="stages">
         <div class="field-grid-4">
             <div class="field">
+                <label>Domaine</label>
+                <div class="field-input">
+                <select name="domaine" id="domaine-select" class="cases select-domaine">
+                    <option value="">Tous les domaines</option>
+                    <option value="informatique">Informatique & Digital</option>
+                    <option value="marketing">Marketing & Communication</option>
+                    <option value="commerce">Commerce & Management</option>
+                    <option value="industrie">Industrie & Ingénierie</option>
+                    <option value="services">Services & Autres</option>
+                </select>
+                </div>
+            </div>
+            <div class="field">
+                <label>Ville</label>
+                <div class="field-input"><input name="" value="" class="cases" placeholder="Ex : Paris, Lyon "></div>
+            </div>
+            <div class="field">
                 <label>Compétence</label>
                 <div class="field-input"><input name="domaine" value="{{ domaine }}" class="cases" placeholder="Ex : développement, marketing..."></div>
             </div>
+            <div class="field">
+                <label>Durée</label>
+                <div class="field-input"><input name="" value="" class="cases" placeholder="Ex : 2 mois"></div>
+            </div>
+            <div class="field">
+                <label>Niveau</label>
+                <div class="field-input"><input name="" value="" class="cases" placeholder="Ex : BAC +5"></div>
+            </div>
+
         </div>
         <div class="search-actions">
             <button type="submit" class="btn btn-fill">Rechercher</button>
         </div>
     </form>
 </div>
+
+
+
+
+
+
 
 <div class="stages-list" style="margin-top:1.5rem">
     {% for stage in stages %}
