@@ -8,13 +8,14 @@
 <div class="search-card">
     <div class="search-head">
         <span class="pill pill-r">Recherche de stage</span>
-        <span class="pill pill-count">{{ stages|length }} résultats</span>
+        <span class="pill pill-count">{{ totalStages }} résultats</span>
     </div>
     <form action="/?uri=stages" method="get">
+        <input type="hidden" name="uri" value="stages">
         <div class="field-grid-4">
             <div class="field">
-                <label>Domaine</label>
-                <div class="field-input"><input name="domaine" value="{{ domaine }}" class="cases"></div>
+                <label>Domaine / Compétence</label>
+                <div class="field-input"><input name="domaine" value="{{ domaine }}" class="cases" placeholder="Ex : développement, marketing..."></div>
             </div>
         </div>
         <div class="search-actions">
@@ -22,7 +23,8 @@
         </div>
     </form>
 </div>
-<div class="stages-list">
+
+<div class="stages-list" style="margin-top:1.5rem">
     {% for stage in stages %}
     <article class="stage-card">
         <div class="stage-info">
@@ -31,36 +33,44 @@
                 <span class="stage-type">Stage</span>
             </div>
             <h3 class="stage-title">{{ stage.title }}</h3>
-            <p class="stage-desc">{{ stage.entreprise_name }} • {{ stage.location }}</p>
+            {% if stage.description %}
+            <p class="stage-desc">{{ stage.description|slice(0, 120) }}{% if stage.description|length > 120 %}…{% endif %}</p>
+            {% endif %}
             <div class="stage-tags">
                 {% for tag in stage.tags %}
-                <span class="stage-tag">{{ stage.tags }}</span>
+                <span class="stage-tag">{{ tag }}</span>
                 {% endfor %}
             </div>
         </div>
         <div class="stage-right">
-            <span class="stage-location">📍 {{ stage.location }}</span>
+            {% if stage.duration %}
             <span class="stage-duration">{{ stage.duration }}</span>
+            {% endif %}
+            {% if stage.date %}
             <span class="stage-date">{{ stage.date }}</span>
-            <a href="#" class="btn btn-dark">Voir l'offre</a>
+            {% endif %}
+            <a href="/?uri=offre&id={{ stage.id }}" class="btn btn-dark">Voir l'offre</a>
         </div>
     </article>
+    {% else %}
+    <p style="color:var(--text-muted);font-size:.82rem;text-align:center;padding:2rem 0">Aucun stage trouvé.</p>
     {% endfor %}
 </div>
+
 <div class="pagination">
     {% if currentPage > 1 %}
-        <a href="/?uri=stages&page={{ currentPage - 1 }}" class="page-btn arrow">←</a>
+        <a href="/?uri=stages&page={{ currentPage - 1 }}&domaine={{ domaine }}" class="page-btn arrow">←</a>
     {% endif %}
-    
+
     {% for i in range(1, totalPages) %}
-        <a href="/?uri=stages&page={{ i }}" 
+        <a href="/?uri=stages&page={{ i }}&domaine={{ domaine }}"
            class="page-btn {{ i == currentPage ? 'active' : '' }}">
             {{ i }}
         </a>
     {% endfor %}
-    
+
     {% if currentPage < totalPages %}
-        <a href="/?uri=stages&page={{ totalPages }}" class="page-btn arrow">→</a>
+        <a href="/?uri=stages&page={{ totalPages }}&domaine={{ domaine }}" class="page-btn arrow">→</a>
     {% endif %}
 </div>
 {% endblock %}

@@ -22,8 +22,15 @@
             <a href="/?uri=nous" class="{% if uri == 'nous' %}active{% endif %}"  >A propos de nous</a>
         </nav>
         <div class="hdr-btns">
-            <a href="/?uri=login" class="btn btn-outline">Se connecter</a>
-            <a href="/?uri=register" class="btn btn-fill">Créer un compte</a>
+            {% if session_user %}
+                <a href="/?uri=profil" class="btn btn-outline {% if uri == 'profil' %}active{% endif %}">
+                    {{ session_user.prenom }} {{ session_user.nom }}
+                </a>
+                <a href="/?uri=logout" class="btn btn-fill">Se déconnecter</a>
+            {% else %}
+                <a href="/?uri=login" class="btn btn-outline">Se connecter</a>
+                <a href="/?uri=register" class="btn btn-fill">Créer un compte</a>
+            {% endif %}
         </div>
     </header>
 

@@ -1,0 +1,185 @@
+/* ── Page profil ── */
+.profil-page {
+    max-width: 860px;
+    margin: 2.5rem auto;
+    padding: 0 1.25rem 3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+}
+
+/* ── En-tête profil ── */
+.profil-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    background: #fff;
+    border-radius: 16px;
+    padding: 2rem 2.5rem;
+    box-shadow: 0 2px 12px rgba(0,0,0,.07);
+}
+
+.profil-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: #a2d766;
+    color: #fff;
+    font-size: 1.6rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    letter-spacing: .03em;
+}
+
+.profil-info h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: .25rem;
+}
+
+.profil-email {
+    color: #666;
+    font-size: .95rem;
+    margin-bottom: .5rem;
+}
+
+.profil-role {
+    display: inline-block;
+    padding: .2rem .75rem;
+    border-radius: 20px;
+    font-size: .78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+}
+
+.role-etudiant { background: #e8f5d6; color: #4e9a4e; }
+.role-pilote   { background: #dbeafe; color: #1d4ed8; }
+.role-admin    { background: #fde8e8; color: #b91c1c; }
+
+/* ── Section candidatures ── */
+.candidatures-section h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 1rem;
+}
+
+.candidatures-list {
+    display: flex;
+    flex-direction: column;
+    gap: .75rem;
+}
+
+.candidature-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 1.1rem 1.5rem;
+    box-shadow: 0 1px 6px rgba(0,0,0,.06);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    border-left: 4px solid #ccc;
+    transition: box-shadow .2s;
+}
+
+.candidature-card:hover { box-shadow: 0 4px 14px rgba(0,0,0,.1); }
+
+.candidature-card.statut-en_attente { border-left-color: #f59e0b; }
+.candidature-card.statut-acceptee   { border-left-color: #22c55e; }
+.candidature-card.statut-refusee    { border-left-color: #ef4444; }
+.candidature-card.favori-card       { border-left-color: #a2d766; }
+
+.cand-info {
+    display: flex;
+    flex-direction: column;
+    gap: .2rem;
+}
+
+.cand-titre {
+    font-weight: 600;
+    color: #1a1a2e;
+    font-size: 1rem;
+}
+
+.cand-entreprise {
+    color: #555;
+    font-size: .88rem;
+}
+
+.cand-duree {
+    color: #888;
+    font-size: .82rem;
+}
+
+.cand-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: .4rem;
+    flex-shrink: 0;
+}
+
+.cand-date {
+    font-size: .8rem;
+    color: #999;
+}
+
+.badge {
+    display: inline-block;
+    padding: .25rem .75rem;
+    border-radius: 20px;
+    font-size: .78rem;
+    font-weight: 600;
+}
+
+.badge-en_attente { background: #fef3c7; color: #b45309; }
+.badge-acceptee   { background: #dcfce7; color: #166534; }
+.badge-refusee    { background: #fee2e2; color: #991b1b; }
+
+/* ── État vide ── */
+.empty-state {
+    background: #fff;
+    border-radius: 12px;
+    padding: 2.5rem;
+    text-align: center;
+    box-shadow: 0 1px 6px rgba(0,0,0,.06);
+    color: #666;
+}
+
+.btn-explore {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: .6rem 1.4rem;
+    background: #a2d766;
+    color: #fff;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background .2s;
+}
+
+.btn-explore:hover { background: #8bc855; }
+
+.btn-retirer {
+    background: none;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 6px;
+    cursor: pointer;
+    font: 500 .72rem 'DM Sans', sans-serif;
+    color: #9ca3af;
+    padding: .28rem .7rem;
+    transition: border-color .15s, color .15s;
+}
+.btn-retirer:hover { border-color: #ef4444; color: #ef4444; }
+
+@media (max-width: 600px) {
+    .profil-header { flex-direction: column; text-align: center; }
+    .candidature-card { flex-direction: column; align-items: flex-start; }
+    .cand-meta { align-items: flex-start; }
+}

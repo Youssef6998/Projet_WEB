@@ -17,23 +17,21 @@
 
             <h1>Connexion</h1>
 
-            <form>
+            {% if erreur %}
+                <div style="background:#ffe0e0;color:#c00;border:1px solid #f5a5a5;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:14px;">
+                    {{ erreur }}
+                </div>
+            {% endif %}
+
+            <form method="POST" action="/?uri=login">
                 <div class="input-group">
                     <label>Email</label>
-                    <input type="email" placeholder="Votre email">
+                    <input type="email" name="email" placeholder="Votre email" required>
                 </div>
 
                 <div class="input-group">
                     <label>Mot de passe</label>
-                    <input type="password" placeholder="Votre mot de passe">
-                </div>
-
-                <div class="options">
-                    <label>
-                        <input type="checkbox">
-                        Se souvenir de moi
-                    </label>
-                    <a href="#">Mot de passe oublié ?</a>
+                    <input type="password" name="motdepasse" placeholder="Votre mot de passe" required>
                 </div>
 
                 <button type="submit" class="btn-primary">Se connecter</button>
