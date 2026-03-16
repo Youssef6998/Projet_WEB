@@ -1,0 +1,80 @@
+{% extends "base.twig.html" %}
+{% block css %}
+<link rel="stylesheet" href="/assets/creer_entreprise.css">
+{% endblock %}
+
+{% block title %}Créer une entreprise – Stage Finder{% endblock %}
+
+{% block content %}
+<div class="page">
+    <div class="intro-page">
+        <div class="intro-small-titre">Entreprise</div>
+        <h1 class="titre-principal">Créer une entreprise</h1>
+        <p class="sous-titre">
+            Renseignez les informations principales de votre entreprise.
+        </p>
+    </div>
+    <div class="register-card">
+        <div class="back-btn-container">
+            <a href="/dashboard" class="btn-back">← Retour</a>
+        </div>
+        <form method="POST" action="/?uri=entreprise_create">
+            <div class="input-group">
+                <label for="nom">Nom de l'entreprise *</label>
+                <input type="text" id="nom" name="nom" placeholder="Ex : Ma Super Entreprise" required>
+            </div>
+            <div class="row">
+                <div class="input-group">
+                    <label for="pays">Pays *</label>
+                    <input type="text" id="pays" name="pays" placeholder="France" required>
+                </div>
+                <div class="input-group">
+                    <label for="ville">Ville *</label>
+                    <input type="text" id="ville" name="ville" placeholder="Paris" required>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-group" style="flex:2;">
+                    <label for="adresse">Adresse *</label>
+                    <input type="text" id="adresse" name="adresse" placeholder="123 rue de Rivoli" required>
+                </div>
+                <div class="input-group">
+                    <label for="cp">Code postal *</label>
+                    <input type="text" id="cp" name="cp" placeholder="75001" required>
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="site">Site web</label>
+                <input type="url" id="site" name="site" placeholder="https://entreprise.com">
+            </div>
+            <div class="row">
+                <div class="input-group">
+                    <label for="annee">Année de création</label>
+                    <input type="number" id="annee" name="annee" placeholder="2024">
+                </div>
+                <div class="input-group">
+                    <label for="telephone">Téléphone</label>
+                    <input type="tel" id="telephone" name="telephone" placeholder="+33 6 12 34 56 78">
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="email">Email de contact *</label>
+                <input type="email" id="email" name="email" placeholder="contact@entreprise.com" required>
+            </div>
+            <div class="terms">
+                <label>
+                    <input type="checkbox" required>
+                    J'accepte les conditions d'utilisation
+                </label>
+            </div>
+            <button type="submit" class="btn-primary">
+                Créer l'entreprise
+            </button>
+        </form>
+        <div class="login-link">
+            Déjà une entreprise ?
+            <a href="/?uri=login">Connexion</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

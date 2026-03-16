@@ -63,6 +63,22 @@ if ($uri === 'candidater' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
+// --- Créer entreprise ---
+if ($uri === 'entreprise_create' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    $nom       = trim($_POST['nom'] ?? '');
+    $pays      = trim($_POST['pays'] ?? '');
+    $ville     = trim($_POST['ville'] ?? '');
+    $adresse   = trim($_POST['adresse'] ?? '');
+    $cp        = trim($_POST['cp'] ?? '');
+    $site      = trim($_POST['site'] ?? '');
+    $annee     = (int)($_POST['annee'] ?? 0);
+    $telephone = trim($_POST['telephone'] ?? '');
+    $email     = trim($_POST['email'] ?? '');
+    // $model->creerEntreprise($nom, $pays, $ville, $adresse, $cp, $site, $annee, $telephone, $email);
+    header('Location: /?uri=entreprises');
+    exit;
+}
+
 // --- Déconnexion ---
 if ($uri === 'logout') {
     session_destroy();
@@ -87,23 +103,24 @@ if ($uri === 'login' && $_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $pageTemplate = match($uri) {
-    'cherche-stage' => 'cherche_stage.twig.html',
-    'stages'        => 'stages.twig.html',
-    'home'          => 'cherche_stage.twig.html',
-    'login'         => 'connexion.twig.html',
-    'register'      => 'inscription.twig.html',
-    'mentions'      => 'mentions.twig.html',
-    'entreprises'   => 'cherche_entreprises.twig.html',
-    'nous'          => 'nous.twig.html',
-    'profil'        => 'profil.twig.html',
-    'offre'         => 'offre.twig.html',
-    default         => '404.twig.html',
+    'cherche-stage'     => 'cherche_stage.twig.html',
+    'stages'            => 'stages.twig.html',
+    'home'              => 'cherche_stage.twig.html',
+    'login'             => 'connexion.twig.html',
+    'register'          => 'inscription.twig.html',
+    'mentions'          => 'mentions.twig.html',
+    'entreprises'       => 'cherche_entreprises.twig.html',
+    'nous'              => 'nous.twig.html',
+    'profil'            => 'profil.twig.html',
+    'offre'             => 'offre.twig.html',
+    'entreprise_create' => 'creer_entreprise.twig.html',
+    default             => '404.twig.html',
 };
 
 if ($uri === 'stages' || $uri === 'cherche-stage') {
     $domaine = $_GET['domaine'] ?? '';
     $data = $model->getPaginatedStages($page, 6, $domaine);
-    $data['uri']    = $uri;
+    $data['uri']     = $uri;
     $data['domaine'] = $domaine;
 } elseif ($uri === 'entreprises') {
     $nom = $_GET['nom'] ?? '';
@@ -184,3 +201,5 @@ if ($uri === 'stages' || $uri === 'cherche-stage') {
 $data['session_user'] = $_SESSION['user'] ?? null;
 
 echo $twig->render($pageTemplate, $data);
+
+
