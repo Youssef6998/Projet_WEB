@@ -358,10 +358,15 @@ INSERT INTO etudiant (id_utilisateur, id_pilote, formation, niveau_etude) VALUES
 
 -- Entreprises
 INSERT INTO entreprise (nom, description, email_contact, telephone_contact) VALUES
-('TechCorp',       'Entreprise spécialisée en développement web',       'contact@techcorp.fr',      '0140506070'),
-('DataSoft',       'Éditeur de logiciels de gestion de données',        'rh@datasoft.fr',           '0150607080'),
-('CyberSec SA',    'Cabinet de conseil en cybersécurité',               'stages@cybersec.fr',       '0160708090'),
-('GreenIT',        'Solutions numériques éco-responsables',             'recrutement@greenit.fr',   '0170809010');
+('TechCorp',       'Entreprise spécialisée en développement web',                        'contact@techcorp.fr',        '0140506070'),
+('DataSoft',       'Éditeur de logiciels de gestion de données',                         'rh@datasoft.fr',             '0150607080'),
+('CyberSec SA',    'Cabinet de conseil en cybersécurité',                                'stages@cybersec.fr',         '0160708090'),
+('GreenIT',        'Solutions numériques éco-responsables',                              'recrutement@greenit.fr',     '0170809010'),
+('CloudNova',      'Hébergement cloud et services SaaS pour PME',                        'stages@cloudnova.fr',        '0181920210'),
+('UX Studio',      'Agence spécialisée en design UX/UI et recherche utilisateur',        'rh@uxstudio.fr',             '0191011121'),
+('FinTechHub',     'Start-up innovante dans le secteur de la finance digitale',          'recrutement@fintechhub.fr',  '0201112131'),
+('MobileSoft',     'Développement d\'applications mobiles iOS et Android',               'contact@mobilesoft.fr',      '0211213141'),
+('DataViz Pro',    'Visualisation de données et business intelligence pour grands comptes', 'stages@datavizpro.fr',    '0221314151');
 
 -- Compétences (référentiel fixe)
 INSERT INTO competence (libelle) VALUES
@@ -378,11 +383,16 @@ INSERT INTO competence (libelle) VALUES
 
 -- Offres
 INSERT INTO offre (id_entreprise, titre, description, base_remuneration, date_offre, duree, nb_places) VALUES
-(1, 'Développeur web PHP',         'Stage en développement web full-stack PHP/MySQL',      600.00, '2025-09-01', '6 mois', 2),
-(1, 'Développeur frontend JS',     'Intégration et développement frontend JavaScript',     550.00, '2025-09-01', '4 mois', 1),
-(2, 'Data Analyst Python',         'Analyse de données et reporting avec Python',          650.00, '2025-10-01', '6 mois', 1),
-(3, 'Consultant cybersécurité',    'Audit et pentesting pour clients grands comptes',      700.00, '2025-09-15', '5 mois', 2),
-(4, 'DevOps Green IT',             'Mise en place CI/CD et optimisation infrastructure',   600.00, '2025-11-01', '6 mois', 1);
+(1, 'Développeur web PHP',             'Stage en développement web full-stack PHP/MySQL',                        600.00, '2025-09-01', '6 mois', 2),
+(1, 'Développeur frontend JS',         'Intégration et développement frontend JavaScript',                       550.00, '2025-09-01', '4 mois', 1),
+(2, 'Data Analyst Python',             'Analyse de données et reporting avec Python',                            650.00, '2025-10-01', '6 mois', 1),
+(3, 'Consultant cybersécurité',        'Audit et pentesting pour clients grands comptes',                        700.00, '2025-09-15', '5 mois', 2),
+(4, 'DevOps Green IT',                 'Mise en place CI/CD et optimisation infrastructure',                     600.00, '2025-11-01', '6 mois', 1),
+(5, 'Ingénieur DevOps Cloud',          'Déploiement et supervision de services cloud AWS/Azure',                 680.00, '2025-09-01', '6 mois', 2),
+(6, 'Designer UX/UI',                  'Conception de maquettes et tests utilisateurs sur produits SaaS',        575.00, '2025-10-01', '4 mois', 1),
+(7, 'Développeur React Native',        'Création de l\'application mobile de la plateforme de paiement',        620.00, '2025-09-15', '5 mois', 1),
+(8, 'Développeur iOS Swift',           'Développement de nouvelles fonctionnalités sur l\'app iOS grand public', 590.00, '2025-10-15', '6 mois', 2),
+(9, 'Data Visualisation Analyst',      'Conception de dashboards interactifs avec Power BI et Tableau',         640.00, '2025-11-01', '4 mois', 1);
 
 -- Offre ↔ Compétences
 INSERT INTO offre_competence (id_offre, id_competence) VALUES
@@ -390,7 +400,12 @@ INSERT INTO offre_competence (id_offre, id_competence) VALUES
 (2, 2), (2, 3), (2, 6),                 -- JS, HTML/CSS, React
 (3, 5), (3, 4),                          -- Python, MySQL
 (4, 7), (4, 10),                         -- Cybersécurité, API REST
-(5, 8), (5, 9), (5, 10);                -- Docker, Git, API REST
+(5, 8), (5, 9), (5, 10),                -- Docker, Git, API REST
+(6, 8), (6, 9), (6, 10),               -- Docker, Git, API REST (Cloud DevOps)
+(7, 3),                                  -- HTML/CSS (UX/UI)
+(8, 2), (8, 6),                          -- JS, React (React Native)
+(9, 2),                                  -- JavaScript (iOS Swift — approximation)
+(10, 4), (10, 5);                        -- MySQL, Python (Data Viz)
 
 -- Pilote ↔ Entreprise
 INSERT INTO pilote_entreprise (id_pilote, id_entreprise) VALUES
