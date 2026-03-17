@@ -150,6 +150,7 @@ if ($uri === 'login' && $_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $pageTemplate = match($uri) {
     'cherche-stage'      => 'cherche_stage.twig.html',
+    'entreprise'         => 'entreprise.twig.html',
     'stages'             => 'stages.twig.html',
     'home'               => 'cherche_stage.twig.html',
     'login'              => 'connexion.twig.html',
@@ -233,34 +234,49 @@ if ($uri === 'stages' || $uri === 'cherche-stage') {
         'candidatures' => $candidatures,
         'wishlist'     => $wishlist,
     ];
-} elseif ($uri === 'offre') {
+}elseif ($uri === 'offre') {
+    $id = (int)($_GET['id'] ?? 0);
+    $offre = $model->getOffreById($id);
+    if (!$offre) {
+        $pageTemplate = '404.twig.html';
+        $data = ['uri' => $uri];
+    } else {
+        $enFavori      = false;
+        $dejaCandidate = false;
+        if (!empty($_SESSION['user']['id_etudiant'])) {
+            $idEt          = (int)$_SESSION['user']['id_etudiant'];
+            $enFavori      = $model->isInWishlist($idEt, $id);
+            $dejaCandidate = $model->dejaCandidate($idEt, $id);
+        }
+        $data = [
+            'uri'             => $uri,
+            'offre'           => $offre,
+            'en_favori'       => $enFavori,
+            'deja_candidate'  => $dejaCandidate,
+            'candidature_ok'  => isset($_GET['candidature']) && $_GET['candidature'] === 'ok',
+        ];
+    }
+}
+elseif ($uri === 'entreprise') {
     $id = (int)($_GET['id'] ?? 0);
     if (!$id) {
         $pageTemplate = '404.twig.html';
         $data = ['uri' => $uri];
     } else {
-        $offre = $model->getOffreById($id);
-        if (!$offre) {
+        $entreprise = $model->getEntrepriseById($id);
+        if (!$entreprise) {
             $pageTemplate = '404.twig.html';
             $data = ['uri' => $uri];
         } else {
-            $enFavori      = false;
-            $dejaCandidate = false;
-            if (!empty($_SESSION['user']['id_etudiant'])) {
-                $idEt          = (int)$_SESSION['user']['id_etudiant'];
-                $enFavori      = $model->isInWishlist($idEt, $id);
-                $dejaCandidate = $model->dejaCandidate($idEt, $id);
-            }
             $data = [
-                'uri'            => $uri,
-                'offre'          => $offre,
-                'en_favori'      => $enFavori,
-                'deja_candidate' => $dejaCandidate,
-                'candidature_ok' => isset($_GET['candidature']) && $_GET['candidature'] === 'ok',
+                'uri'        => $uri,
+                'entreprise' => $entreprise,
             ];
         }
     }
-} else {
+}
+
+else {
     $data = ['uri' => $uri];
 }
 
