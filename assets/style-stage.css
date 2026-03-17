@@ -165,7 +165,12 @@
     display: flex;
     gap: .4rem;
     align-items: center;}
-
+    .stage-location {
+    background: var(--color-muted);
+    font-size: .75rem;
+    padding: .2rem .4rem;
+    border-radius: 4px;
+}
     .stage-card .btn-heart {
     opacity: 0;
     pointer-events: none;      /* non cliquable tant qu’il est caché */

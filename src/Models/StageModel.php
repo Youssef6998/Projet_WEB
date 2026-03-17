@@ -45,7 +45,8 @@ class StageModel {
                        o.description,
                        o.duree          AS duration,
                        o.date_publication AS date,
-                       e.nom            AS company
+                       e.nom            AS company,
+                       e.ville AS ville
                 FROM offre o
                 JOIN entreprise e ON o.id_entreprise = e.id_entreprise
                 $whereClause
@@ -79,6 +80,7 @@ class StageModel {
                 'title'       => $row['title'],
                 'description' => $row['description'],
                 'tags'        => $tags,
+                'ville'       => $row['ville'] ?? '',
                 'location'    => '',
                 'duration'    => $row['duration'],
                 'date'        => $row['date'] ? (new DateTime($row['date']))->format('d/m/Y') : '',
@@ -190,6 +192,7 @@ class StageModel {
             "SELECT o.id_offre, o.titre, o.description, o.base_remuneration,
                     o.date_offre, o.duree, o.nb_places, o.date_publication,
                     e.id_entreprise, e.nom AS company, e.description AS company_desc,
+                    e.id_entreprise, e.nom AS company, e.ville AS ville,
                     e.email_contact, e.telephone_contact
              FROM offre o
              JOIN entreprise e ON o.id_entreprise = e.id_entreprise

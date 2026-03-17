@@ -9,7 +9,6 @@
 
 
 
-
 <div class="search-card">
     <div class="search-head">
         <span class="pill pill-r">Recherche de stage</span>
@@ -60,7 +59,7 @@
 
 
 
-
+<!-- Liste des stages -->
 <div class="stages-list" style="margin-top:1.5rem">
     {% for stage in stages %}
     <article class="stage-card">
@@ -68,6 +67,11 @@
             <div class="stage-top">
                 <span class="stage-company">{{ stage.company }}</span>
                 <span class="stage-type">Stage</span>
+                {% if stage.ville %}
+                    <span class="stage-type">{{ stage.ville }}</span>
+                {% else %}
+                    <span class="stage-type"> Lieu Non précisé</span>
+                {% endif %}
             </div>
             <h3 class="stage-title">{{ stage.title }}</h3>
             {% if stage.description %}

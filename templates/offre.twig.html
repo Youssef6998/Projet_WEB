@@ -67,12 +67,16 @@
                 {% endif %}
             </div>
 
+
+            <!-- Description du poste -->
             {# Description #}
             <div class="card">
                 <h2 class="section-title">Description du poste</h2>
                 <p class="offre-description">{{ offre.description|nl2br }}</p>
             </div>
 
+
+            <!-- Petite description de l'entreprise-->
             {# Entreprise #}
             <div class="card">
                 <h2 class="section-title">À propos de {{ offre.company }}</h2>
@@ -81,19 +85,29 @@
                 {% endif %}
                 <div class="entreprise-contact">
                     {% if offre.email_contact %}
-                    <span><a href="mailto:{{ offre.email_contact }}">{{ offre.email_contact }}</a></span>
+                    <span><a href="mailto:{{ offre.email_contact }}">mail : {{ offre.email_contact }}</a></span>
                     {% endif %}
+                </div>
+                <div class="entreprise-contact">
                     {% if offre.telephone_contact %}
-                    <span>{{ offre.telephone_contact }}</span>
+                    <span>Numéro de téléphone : {{ offre.telephone_contact }}</span>
                     {% endif %}
+                </div>
+                <div class="entreprise-contact">
+                <a href="/?uri=entreprise&id={{ offre.id_entreprise }}" class="btn btn-dark">Voir l'entreprise</a>
                 </div>
             </div>
 
         </div>
 
+
+        <!-- case en haut à gauche--> 
+
         {# Colonne latérale #}
         <aside class="offre-aside">
 
+
+            <!-- Si tu n'es pas connecté -->
             {% if not session_user %}
             {# Non connecté #}
             <div class="card aside-card">
@@ -115,6 +129,8 @@
             </div>
 
             {% else %}
+
+            <!-- Formulaire de candidature -->
             {# Formulaire de candidature #}
             <div class="card aside-card" id="form-candidature">
                 <h2 class="section-title">Candidater</h2>
@@ -141,18 +157,24 @@
             </div>
             {% endif %}
 
-            {# Infos rapides #}
-            <div class="card aside-card aside-info">
-                <h3>Récapitulatif</h3>
-                <ul class="info-list">
-                    <li><span class="info-label">Entreprise</span><span>{{ offre.company }}</span></li>
-                    {% if offre.duree %}<li><span class="info-label">Durée</span><span>{{ offre.duree }}</span></li>{% endif %}
-                    {% if offre.base_remuneration %}<li><span class="info-label">Rémunération</span><span>{{ offre.base_remuneration|number_format(0, ',', ' ') }} €/mois</span></li>{% endif %}
-                    {% if offre.nb_places %}<li><span class="info-label">Places</span><span>{{ offre.nb_places }}</span></li>{% endif %}
-                    {% if offre.date_offre %}<li><span class="info-label">Début</span><span>{{ offre.date_offre|date('d/m/Y') }}</span></li>{% endif %}
-                    {% if offre.date_publication %}<li><span class="info-label">Publié le</span><span>{{ offre.date_publication|date('d/m/Y') }}</span></li>{% endif %}
-                </ul>
-            </div>
+
+                <!-- Info rapide à bas à gauche-->
+                {# Infos rapides #}
+                <div class="card aside-card aside-info">
+                    <h3>Récapitulatif</h3>
+                    <ul class="info-list">
+                        <li><span class="info-label">Entreprise</span><span>{{ offre.company }}</span></li>
+                        {% if offre.ville %}
+                            <li><span class="info-label">Ville</span><span>{{ offre.ville }}</span></li>
+                        {% endif %}
+                        {% if offre.duree %}<li><span class="info-label">Durée</span><span>{{ offre.duree }}</span></li>{% endif %}
+                        {% if offre.base_remuneration %}<li><span class="info-label">Rémunération</span><span>{{ offre.base_remuneration|number_format(0, ',', ' ') }} €/mois</span></li>{% endif %}
+                        {% if offre.nb_places %}<li><span class="info-label">Places</span><span>{{ offre.nb_places }}</span></li>{% endif %}
+                        {% if offre.date_offre %}<li><span class="info-label">Début</span><span>{{ offre.date_offre|date('d/m/Y') }}</span></li>{% endif %}
+                        {% if offre.date_publication %}<li><span class="info-label">Publié le</span><span>{{ offre.date_publication|date('d/m/Y') }}</span></li>{% endif %}
+                    </ul>
+                </div>
+
 
         </aside>
     </div>

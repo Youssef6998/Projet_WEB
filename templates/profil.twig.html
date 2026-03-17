@@ -21,6 +21,9 @@
 
     {% if user.role == 'etudiant' %}
 
+
+    
+    <!-- Liste des candidatures --> 
     <section class="candidatures-section">
         <h2>Mes candidatures</h2>
 
@@ -55,6 +58,8 @@
         {% endif %}
     </section>
 
+
+    <!-- Wishlist --> 
     <section class="candidatures-section">
         <h2>Mes favoris</h2>
 
@@ -91,7 +96,47 @@
         {% endif %}
     </section>
 
-    {% endif %}
 
+<!-- A modifier à l'avenir -->     
+<!-- Liste des étudiants -->     
+
+ <section class="candidatures-section">
+        <h2>Mes étudiants</h2>
+
+        {% if wishlist is empty %}
+            <div class="empty-state">
+                <p>Vous n'avez pas encore ajouté d'étudiants à votre suivi.</p>
+                <a href="/?uri=stages" class="btn-explore">Explorer les stages</a>
+            </div>
+        {% else %}
+            <div class="candidatures-list">
+                {% for w in wishlist %}
+                <div class="candidature-card favori-card">
+                    <div class="cand-info">
+                        <a href="/?uri=offre&id={{ w.id_offre }}" class="cand-titre" style="text-decoration:none;color:inherit;">{{ w.titre }}</a>
+                        <span class="cand-entreprise">{{ w.company }}</span>
+                        {% if w.duree %}
+                            <span class="cand-duree">{{ w.duree }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="cand-meta">
+                        <span class="cand-date">Ajouté le {{ w.date_ajout|date('d/m/Y') }}</span>
+                        <div style="display:flex;gap:.5rem;align-items:center">
+                            <a href="/?uri=offre&id={{ w.id_offre }}" class="btn-explore" style="margin-top:0;padding:.3rem .9rem;font-size:.72rem">Voir</a>
+                            <form method="post" action="/?uri=wishlist-toggle" style="margin:0">
+                                <input type="hidden" name="id_offre" value="{{ w.id_offre }}">
+                                <input type="hidden" name="redirect" value="/?uri=profil">
+                                <button type="submit" class="btn-retirer" title="Retirer des favoris">Retirer</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </section>
+
+
+{% endif %}
 </main>
 {% endblock %}

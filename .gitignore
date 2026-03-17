@@ -1,3 +1,5 @@
+*.sql
+*Zone.Identifier
+update-bdd.sh
+uploads/
 vendor/
-cache/
-*.log

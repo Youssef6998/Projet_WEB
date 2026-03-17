@@ -78,9 +78,7 @@
     gap: 1rem;
     margin-top: .85rem;
     font-size: .78rem;
-    color: var(--text-muted);
 }
-.entreprise-contact a { color: var(--rose); }
 
 .offre-aside { display: flex; flex-direction: column; gap: 1rem; }
 .aside-card { display: flex; flex-direction: column; gap: .65rem; }
