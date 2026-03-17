@@ -80,7 +80,7 @@ if ($uri === 'entreprise_create' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     $annee     = (int)($_POST['annee'] ?? 0);
     $telephone = trim($_POST['telephone'] ?? '');
     $email     = trim($_POST['email'] ?? '');
-    // $model->creerEntreprise($nom, $pays, $ville, $adresse, $cp, $site, $annee, $telephone, $email);
+    $model->creerEntreprise($nom, $pays, $ville, $adresse, $cp, $site, $annee, $telephone, $email);
     header('Location: /?uri=entreprises');
     exit;
 }
@@ -88,7 +88,7 @@ if ($uri === 'entreprise_create' && $_SERVER['REQUEST_METHOD'] === 'POST') {
 // --- Modifier entreprise (admin + pilote) ---
 if ($uri === 'entreprise_update' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!isAdminOrPilote()) { header('Location: /?uri=login'); exit; }
-    // $model->modifierEntreprise(...);
+    $model->modifierEntreprise(...);
     header('Location: /?uri=entreprises');
     exit;
 }
@@ -100,7 +100,7 @@ if ($uri === 'avis_create' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     $id_entreprise = (int)($_POST['id_entreprise'] ?? 0);
     $note          = (int)($_POST['note'] ?? 0);
     $commentaire   = trim($_POST['commentaire'] ?? '');
-    // $model->creerEvaluation($id_etudiant, $id_entreprise, $note, $commentaire);
+    $model->creerEvaluation($id_etudiant, $id_entreprise, $note, $commentaire);
     header('Location: /?uri=avis_create&success=1');
     exit;
 }
@@ -121,7 +121,7 @@ if ($uri === 'pilote_create' && $_SERVER['REQUEST_METHOD'] === 'POST') {
         echo $twig->render('creer_compte_pilote.twig.html', $data);
         exit;
     }
-    // $model->creerPilote($nom, $prenom, $email, $motdepasse, $telephone, $promotion);
+    $model->creerPilote($nom, $prenom, $email, $motdepasse, $telephone, $promotion);
     header('Location: /?uri=pilote_list');
     exit;
 }
