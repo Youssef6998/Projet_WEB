@@ -2,7 +2,7 @@
 $host = 'localhost';
 $dbname = 'stagefinder';
 $username = 'root';
-$password = 'StageFinder2026!';
+$password = 'Youssef.2006';
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
