@@ -32,20 +32,24 @@
             </div>
             <div class="field">
                 <label>Ville</label>
-                <div class="field-input"><input name="" value="" class="cases" placeholder="Ex : Paris, Lyon "></div>
+                <div class="field-input">
+                    <input name="ville" value="{{ ville|default('') }}" class="cases" placeholder="Ex : Paris, Lyon">
+                </div>
             </div>
+
             <div class="field">
                 <label>Compétence</label>
-                <div class="field-input"><input name="domaine" value="{{ domaine }}" class="cases" placeholder="Ex : développement, marketing..."></div>
+                <div class="field-input">
+                    <input name="competence" value="{{ competence|default('') }}" class="cases" placeholder="Ex : développement, marketing...">
+                </div>
             </div>
+
             <div class="field">
                 <label>Durée</label>
-                <div class="field-input"><input name="" value="" class="cases" placeholder="Ex : 2 mois"></div>
-            </div>
-            <div class="field">
-                <label>Niveau</label>
-                <div class="field-input"><input name="" value="" class="cases" placeholder="Ex : BAC +5"></div>
-            </div>
+                <div class="field-input">
+                    <input name="duree" value="{{ duree|default('') }}" class="cases" placeholder="Ex : 2 mois">
+                </div>
+            </div>  
 
         </div>
         <div class="search-actions">
@@ -115,7 +119,7 @@
         <a href="/?uri=stages&page={{ currentPage - 1 }}&domaine={{ domaine }}" class="page-btn arrow">←</a>
     {% endif %}
 
-    {% for i in range(1, totalPages) %}
+    {% for i in 1..totalPages %}
         <a href="/?uri=stages&page={{ i }}&domaine={{ domaine }}"
            class="page-btn {{ i == currentPage ? 'active' : '' }}">
             {{ i }}
@@ -123,7 +127,8 @@
     {% endfor %}
 
     {% if currentPage < totalPages %}
-        <a href="/?uri=stages&page={{ totalPages }}&domaine={{ domaine }}" class="page-btn arrow">→</a>
+        <a href="/?uri=stages&page={{ currentPage + 1 }}&domaine={{ domaine }}" class="page-btn arrow">→</a>
     {% endif %}
 </div>
+
 {% endblock %}

@@ -78,7 +78,7 @@
     gap: 1rem;
     margin-top: .85rem;
     font-size: .78rem;
-}
+}   
 
 .offre-aside { display: flex; flex-direction: column; gap: 1rem; }
 .aside-card { display: flex; flex-direction: column; gap: .65rem; }

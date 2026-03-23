@@ -10,28 +10,46 @@ class StageModel {
         $this->db = Database::getConnection();
     }
 
-    public function getPaginatedStages(int $page = 1, int $perPage = 6, string $domaine = ''): array {
+    public function getPaginatedStages(int $page = 1, int $perPage = 6, string $domaine = '', string $ville ='', string $duree='',string $competence=''): array {
         $page   = max(1, $page);
         $offset = ($page - 1) * $perPage;
 
-        // Filtre optionnel par domaine (titre ou compétence)
         $whereClause = '';
         $params      = [];
+        // Filtres multiples
+        $whereConditions = [];
 
-        if ($domaine !== '') {
-            $whereClause = "WHERE o.titre LIKE :domaine
-                               OR EXISTS (
-                                   SELECT 1 FROM offre_competence oc2
-                                   JOIN competence c2 ON oc2.id_competence = c2.id_competence
-                                   WHERE oc2.id_offre = o.id_offre
-                                     AND c2.libelle LIKE :domaine2
-                               )";
-            $params[':domaine']  = '%' . $domaine . '%';
-            $params[':domaine2'] = '%' . $domaine . '%';
+        if (!empty($domaine)) {
+            $whereConditions[] = "o.domaine = :domaine";
+            $params[':domaine'] = $domaine;
         }
 
-        // Compte total pour la pagination
-        $countSql    = "SELECT COUNT(*) FROM offre o $whereClause";
+        if (!empty($ville)) {
+            $whereConditions[] = "e.ville LIKE :ville";
+            $params[':ville'] = '%' . $ville . '%';
+        }
+
+        if (!empty($duree)) {
+            $whereConditions[] = "o.duree LIKE :duree";
+            $params[':duree'] = '%' . $duree . '%';
+        }
+
+        if (!empty($competence)) {
+            $whereConditions[] = "EXISTS (
+                SELECT 1 FROM offre_competence oc 
+                JOIN competence c ON oc.id_competence = c.id_competence 
+                WHERE oc.id_offre = o.id_offre AND c.libelle LIKE :competence
+            )";
+            $params[':competence'] = '%' . $competence . '%';
+        }
+
+$whereClause = !empty($whereConditions) ? 'WHERE ' . implode(' AND ', $whereConditions) : '';
+
+
+        $countSql = "SELECT COUNT(*) 
+              FROM offre o
+              JOIN entreprise e ON o.id_entreprise = e.id_entreprise
+              $whereClause";
         $countStmt   = $this->db->prepare($countSql);
         $countStmt->execute($params);
         $totalStages = (int) $countStmt->fetchColumn();
@@ -39,7 +57,6 @@ class StageModel {
         $page        = min($page, $totalPages);
         $offset      = ($page - 1) * $perPage;
 
-        // Offres paginées avec le nom de l'entreprise
         $sql = "SELECT o.id_offre,
                        o.titre          AS title,
                        o.description,
@@ -106,7 +123,10 @@ class StageModel {
             $params[':nom'] = '%' . $nom . '%';
         }
 
-        $countSql  = "SELECT COUNT(*) FROM entreprise e $whereClause";
+        $countSql = "SELECT COUNT(*) 
+                    FROM entreprise e
+                    $whereClause";
+
         $countStmt = $this->db->prepare($countSql);
         $countStmt->execute($params);
         $total      = (int) $countStmt->fetchColumn();

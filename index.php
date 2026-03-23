@@ -17,7 +17,7 @@ $model = new StageModel();
 $page = max(1, (int)($_GET['page'] ?? 1));
 $uri  = $_GET['uri'] ?? 'cherche-stage';
 
-// --- Helpers rôles ---
+
 function isAdmin(): bool {
     return ($_SESSION['user']['role'] ?? '') === 'admin';
 }
@@ -34,7 +34,7 @@ function isConnecte(): bool {
     return !empty($_SESSION['user']);
 }
 
-// --- Toggle Wishlist (étudiant) ---
+
 if ($uri === 'wishlist-toggle' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!isEtudiant()) { header('Location: /?uri=login'); exit; }
     $idOffre    = (int)($_POST['id_offre'] ?? 0);
@@ -45,7 +45,7 @@ if ($uri === 'wishlist-toggle' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-// --- Candidater (étudiant) ---
+
 if ($uri === 'candidater' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!isEtudiant()) { header('Location: /?uri=login'); exit; }
     $idOffre    = (int)($_POST['id_offre'] ?? 0);
@@ -68,7 +68,6 @@ if ($uri === 'candidater' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-// --- Créer entreprise (admin + pilote) ---
 if ($uri === 'entreprise_create' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!isAdminOrPilote()) { header('Location: /?uri=login'); exit; }
     $nom       = trim($_POST['nom'] ?? '');
@@ -85,7 +84,7 @@ if ($uri === 'entreprise_create' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-// --- Modifier entreprise (admin + pilote) ---
+
 if ($uri === 'entreprise_update' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!isAdminOrPilote()) { header('Location: /?uri=login'); exit; }
     $model->modifierEntreprise(...);
@@ -93,7 +92,7 @@ if ($uri === 'entreprise_update' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-// --- Créer avis (admin + pilote) ---
+
 if ($uri === 'avis_create' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!isAdminOrPilote()) { header('Location: /?uri=login'); exit; }
     $id_etudiant   = (int)($_POST['id_etudiant'] ?? 0);
@@ -105,7 +104,7 @@ if ($uri === 'avis_create' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-// --- Créer pilote (admin seulement) ---
+
 if ($uri === 'pilote_create' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!isAdmin()) { header('Location: /?uri=login'); exit; }
     $nom          = trim($_POST['nom'] ?? '');
@@ -126,14 +125,14 @@ if ($uri === 'pilote_create' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-// --- Déconnexion ---
+
 if ($uri === 'logout') {
     session_destroy();
     header('Location: /?uri=cherche-stage');
     exit;
 }
 
-// --- Connexion POST ---
+
 if ($uri === 'login' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     $email      = trim($_POST['email'] ?? '');
     $motdepasse = $_POST['motdepasse'] ?? '';
@@ -169,7 +168,7 @@ $pageTemplate = match($uri) {
     default              => '404.twig.html',
 };
 
-// --- Gardes d'accès par page ---
+
 $pagesAdminPilote = ['entreprise_create', 'entreprise_update', 'avis_create', 'etudiant_list'];
 $pagesAdmin       = ['pilote_create', 'pilote_list'];
 $pagesConnecte    = ['profil'];
@@ -186,11 +185,19 @@ if (in_array($uri, $pagesConnecte) && !isConnecte()) {
 
 // --- Data par page ---
 if ($uri === 'stages' || $uri === 'cherche-stage') {
-    $domaine = $_GET['domaine'] ?? '';
-    $data = $model->getPaginatedStages($page, 6, $domaine);
-    $data['uri']     = $uri;
-    $data['domaine'] = $domaine;
-} elseif ($uri === 'entreprises') {
+    $domaine    = $_GET['domaine'] ?? '';
+    $ville      = $_GET['ville'] ?? '';
+    $duree      = $_GET['duree'] ?? '';
+    $competence = $_GET['competence'] ?? '';
+
+    $data = $model->getPaginatedStages($page, 6, $domaine, $ville, $duree, $competence);
+    $data['uri']       = $uri;
+    $data['domaine']   = $domaine;
+    $data['ville']     = $ville;
+    $data['duree']     = $duree;
+    $data['competence']= $competence;
+}
+ elseif ($uri === 'entreprises') {
     $nom = $_GET['nom'] ?? '';
     $data = $model->getPaginatedEntreprises($page, 6, $nom);
     $data['uri'] = $uri;
