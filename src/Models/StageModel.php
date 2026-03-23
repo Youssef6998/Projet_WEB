@@ -1,5 +1,5 @@
 <?php
-
+require 'vendor/autoload.php';
 require_once __DIR__ . '/../Database.php';
 
 class StageModel {
@@ -323,44 +323,74 @@ $whereClause = !empty($whereConditions) ? 'WHERE ' . implode(' AND ', $whereCond
         $stmt->execute([':id' => $idEtudiant]);
         return $stmt->fetchAll();
     }
-public function getToutesEntreprises(): array {
-    $stmt = $this->db->prepare(
-        "SELECT id_entreprise, nom FROM entreprise ORDER BY nom ASC"
-    );
-    $stmt->execute();
-    return $stmt->fetchAll();
+    public function getToutesEntreprises(): array {
+        $stmt = $this->db->prepare(
+            "SELECT id_entreprise, nom FROM entreprise ORDER BY nom ASC"
+        );
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+    public function creerEntreprise(string $nom, string $ville, string $adresse, string $email, string $telephone, string $description): bool {
+        $stmt = $this->db->prepare(
+            "INSERT INTO entreprise (nom, ville, adresse, email_contact, telephone_contact, description)
+             VALUES (:nom, :ville, :adresse, :email, :tel, :desc)"
+        );
+        return $stmt->execute([
+            ':nom'    => $nom,
+            ':ville'  => $ville,
+            ':adresse' => $adresse,
+            ':email'  => $email,
+            ':tel'    => $telephone,
+            ':desc'   => $description,
+        ]);
+    }
+
+    public function supprimerEntreprise(int $id): bool {
+        $stmt = $this->db->prepare("DELETE FROM entreprise WHERE id_entreprise = :id");
+        return $stmt->execute([':id' => $id]);
+    }
+
+    public function creerEvaluation(int $idEtudiant, int $idEntreprise, int $note, string $commentaire): bool {
+        $stmt = $this->db->prepare(
+            "INSERT INTO evaluation (id_etudiant, id_entreprise, note, commentaire)
+             VALUES (:e, :ent, :note, :comm)"
+        );
+        return $stmt->execute([
+            ':e'    => $idEtudiant,
+            ':ent'  => $idEntreprise,
+            ':note' => $note,
+            ':comm' => $commentaire,
+        ]);
+    }
+
+
+
+    public function getEtudiantsSupervisesParPilote(int $idPilote): array
+    {
+        $sql = "SELECT u.id_utilisateur, u.nom, u.prenom, u.email
+                FROM utilisateur u
+                JOIN etudiant e ON u.id_utilisateur = e.id_utilisateur
+                JOIN pilote_etudiant pe ON e.id_etudiant = pe.id_etudiant
+                WHERE pe.id_pilote = :id_pilote
+                ORDER BY u.nom, u.prenom";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':id_pilote' => $idPilote]);
+        return $stmt->fetchAll();
+    }
+
+    public function ajouterEtudiantAuPilote(int $idPilote, int $idEtudiant): bool
+    {
+        $stmt = $this->db->prepare(
+            "INSERT INTO pilote_etudiant (id_pilote, id_etudiant)
+             VALUES (:pilote, :etudiant)"
+        );
+        return $stmt->execute([
+            ':pilote'   => $idPilote,
+            ':etudiant' => $idEtudiant
+        ]);
+    }
+
 }
 
-public function creerEntreprise(string $nom, string $ville, string $adresse, string $email, string $telephone, string $description): bool {
-    $stmt = $this->db->prepare(
-        "INSERT INTO entreprise (nom, ville, adresse, email_contact, telephone_contact, description)
-         VALUES (:nom, :ville, :adresse, :email, :tel, :desc)"
-    );
-    return $stmt->execute([
-        ':nom'    => $nom,
-        ':ville'  => $ville,
-        ':adresse'=> $adresse,
-        ':email'  => $email,
-        ':tel'    => $telephone,
-        ':desc'   => $description,
-    ]);
-}
-
-public function supprimerEntreprise(int $id): bool {
-    $stmt = $this->db->prepare("DELETE FROM entreprise WHERE id_entreprise = :id");
-    return $stmt->execute([':id' => $id]);
-}
-
-public function creerEvaluation(int $idEtudiant, int $idEntreprise, int $note, string $commentaire): bool {
-    $stmt = $this->db->prepare(
-        "INSERT INTO evaluation (id_etudiant, id_entreprise, note, commentaire)
-         VALUES (:e, :ent, :note, :comm)"
-    );
-    return $stmt->execute([
-        ':e'    => $idEtudiant,
-        ':ent'  => $idEntreprise,
-        ':note' => $note,
-        ':comm' => $commentaire,
-    ]);
-}
-}

@@ -33,6 +33,9 @@ function isAdminOrPilote(): bool {
 function isConnecte(): bool {
     return !empty($_SESSION['user']);
 }
+function isAnonyme(): bool {
+    return empty($_SESSION['user']);
+}
 
 
 if ($uri === 'wishlist-toggle' && $_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -227,21 +230,28 @@ if ($uri === 'stages' || $uri === 'cherche-stage') {
         exit;
     }
     $data = ['uri' => $uri, 'erreur' => $erreur];
-} elseif ($uri === 'profil') {
+}
+elseif ($uri === 'profil') {
     $user = $_SESSION['user'];
     $candidatures = [];
     $wishlist     = [];
+
     if ($user['role'] === 'etudiant' && !empty($user['id_etudiant'])) {
         $candidatures = $model->getCandidaturesEtudiant($user['id_etudiant']);
         $wishlist     = $model->getWishlistEtudiant($user['id_etudiant']);
     }
+
+
     $data = [
         'uri'          => $uri,
         'user'         => $user,
         'candidatures' => $candidatures,
         'wishlist'     => $wishlist,
     ];
-}elseif ($uri === 'offre') {
+}
+
+
+elseif ($uri === 'offre') {
     $id = (int)($_GET['id'] ?? 0);
     $offre = $model->getOffreById($id);
     if (!$offre) {
@@ -286,6 +296,5 @@ elseif ($uri === 'entreprise') {
 else {
     $data = ['uri' => $uri];
 }
-
 $data['session_user'] = $_SESSION['user'] ?? null;
 echo $twig->render($pageTemplate, $data);

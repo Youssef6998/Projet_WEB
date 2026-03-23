@@ -1,6 +1,6 @@
 <?php
 require_once 'Database.php';
-
+require 'vendor/autoload.php';
 class Stage extends Database {
     public function getAll() {
         $stmt = $this->pdo->query("

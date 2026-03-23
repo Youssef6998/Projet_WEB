@@ -1,5 +1,5 @@
 <?php
-
+require 'vendor/autoload.php';
 class Database {
     private static ?PDO $instance = null;
 
