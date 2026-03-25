@@ -1,4 +1,5 @@
 <?php
+require 'vendor/autoload.php';
 require_once 'Database.php';
 namespace App\Models;
 

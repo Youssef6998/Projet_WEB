@@ -1,5 +1,5 @@
 <?php
-// Si le formulaire est envoyé
+require 'vendor/autoload.php';
 if(isset($_POST['nom']) && isset($_POST['message']) && isset($_POST['note'])){
 
     $nom = htmlspecialchars($_POST['nom']);
