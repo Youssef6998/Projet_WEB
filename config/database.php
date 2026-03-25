@@ -1,6 +1,6 @@
 <?php
 $host = 'localhost';
-$dbname = 'stagefinder';
+$dbname = 'stageconnect';
 $username = 'root';
 $password = 'Youssef.2006';
 
