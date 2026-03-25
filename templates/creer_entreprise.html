@@ -1,14 +1,28 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<title>Créer une entreprise</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <title>Créer une entreprise</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link rel="stylesheet" href="creer_entreprise.css">
+    <link rel="stylesheet" href="creer_entreprise.css">
 </head>
 
 <body>
+
+<header>
+    <nav class="navbar">
+        <div class="logo">SF - Stage Finder</div>
+        <div class="nav-links">
+            <a href="/?uri=home">Accueil</a>
+            <a href="/?uri=stages">Stages</a>
+            <a href="/?uri=entreprises">Entreprises</a>
+            <a href="/?uri=dashboard">Gestion entreprise</a>
+            <a href="/?uri=etudiants">Gestion Étudiants</a>
+            <a href="/?uri=about">À propos</a>
+        </div>
+    </nav>
+</header>
 
 <div class="page">
 
@@ -23,7 +37,7 @@
     <div class="register-card">
 
         <div class="back-btn-container">
-            <a href="/dashboard" class="btn-back">← Retour</a>
+            <a href="/?uri=dashboard" class="btn-back">← Retour</a>
         </div>
 
         <form method="POST" action="/?uri=entreprise_create">
