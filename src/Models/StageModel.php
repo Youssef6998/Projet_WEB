@@ -493,35 +493,11 @@ class StageModel {
         return $stmt->fetchAll();
     }
 
-    public function ajouterEtudiantAuPilote(int $idPilote, int $idEtudiant): bool {
+        public function ajouterEtudiantAuPilote(int $idPilote, int $idEtudiant): bool {
         $stmt = $this->db->prepare(
             "INSERT INTO pilote_etudiant (id_pilote, id_etudiant) VALUES (:pilote, :etudiant)"
         );
         return $stmt->execute([':pilote' => $idPilote, ':etudiant' => $idEtudiant]);
-    }
-<<<<<<< HEAD
-=======
-
-    public function creerPilote(string $nom, string $prenom, string $email, string $motDePasse, string $telephone, string $promotion): bool
-    {
-        $hash = password_hash($motDePasse, PASSWORD_DEFAULT);
-        $stmt = $this->db->prepare(
-            "INSERT INTO utilisateur (nom, prenom, email, mot_de_passe, telephone, role)
-             VALUES (:nom, :prenom, :email, :mdp, :tel, 'pilote')"
-        );
-        $ok = $stmt->execute([
-            ':nom'    => $nom,
-            ':prenom' => $prenom,
-            ':email'  => $email,
-            ':mdp'    => $hash,
-            ':tel'    => $telephone,
-        ]);
-        if ($ok) {
-            $id = (int) $this->db->lastInsertId();
-            $this->db->prepare("INSERT INTO pilote (id_utilisateur, promotion) VALUES (:id, :promo)")
-                     ->execute([':id' => $id, ':promo' => $promotion]);
-        }
-        return $ok;
     }
 
     public function getAllPilotes(): array
@@ -558,15 +534,17 @@ class StageModel {
 
     public function supprimerPilote(int $idUtilisateur): bool
     {
-        $this->db->prepare("DELETE FROM pilote WHERE id_utilisateur = :id")->execute([':id' => $idUtilisateur]);
-        return $this->db->prepare("DELETE FROM utilisateur WHERE id_utilisateur = :id")->execute([':id' => $idUtilisateur]);
+        $this->db->prepare("DELETE FROM pilote WHERE id_utilisateur = :id")
+                 ->execute([':id' => $idUtilisateur]);
+        return $this->db->prepare("DELETE FROM utilisateur WHERE id_utilisateur = :id")
+                        ->execute([':id' => $idUtilisateur]);
     }
 
     public function supprimerEtudiant(int $idUtilisateur): bool
     {
-        $this->db->prepare("DELETE FROM etudiant WHERE id_utilisateur = :id")->execute([':id' => $idUtilisateur]);
-        return $this->db->prepare("DELETE FROM utilisateur WHERE id_utilisateur = :id")->execute([':id' => $idUtilisateur]);
+        $this->db->prepare("DELETE FROM etudiant WHERE id_utilisateur = :id")
+                 ->execute([':id' => $idUtilisateur]);
+        return $this->db->prepare("DELETE FROM utilisateur WHERE id_utilisateur = :id")
+                        ->execute([':id' => $idUtilisateur]);
     }
-
->>>>>>> cd5c7b9a76b9c273690d940b38cc4ab2f01c9793
 }
