@@ -1,5 +1,4 @@
 <?php
-
 require_once __DIR__ . '/Models/StageModel.php';
 require_once __DIR__ . '/Controllers/AuthController.php';
 require_once __DIR__ . '/Controllers/StageController.php';
@@ -75,6 +74,10 @@ class Router {
             // Profil
             $uri === 'profil'
                 => $this->profil->index(),
+            $uri === 'profil_update' && $method === 'POST'
+                => $this->profil->update(),
+            $uri === 'profil_delete' && $method === 'POST'
+                => $this->profil->delete(),
 
             // Admin / Pilote
             $uri === 'pilote_create' && $method === 'POST'
