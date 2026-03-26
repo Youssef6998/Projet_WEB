@@ -423,6 +423,25 @@ class StageModel {
         ]);
     }
 
+    public function modifierEntreprise(int $id, string $nom, string $ville, string $adresse, string $email, string $telephone, string $description): bool
+    {
+        $stmt = $this->db->prepare(
+            "UPDATE entreprise
+             SET nom = :nom, ville = :ville, adresse = :adresse,
+                 email_contact = :email, telephone_contact = :tel, description = :desc
+             WHERE id_entreprise = :id"
+        );
+        return $stmt->execute([
+            ':id'    => $id,
+            ':nom'   => $nom,
+            ':ville' => $ville,
+            ':adresse' => $adresse,
+            ':email' => $email,
+            ':tel'   => $telephone,
+            ':desc'  => $description,
+        ]);
+    }
+
     public function supprimerEntreprise(int $id): bool {
         $stmt = $this->db->prepare("DELETE FROM entreprise WHERE id_entreprise = :id");
         return $stmt->execute([':id' => $id]);
@@ -480,4 +499,74 @@ class StageModel {
         );
         return $stmt->execute([':pilote' => $idPilote, ':etudiant' => $idEtudiant]);
     }
+<<<<<<< HEAD
+=======
+
+    public function creerPilote(string $nom, string $prenom, string $email, string $motDePasse, string $telephone, string $promotion): bool
+    {
+        $hash = password_hash($motDePasse, PASSWORD_DEFAULT);
+        $stmt = $this->db->prepare(
+            "INSERT INTO utilisateur (nom, prenom, email, mot_de_passe, telephone, role)
+             VALUES (:nom, :prenom, :email, :mdp, :tel, 'pilote')"
+        );
+        $ok = $stmt->execute([
+            ':nom'    => $nom,
+            ':prenom' => $prenom,
+            ':email'  => $email,
+            ':mdp'    => $hash,
+            ':tel'    => $telephone,
+        ]);
+        if ($ok) {
+            $id = (int) $this->db->lastInsertId();
+            $this->db->prepare("INSERT INTO pilote (id_utilisateur, promotion) VALUES (:id, :promo)")
+                     ->execute([':id' => $id, ':promo' => $promotion]);
+        }
+        return $ok;
+    }
+
+    public function getAllPilotes(): array
+    {
+        $stmt = $this->db->query(
+            "SELECT u.id_utilisateur, u.nom, u.prenom, u.email, u.telephone,
+                    p.id_pilote, p.centre, p.promotion,
+                    COUNT(e.id_etudiant) AS nb_etudiants
+             FROM utilisateur u
+             JOIN pilote p ON u.id_utilisateur = p.id_utilisateur
+             LEFT JOIN etudiant e ON p.id_pilote = e.id_pilote
+             WHERE u.actif = 1
+             GROUP BY u.id_utilisateur, p.id_pilote
+             ORDER BY u.nom, u.prenom"
+        );
+        return $stmt->fetchAll();
+    }
+
+    public function getAllEtudiants(): array
+    {
+        $stmt = $this->db->query(
+            "SELECT u.id_utilisateur, u.nom, u.prenom, u.email, u.telephone,
+                    e.id_etudiant, e.formation, e.niveau_etude,
+                    CONCAT(up.prenom, ' ', up.nom) AS pilote_nom
+             FROM utilisateur u
+             JOIN etudiant e ON u.id_utilisateur = e.id_utilisateur
+             LEFT JOIN pilote p ON e.id_pilote = p.id_pilote
+             LEFT JOIN utilisateur up ON p.id_utilisateur = up.id_utilisateur
+             WHERE u.actif = 1
+             ORDER BY u.nom, u.prenom"
+        );
+        return $stmt->fetchAll();
+    }
+
+    public function supprimerPilote(int $idUtilisateur): bool
+    {
+        $this->db->prepare("DELETE FROM pilote WHERE id_utilisateur = :id")->execute([':id' => $idUtilisateur]);
+        return $this->db->prepare("DELETE FROM utilisateur WHERE id_utilisateur = :id")->execute([':id' => $idUtilisateur]);
+    }
+
+    public function supprimerEtudiant(int $idUtilisateur): bool
+    {
+        $this->db->prepare("DELETE FROM etudiant WHERE id_utilisateur = :id")->execute([':id' => $idUtilisateur]);
+        return $this->db->prepare("DELETE FROM utilisateur WHERE id_utilisateur = :id")->execute([':id' => $idUtilisateur]);
+    }
+
+>>>>>>> cd5c7b9a76b9c273690d940b38cc4ab2f01c9793
 }

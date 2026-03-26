@@ -11,6 +11,27 @@ class EntrepriseController extends BaseController {
         $this->model = $model;
     }
 
+    // GET /?uri=entreprise_list  (vue de gestion admin/pilote)
+    public function showEntrepriseList(int $page = 1): string {
+        $this->requireRole(fn() => $this->isAdminOrPilote());
+        $nom  = $_GET['nom'] ?? '';
+        $data = $this->model->getPaginatedEntreprises($page, 10, $nom);
+        $data['uri'] = 'entreprise_list';
+        $data['nom'] = $nom;
+        $data['success'] = $_GET['success'] ?? null;
+        return $this->render('entreprise_list.twig.html', $data);
+    }
+
+    // POST /?uri=entreprise_delete
+    public function destroy(): void {
+        $this->requireRole(fn() => $this->isAdminOrPilote());
+        $id = (int)($_POST['id'] ?? 0);
+        if ($id) {
+            $this->model->supprimerEntreprise($id);
+        }
+        $this->redirect('/?uri=entreprise_list&success=supprime');
+    }
+
     // GET /?uri=entreprises
     public function index(int $page = 1): string {
         $nom  = $_GET['nom'] ?? '';
@@ -53,7 +74,7 @@ class EntrepriseController extends BaseController {
             trim($_POST['telephone']   ?? ''),
             trim($_POST['description'] ?? '')
         );
-        $this->redirect('/?uri=entreprises');
+        $this->redirect('/?uri=entreprise_list&success=cree');
     }
 
     // GET /?uri=entreprise_update&id=X
@@ -72,7 +93,18 @@ class EntrepriseController extends BaseController {
     // POST /?uri=entreprise_update
     public function update(): void {
         $this->requireRole(fn() => $this->isAdminOrPilote());
-        // TODO: appeler $this->model->modifierEntreprise(...) quand la méthode sera implémentée
-        $this->redirect('/?uri=entreprises');
+        $id = (int)($_POST['id'] ?? 0);
+        if ($id) {
+            $this->model->modifierEntreprise(
+                $id,
+                trim($_POST['nom']         ?? ''),
+                trim($_POST['ville']       ?? ''),
+                trim($_POST['adresse']     ?? ''),
+                trim($_POST['email']       ?? ''),
+                trim($_POST['telephone']   ?? ''),
+                trim($_POST['description'] ?? '')
+            );
+        }
+        $this->redirect('/?uri=entreprise_list');
     }
 }

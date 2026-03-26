@@ -20,18 +20,37 @@
             <a href="/?uri=stages" class="{% if uri == 'stages' %}active{% endif %}">Stages</a>
             <a href="/?uri=entreprises" class="{% if uri == 'entreprises' %}active{% endif %}">Entreprises</a>
 
-            
-            {% if session_user and session_user.role in ['admin', 'pilote'] %}
-                <a href="/?uri=entreprise_create" class="{% if uri == 'entreprise_create' %}active{% endif %}">Gestion entreprise</a>
-            {% endif %}
 
             {% if session_user and session_user.role in ['admin', 'pilote'] %}
-                <a href="/?uri=etudiant_list" class="{% if uri == 'etudiant_list' %}active{% endif %}"> Gestion Étudiants</a>
-            {% endif %}
-
-            {# Admin seulement : gestion pilotes #}
-            {% if session_user and session_user.role == 'admin' %}
-                <a href="/?uri=pilote_list" class="{% if uri == 'pilote_list' %}active{% endif %}">Gestion Pilotes</a>
+            <div class="nav-dropdown" id="nav-gestion">
+                <button class="nav-dropdown-btn {% if uri in ['etudiant_list','entreprise_list','entreprise_create','entreprise_update','pilote_list','pilote_create'] %}active{% endif %}"
+                        onclick="toggleDropdown(this)" type="button">
+                    Gestion
+                    <svg class="nav-chevron" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4"/></svg>
+                </button>
+                <div class="nav-dropdown-menu">
+                    <a href="/?uri=etudiant_list" class="{% if uri == 'etudiant_list' %}active{% endif %}">
+                        <span class="nav-item-icon">
+                            <svg viewBox="0 0 16 16"><path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0 1c-3.5 0-6 1.8-6 3.5V14h12v-1.5C14 9.8 11.5 8 8 8z"/></svg>
+                        </span>
+                        Étudiants
+                    </a>
+                    <a href="/?uri=entreprise_list" class="{% if uri in ['entreprise_list','entreprise_create','entreprise_update'] %}active{% endif %}">
+                        <span class="nav-item-icon">
+                            <svg viewBox="0 0 16 16"><rect x="2" y="6" width="12" height="8" rx="1"/><path d="M5 6V4a3 3 0 0 1 6 0v2"/><path d="M6 10h4"/></svg>
+                        </span>
+                        Entreprises
+                    </a>
+                    {% if session_user.role == 'admin' %}
+                    <a href="/?uri=pilote_list" class="{% if uri in ['pilote_list','pilote_create'] %}active{% endif %}">
+                        <span class="nav-item-icon">
+                            <svg viewBox="0 0 16 16"><circle cx="8" cy="5" r="2.5"/><path d="M3 13c0-2.8 2.2-4.5 5-4.5s5 1.7 5 4.5"/><path d="M5 8.5l1.5 2.5L8 9.5l1.5 1.5L11 8.5"/></svg>
+                        </span>
+                        Pilotes
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
             {% endif %}
 
             <a href="/?uri=nous" class="{% if uri == 'nous' %}active{% endif %}">À propos</a>
@@ -56,5 +75,25 @@
         </div>
     </footer>
 </div>
+<script>
+function toggleDropdown(btn) {
+    const menu = btn.nextElementSibling;
+    const isOpen = menu.classList.contains('open');
+    // Ferme tous les dropdowns ouverts
+    document.querySelectorAll('.nav-dropdown-menu.open').forEach(m => m.classList.remove('open'));
+    document.querySelectorAll('.nav-dropdown-btn.open').forEach(b => b.classList.remove('open'));
+    if (!isOpen) {
+        menu.classList.add('open');
+        btn.classList.add('open');
+    }
+}
+// Ferme au clic en dehors
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('.nav-dropdown')) {
+        document.querySelectorAll('.nav-dropdown-menu.open').forEach(m => m.classList.remove('open'));
+        document.querySelectorAll('.nav-dropdown-btn.open').forEach(b => b.classList.remove('open'));
+    }
+});
+</script>
 </body>
 </html>

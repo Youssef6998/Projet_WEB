@@ -40,6 +40,48 @@ class AdminController extends BaseController {
         $this->redirect('/?uri=pilote_list');
     }
 
+    // GET /?uri=pilote_list
+    public function showPiloteList(): string {
+        $this->requireRole(fn() => $this->isAdmin());
+        $pilotes = $this->model->getAllPilotes();
+        return $this->render('pilote_list.twig.html', [
+            'uri'     => 'pilote_list',
+            'pilotes' => $pilotes,
+            'success' => $_GET['success'] ?? null,
+        ]);
+    }
+
+    // POST /?uri=pilote_delete
+    public function destroyPilote(): void {
+        $this->requireRole(fn() => $this->isAdmin());
+        $id = (int)($_POST['id'] ?? 0);
+        if ($id) {
+            $this->model->supprimerPilote($id);
+        }
+        $this->redirect('/?uri=pilote_list&success=supprime');
+    }
+
+    // GET /?uri=etudiant_list
+    public function showEtudiantList(): string {
+        $this->requireRole(fn() => $this->isAdminOrPilote());
+        $etudiants = $this->model->getAllEtudiants();
+        return $this->render('etudiant_list.twig.html', [
+            'uri'       => 'etudiant_list',
+            'etudiants' => $etudiants,
+            'success'   => $_GET['success'] ?? null,
+        ]);
+    }
+
+    // POST /?uri=etudiant_delete
+    public function destroyEtudiant(): void {
+        $this->requireRole(fn() => $this->isAdmin());
+        $id = (int)($_POST['id'] ?? 0);
+        if ($id) {
+            $this->model->supprimerEtudiant($id);
+        }
+        $this->redirect('/?uri=etudiant_list&success=supprime');
+    }
+
     // GET /?uri=avis_create
     public function showAvisCreate(): string {
         $this->requireRole(fn() => $this->isAdminOrPilote());
