@@ -63,6 +63,8 @@ class Router {
                 => $this->entreprise->index($page),
             $uri === 'entreprise'
                 => $this->entreprise->show($id),
+            $uri === 'entreprise_list'
+                => $this->entreprise->showEntrepriseList($page),
             $uri === 'entreprise_create' && $method === 'POST'
                 => $this->entreprise->store(),
             $uri === 'entreprise_create'
@@ -71,16 +73,26 @@ class Router {
                 => $this->entreprise->update(),
             $uri === 'entreprise_update'
                 => $this->entreprise->showUpdate($id),
+            $uri === 'entreprise_delete' && $method === 'POST'
+                => $this->entreprise->destroy(),
 
             // Profil
             $uri === 'profil'
                 => $this->profil->index(),
 
             // Admin / Pilote
+            $uri === 'pilote_list'
+                => $this->admin->showPiloteList(),
             $uri === 'pilote_create' && $method === 'POST'
                 => $this->admin->storePilote(),
             $uri === 'pilote_create'
                 => $this->admin->showPiloteCreate(),
+            $uri === 'pilote_delete' && $method === 'POST'
+                => $this->admin->destroyPilote(),
+            $uri === 'etudiant_list'
+                => $this->admin->showEtudiantList(),
+            $uri === 'etudiant_delete' && $method === 'POST'
+                => $this->admin->destroyEtudiant(),
             $uri === 'avis_create' && $method === 'POST'
                 => $this->admin->storeAvis(),
             $uri === 'avis_create'

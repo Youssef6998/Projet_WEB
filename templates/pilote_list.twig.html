@@ -1,0 +1,69 @@
+{% extends "base.twig.html" %}
+{% block title %}Gestion des pilotes – Stage Finder{% endblock %}
+{% block content %}
+<div class="page">
+
+    <div class="search-card" style="margin-bottom:1.5rem">
+        <div class="search-head">
+            <span class="pill pill-r">Administration</span>
+            <span class="pill pill-count">{{ pilotes|length }} pilote{{ pilotes|length != 1 ? 's' : '' }}</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:.75rem; margin-top:.4rem">
+            <div>
+                <h2 style="font-size:1.05rem; font-weight:700; color:var(--dark); margin:0">Gestion des Pilotes</h2>
+                <p style="font-size:.75rem; color:var(--text-muted); margin:.2rem 0 0">Créez, consultez et supprimez les comptes pilotes.</p>
+            </div>
+            <a href="/?uri=pilote_create" class="btn btn-fill">+ Créer un pilote</a>
+        </div>
+    </div>
+
+    {% if success == 'supprime' %}
+    <div style="background:#fef2f2; border:1.5px solid #fca5a5; color:#991b1b; border-radius:.75rem; padding:.7rem 1rem; font-size:.8rem; margin-bottom:1rem">
+        Le compte pilote a bien été supprimé.
+    </div>
+    {% endif %}
+
+    <div class="stages-list">
+        {% for p in pilotes %}
+        <article class="stage-card">
+            <div class="stage-info">
+                <div class="stage-top">
+                    <span class="stage-company">{{ p.prenom }} {{ p.nom }}</span>
+                    <span class="stage-type">{{ p.nb_etudiants }} étudiant{{ p.nb_etudiants != 1 ? 's' : '' }}</span>
+                </div>
+                <p class="stage-desc" style="margin-top:.3rem">
+                    {{ p.email }}
+                    {% if p.telephone %} · {{ p.telephone }}{% endif %}
+                </p>
+                {% if p.promotion or p.centre %}
+                <div style="display:flex; gap:.4rem; flex-wrap:wrap; margin-top:.4rem">
+                    {% if p.promotion %}
+                    <span style="font-size:.65rem; font-weight:600; background:var(--rose-light); color:var(--rose-vivid); border-radius:999px; padding:.2rem .6rem; border:1px solid var(--rose-border)">
+                        {{ p.promotion }}
+                    </span>
+                    {% endif %}
+                    {% if p.centre %}
+                    <span style="font-size:.65rem; font-weight:600; background:#f0fdf4; color:#166534; border-radius:999px; padding:.2rem .6rem; border:1px solid #bbf7d0">
+                        {{ p.centre }}
+                    </span>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+            <div class="stage-right">
+                <form method="POST" action="/?uri=pilote_delete"
+                      onsubmit="return confirm('Supprimer le pilote {{ p.prenom }} {{ p.nom }} ? Cette action est irréversible.')">
+                    <input type="hidden" name="id" value="{{ p.id_utilisateur }}">
+                    <button type="submit" class="btn btn-ghost" style="color:#dc2626; border-color:#fca5a5">
+                        Supprimer
+                    </button>
+                </form>
+            </div>
+        </article>
+        {% else %}
+        <p style="color:var(--text-muted); font-size:.82rem; text-align:center; padding:2rem 0">Aucun pilote enregistré.</p>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}

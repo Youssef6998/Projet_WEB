@@ -1,0 +1,86 @@
+{% extends "base.twig.html" %}
+{% block title %}Gestion des entreprises – Stage Finder{% endblock %}
+{% block content %}
+<div class="page">
+
+    <div class="search-card" style="margin-bottom:1.5rem">
+        <div class="search-head">
+            <span class="pill pill-r">{% if session_user.role == 'admin' %}Administration{% else %}Pilote{% endif %}</span>
+            <span class="pill pill-count">{{ total }} entreprise{{ total != 1 ? 's' : '' }}</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:.75rem; margin-top:.4rem">
+            <div>
+                <h2 style="font-size:1.05rem; font-weight:700; color:var(--dark); margin:0">Gestion des Entreprises</h2>
+                <p style="font-size:.75rem; color:var(--text-muted); margin:.2rem 0 0">Créez, modifiez et supprimez les entreprises partenaires.</p>
+            </div>
+            <a href="/?uri=entreprise_create" class="btn btn-fill">+ Ajouter une entreprise</a>
+        </div>
+        <form action="/?uri=entreprise_list" method="get" style="margin-top:.6rem">
+            <input type="hidden" name="uri" value="entreprise_list">
+            <div class="field-grid-4" style="grid-template-columns:1fr auto; gap:.5rem; align-items:end">
+                <div class="field">
+                    <label>Rechercher par nom</label>
+                    <div class="field-input">
+                        <input name="nom" value="{{ nom }}" class="cases" placeholder="Ex : TechCorp, DataSoft…">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-fill" style="height:2.2rem">Rechercher</button>
+            </div>
+        </form>
+    </div>
+
+    {% if success == 'supprime' %}
+    <div class="alert alert-success" style="margin-bottom:1rem">L'entreprise a bien été supprimée.</div>
+    {% endif %}
+    {% if success == 'cree' %}
+    <div class="alert alert-success" style="margin-bottom:1rem">L'entreprise a bien été créée.</div>
+    {% endif %}
+
+    <div class="stages-list">
+        {% for e in entreprises %}
+        <article class="stage-card">
+            <div class="stage-info">
+                <div class="stage-top">
+                    <span class="stage-company">{{ e.nom }}</span>
+                    <span class="stage-type">{{ e.nb_offres }} offre{{ e.nb_offres != 1 ? 's' : '' }}</span>
+                    {% if e.ville %}
+                    <span style="font-size:.6rem; color:var(--text-muted)">📍 {{ e.ville }}</span>
+                    {% endif %}
+                </div>
+                {% if e.description %}
+                <p class="stage-desc">{{ e.description|slice(0,120) }}{% if e.description|length > 120 %}…{% endif %}</p>
+                {% endif %}
+                <p class="stage-desc" style="margin-top:.2rem">
+                    {{ e.email_contact }}
+                    {% if e.telephone_contact %} · {{ e.telephone_contact }}{% endif %}
+                </p>
+            </div>
+            <div class="stage-right">
+                <a href="/?uri=entreprise_update&id={{ e.id_entreprise }}" class="btn btn-outline">Modifier</a>
+                <form method="POST" action="/?uri=entreprise_delete"
+                      onsubmit="return confirm('Supprimer l\'entreprise {{ e.nom }} ? Cette action supprimera aussi ses offres.')">
+                    <input type="hidden" name="id" value="{{ e.id_entreprise }}">
+                    <button type="submit" class="btn btn-ghost" style="color:#dc2626; border-color:#fca5a5">Supprimer</button>
+                </form>
+            </div>
+        </article>
+        {% else %}
+        <p style="color:var(--text-muted); font-size:.82rem; text-align:center; padding:2rem 0">Aucune entreprise trouvée.</p>
+        {% endfor %}
+    </div>
+
+    <div class="pagination">
+        {% if currentPage > 1 %}
+        <a href="/?uri=entreprise_list&page={{ currentPage - 1 }}&nom={{ nom }}" class="page-btn arrow">←</a>
+        {% endif %}
+        {% for i in 1..totalPages %}
+        <a href="/?uri=entreprise_list&page={{ i }}&nom={{ nom }}"
+           class="page-btn {{ i == currentPage ? 'active' : '' }}">{{ i }}</a>
+        {% endfor %}
+        {% if currentPage < totalPages %}
+        <a href="/?uri=entreprise_list&page={{ currentPage + 1 }}&nom={{ nom }}" class="page-btn arrow">→</a>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}
