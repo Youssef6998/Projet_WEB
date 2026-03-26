@@ -10,6 +10,15 @@
 {% block content %}
 <main class="profil-page">
 
+    {# ── Alertes ── #}
+    {% if success %}
+    <div class="alert-profil success">✓ {{ success }}</div>
+    {% endif %}
+    {% if erreur %}
+    <div class="alert-profil error">✗ {{ erreur }}</div>
+    {% endif %}
+
+    {# ── En-tête ── #}
     <section class="profil-header">
         <div class="profil-avatar">{{ user.prenom|slice(0,1)|upper }}{{ user.nom|slice(0,1)|upper }}</div>
         <div class="profil-info">
@@ -19,11 +28,105 @@
         </div>
     </section>
 
+    {# ── Informations personnelles ── #}
+    <section class="candidatures-section">
+        <h2>Mes informations</h2>
+
+        <div class="profil-fields">
+
+            {# Nom #}
+            <div class="field-row" id="row-nom">
+                <span class="field-label">Nom</span>
+                <span class="field-value">{{ user.nom }}</span>
+                <form class="inline-form" method="POST" action="/?uri=profil_update">
+                    <input type="hidden" name="champ" value="nom">
+                    <input type="text" name="valeur" value="{{ user.nom }}" required>
+                    <button type="submit" class="btn-save">Enregistrer</button>
+                    <button type="button" class="btn-cancel-edit" onclick="cancelEdit('row-nom')">Annuler</button>
+                </form>
+                <button class="btn-edit" onclick="startEdit('row-nom')">Modifier</button>
+            </div>
+
+            {# Prénom #}
+            <div class="field-row" id="row-prenom">
+                <span class="field-label">Prénom</span>
+                <span class="field-value">{{ user.prenom }}</span>
+                <form class="inline-form" method="POST" action="/?uri=profil_update">
+                    <input type="hidden" name="champ" value="prenom">
+                    <input type="text" name="valeur" value="{{ user.prenom }}" required>
+                    <button type="submit" class="btn-save">Enregistrer</button>
+                    <button type="button" class="btn-cancel-edit" onclick="cancelEdit('row-prenom')">Annuler</button>
+                </form>
+                <button class="btn-edit" onclick="startEdit('row-prenom')">Modifier</button>
+            </div>
+
+            {# Email #}
+            <div class="field-row" id="row-email">
+                <span class="field-label">Email</span>
+                <span class="field-value">{{ user.email }}</span>
+                <form class="inline-form" method="POST" action="/?uri=profil_update">
+                    <input type="hidden" name="champ" value="email">
+                    <input type="email" name="valeur" value="{{ user.email }}" required>
+                    <button type="submit" class="btn-save">Enregistrer</button>
+                    <button type="button" class="btn-cancel-edit" onclick="cancelEdit('row-email')">Annuler</button>
+                </form>
+                <button class="btn-edit" onclick="startEdit('row-email')">Modifier</button>
+            </div>
+
+            {# Téléphone #}
+            <div class="field-row" id="row-telephone">
+                <span class="field-label">Téléphone</span>
+                <span class="field-value">{{ user.telephone ? user.telephone : '—' }}</span>
+                <form class="inline-form" method="POST" action="/?uri=profil_update">
+                    <input type="hidden" name="champ" value="telephone">
+                    <input type="tel" name="valeur" value="{{ user.telephone ?? '' }}">
+                    <button type="submit" class="btn-save">Enregistrer</button>
+                    <button type="button" class="btn-cancel-edit" onclick="cancelEdit('row-telephone')">Annuler</button>
+                </form>
+                <button class="btn-edit" onclick="startEdit('row-telephone')">Modifier</button>
+            </div>
+
+            {# Promotion – pilotes uniquement #}
+            {% if user.role == 'pilote' %}
+            <div class="field-row" id="row-promotion">
+                <span class="field-label">Promotion</span>
+                <span class="field-value">{{ user.promotion ? user.promotion : '—' }}</span>
+                <form class="inline-form" method="POST" action="/?uri=profil_update">
+                    <input type="hidden" name="champ" value="promotion">
+                    <select name="valeur">
+                        {% for p in ['CPIA1','CPIA2','FISA A3','FISE A3','FISA A4','FISE A4','FISE A5','FISA A5'] %}
+                        <option value="{{ p }}" {{ user.promotion == p ? 'selected' : '' }}>{{ p }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="btn-save">Enregistrer</button>
+                    <button type="button" class="btn-cancel-edit" onclick="cancelEdit('row-promotion')">Annuler</button>
+                </form>
+                <button class="btn-edit" onclick="startEdit('row-promotion')">Modifier</button>
+            </div>
+            {% endif %}
+
+        </div>
+
+        {# ── Changer le mot de passe ── #}
+        <div class="mdp-section">
+            <button class="mdp-toggle" onclick="document.getElementById('mdp-form').classList.toggle('open')">
+                🔒 Changer mon mot de passe
+            </button>
+            <form id="mdp-form" class="mdp-form" method="POST" action="/?uri=profil_update">
+                <input type="hidden" name="champ" value="mot_de_passe">
+                <input type="password" name="ancien_mdp"  placeholder="Mot de passe actuel" required>
+                <input type="password" name="nouveau_mdp" placeholder="Nouveau mot de passe (8 caractères min.)" required minlength="8">
+                <input type="password" name="confirm_mdp" placeholder="Confirmer le nouveau mot de passe" required minlength="8">
+                <button type="submit" class="btn-save btn-save-mdp">Changer le mot de passe</button>
+            </form>
+        </div>
+    </section>
+
+
+    {# ── Candidatures (étudiants) ── #}
     {% if session_user and session_user.role in ['etudiant'] %}
-    <!-- Liste des candidatures --> 
     <section class="candidatures-section">
         <h2>Mes candidatures</h2>
-
         {% if candidatures is empty %}
             <div class="empty-state">
                 <p>Vous n'avez pas encore postulé à un stage.</p>
@@ -36,17 +139,14 @@
                     <div class="cand-info">
                         <span class="cand-titre">{{ c.titre }}</span>
                         <span class="cand-entreprise">{{ c.entreprise }}</span>
-                        {% if c.duree %}
-                            <span class="cand-duree">{{ c.duree }}</span>
-                        {% endif %}
+                        {% if c.duree %}<span class="cand-duree">{{ c.duree }}</span>{% endif %}
                     </div>
                     <div class="cand-meta">
                         <span class="cand-date">{{ c.date_candidature|date('d/m/Y') }}</span>
                         <span class="badge badge-{{ c.statut }}">
                             {% if c.statut == 'en_attente' %}En attente
                             {% elseif c.statut == 'acceptee' %}Acceptée
-                            {% else %}Refusée
-                            {% endif %}
+                            {% else %}Refusée{% endif %}
                         </span>
                     </div>
                 </div>
@@ -55,11 +155,9 @@
         {% endif %}
     </section>
 
-
-    <!-- Wishlist à faire--> 
+    {# ── Wishlist ── #}
     <section class="candidatures-section">
         <h2>Mes favoris</h2>
-
         {% if wishlist is empty %}
             <div class="empty-state">
                 <p>Vous n'avez pas encore ajouté d'offre en favoris.</p>
@@ -70,20 +168,18 @@
                 {% for w in wishlist %}
                 <div class="candidature-card favori-card">
                     <div class="cand-info">
-                        <a href="/?uri=offre&id={{ w.id_offre }}" class="cand-titre" style="text-decoration:none;color:inherit;">{{ w.titre }}</a>
+                        <a href="/?uri=offre&id={{ w.id_offre }}" class="cand-titre cand-titre-link">{{ w.titre }}</a>
                         <span class="cand-entreprise">{{ w.company }}</span>
-                        {% if w.duree %}
-                            <span class="cand-duree">{{ w.duree }}</span>
-                        {% endif %}
+                        {% if w.duree %}<span class="cand-duree">{{ w.duree }}</span>{% endif %}
                     </div>
                     <div class="cand-meta">
                         <span class="cand-date">Ajouté le {{ w.date_ajout|date('d/m/Y') }}</span>
-                        <div style="display:flex;gap:.5rem;align-items:center">
-                            <a href="/?uri=offre&id={{ w.id_offre }}" class="btn-explore" style="margin-top:0;padding:.3rem .9rem;font-size:.72rem">Voir</a>
-                            <form method="post" action="/?uri=wishlist-toggle" style="margin:0">
+                        <div class="cand-actions">
+                            <a href="/?uri=offre&id={{ w.id_offre }}" class="btn-explore btn-explore-sm">Voir</a>
+                            <form method="post" action="/?uri=wishlist-toggle">
                                 <input type="hidden" name="id_offre" value="{{ w.id_offre }}">
                                 <input type="hidden" name="redirect" value="/?uri=profil">
-                                <button type="submit" class="btn-retirer" title="Retirer des favoris">Retirer</button>
+                                <button type="submit" class="btn-retirer">Retirer</button>
                             </form>
                         </div>
                     </div>
@@ -94,41 +190,60 @@
     </section>
     {% endif %}
 
-   
-<!-- Liste des étudiants -->     
-{% if session_user and session_user.role == 'pilote' %}
+
+    {# ── Étudiants supervisés (pilotes) ── #}
+    {% if session_user and session_user.role == 'pilote' %}
     <section class="candidatures-section">
         <h2>Étudiants que je supervise</h2>
-
         {% if etudiants_supervises is empty %}
             <div class="empty-state">
-                <p>Vous ne supervisez pas encore d’étudiant.</p>
+                <p>Vous ne supervisez pas encore d'étudiant.</p>
                 <a href="/?uri=etudiants_list" class="btn-explore">Ajouter des étudiants</a>
             </div>
         {% else %}
             <div class="candidatures-list">
                 {% for etudiant in etudiants_supervises %}
-                    <div class="candidature-card">
-                        <div class="cand-info">
-                            <span class="cand-titre">{{ etudiant.prenom }} {{ etudiant.nom }}</span>
-                            <span class="cand-entreprise">{{ etudiant.email }}</span>
-                        </div>
-                        <div class="cand-meta">
-                            <a href="/?uri=etudiant_offres&id={{ etudiant.id_utilisateur }}" class="btn-explore" style="margin-top:0;padding:.3rem .9rem;font-size:.72rem">
-                                Voir ses candidatures
-                            </a>
-                        </div>
+                <div class="candidature-card">
+                    <div class="cand-info">
+                        <span class="cand-titre">{{ etudiant.prenom }} {{ etudiant.nom }}</span>
+                        <span class="cand-entreprise">{{ etudiant.email }}</span>
                     </div>
+                    <div class="cand-meta">
+                        <a href="/?uri=etudiant_offres&id={{ etudiant.id_utilisateur }}" class="btn-explore btn-explore-sm">
+                            Voir ses candidatures
+                        </a>
+                    </div>
+                </div>
                 {% endfor %}
-                <a href="/?uri=etudiants_list" class="btn-explore" style="margin-top:.5rem">
-                    Ajouter un étudiant
-                </a>
+                <a href="/?uri=etudiants_list" class="btn-explore btn-explore-add">Ajouter un étudiant</a>
             </div>
         {% endif %}
     </section>
-{% endif %}
+    {% endif %}
 
 
+    {# ── Danger zone ── #}
+    <section class="candidatures-section">
+        <div class="danger-zone">
+            <h3>⚠️ Zone de danger</h3>
+            <p>La suppression de votre compte est définitive. Toutes vos données seront désactivées et vous serez déconnecté immédiatement.</p>
+            <form method="POST" action="/?uri=profil_delete"
+                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.')">
+                <button type="submit" class="btn-danger">Supprimer mon compte</button>
+            </form>
+        </div>
+    </section>
 
 </main>
+
+<script>
+function startEdit(rowId) {
+    document.getElementById(rowId).classList.add('editing');
+    const input = document.querySelector('#' + rowId + ' .inline-form input:not([type=hidden]), #' + rowId + ' .inline-form select');
+    if (input) input.focus();
+}
+function cancelEdit(rowId) {
+    document.getElementById(rowId).classList.remove('editing');
+}
+</script>
 {% endblock %}
