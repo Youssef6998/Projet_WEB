@@ -1,0 +1,33 @@
+  :root {
+      --white: #ffffff;
+      --rose: #7c3d12;
+      --rose-vivid: #6b2d0f;
+      --dark: #1a0a04;
+      --rose-light: #fdf4ed;
+      --rose-mid: #e8c4a4;
+      --rose-border: rgba(124, 61, 18, 0.16);
+      --rose-body: rgba(124, 61, 18, 0.12);
+      --text-muted: #8b6555;
+      --rose-deep: #3d1508;
+      --r: 1.1rem;
+    }
+.suppression {
+    background:#fef2f2; border:1.5px solid #fca5a5; 
+    color:#991b1b; border-radius:.75rem; padding:.7rem 1rem; 
+    font-size:.8rem; margin-bottom:1rem
+}
+.titre {
+    font-size:1.05rem; font-weight:700; color:var(--dark); margin:0
+}
+.petit_titre{
+    font-size:.75rem; color:var(--text-muted); margin:.2rem 0 0
+}
+.search-card {
+    margin-bottom:1.5rem
+}
+.aucun {
+    color:var(--text-muted); font-size:.82rem; text-align:center; padding:2rem 0
+}
+.btn-ghost {
+    color:#dc2626; border-color:#fca5a5
+}

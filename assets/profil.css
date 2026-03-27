@@ -289,7 +289,7 @@
 .btn-explore:hover { box-shadow: 0 6px 20px rgba(124, 61, 18, 0.45); transform: translateY(-1px); }
 
 .btn-explore-sm  { margin-top: 0; padding: .3rem .9rem; font-size: .72rem; }
-.btn-explore-add { margin-top: .5rem; }
+.btn-explore-add { margin-top: .5rem;}
 
 /* ── Retirer favori ── */
 .btn-retirer {

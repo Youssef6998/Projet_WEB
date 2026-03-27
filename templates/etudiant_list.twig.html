@@ -1,21 +1,27 @@
 {% extends "base.twig.html" %}
 {% block title %}Gestion des étudiants – Stage Finder{% endblock %}
+{% block css %}
+<link rel="stylesheet" href="/assets/style-stage.css">
+<link rel="stylesheet" href="/assets/liste_etudiant.css">
+{% endblock %}
 {% block content %}
+
+
 <div class="page">
 
-    <div class="search-card" style="margin-bottom:1.5rem">
+    <div class="search-card" >
         <div class="search-head">
             <span class="pill pill-r">{% if session_user.role == 'admin' %}Administration{% else %}Pilote{% endif %}</span>
             <span class="pill pill-count">{{ etudiants|length }} étudiant{{ etudiants|length != 1 ? 's' : '' }}</span>
         </div>
         <div style="margin-top:.4rem">
-            <h2 style="font-size:1.05rem; font-weight:700; color:var(--dark); margin:0">Gestion des Étudiants</h2>
-            <p style="font-size:.75rem; color:var(--text-muted); margin:.2rem 0 0">Consultez les comptes étudiants et leur pilote superviseur.</p>
+            <h2 class ="titre" >Gestion des Étudiants</h2>
+            <p class ="petit_titre" >Consultez les comptes étudiants et leur pilote superviseur.</p>
         </div>
     </div>
 
     {% if success == 'supprime' %}
-    <div style="background:#fef2f2; border:1.5px solid #fca5a5; color:#991b1b; border-radius:.75rem; padding:.7rem 1rem; font-size:.8rem; margin-bottom:1rem">
+    <div class= "suppression">
         Le compte étudiant a bien été supprimé.
     </div>
     {% endif %}
@@ -51,22 +57,36 @@
                     {% endif %}
                 </div>
             </div>
-            {% if session_user.role == 'admin' %}
+            
+            <!-- Coté droit de la case -->
+
             <div class="stage-right">
+                <a href="/?uri=etudiant_update&id={{ e.id_etudiant }}" class="btn btn-outline">Modifier</a>
                 <form method="POST" action="/?uri=etudiant_delete"
                       onsubmit="return confirm('Supprimer l\'étudiant {{ e.prenom }} {{ e.nom }} ? Cette action est irréversible.')">
                     <input type="hidden" name="id" value="{{ e.id_utilisateur }}">
-                    <button type="submit" class="btn btn-ghost" style="color:#dc2626; border-color:#fca5a5">
+                    <button type="submit" class="btn btn-ghost">
                         Supprimer
                     </button>
                 </form>
             </div>
-            {% endif %}
+            
         </article>
         {% else %}
-        <p style="color:var(--text-muted); font-size:.82rem; text-align:center; padding:2rem 0">Aucun étudiant enregistré.</p>
+        <p class = "aucun" >Aucun étudiant enregistré.</p>
         {% endfor %}
     </div>
-
+    <div class="pagination">
+        {% if currentPage > 1 %}
+        <a href="/?uri=etudiant_list&page={{ currentPage - 1 }}&nom={{ nom }}" class="page-btn arrow">←</a>
+        {% endif %}
+        {% for i in 1..totalPages %}
+        <a href="/?uri=etudiant_list&page={{ i }}&nom={{ nom }}"
+           class="page-btn {{ i == currentPage ? 'active' : '' }}">{{ i }}</a>
+        {% endfor %}
+        {% if currentPage < totalPages %}
+        <a href="/?uri=etudiant_list&page={{ currentPage + 1 }}&nom={{ nom }}" class="page-btn arrow">→</a>
+        {% endif %}
+    </div>
 </div>
 {% endblock %}

@@ -9,6 +9,9 @@ class StageModel {
     public function __construct() {
         $this->db = Database::getConnection();
     }
+    public function getDb(): PDO {
+        return $this->db;
+    }
 
     public function getPaginatedStages(int $page = 1, int $perPage = 6, string $domaine = '', string $ville ='', string $duree='',string $competence=''): array {
         $page   = max(1, $page);
@@ -547,4 +550,28 @@ class StageModel {
         return $this->db->prepare("DELETE FROM utilisateur WHERE id_utilisateur = :id")
                         ->execute([':id' => $idUtilisateur]);
     }
+    public function getEtudiantsSupervises(int $id_utilisateur_pilote): array {
+    try {
+        $sql = "
+            SELECT 
+                u.id_utilisateur,
+                u.prenom, u.nom, u.email,
+                e.formation, e.niveau_etude
+            FROM etudiant e
+            JOIN utilisateur u ON e.id_utilisateur = u.id_utilisateur
+            JOIN pilote p ON e.id_pilote = p.id_pilote
+            WHERE p.id_utilisateur = ?
+            ORDER BY u.nom, u.prenom
+        ";
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$id_utilisateur_pilote]);
+        
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+    } catch (PDOException $e) {
+        error_log("Erreur getEtudiantsSupervises: " . $e->getMessage());
+        return [];
+    }
+}
 }

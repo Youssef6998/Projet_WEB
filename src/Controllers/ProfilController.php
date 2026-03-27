@@ -11,27 +11,35 @@ class ProfilController extends BaseController {
 
     // GET /?uri=profil
     public function index(): string {
-        $this->requireRole(fn() => $this->isConnecte());
-        $user = $this->model->getUtilisateurComplet((int)$_SESSION['user']['id_utilisateur']);
-        $candidatures = [];
-        $wishlist     = [];
-        if ($user['role'] === 'etudiant' && !empty($user['id_etudiant'])) {
-            $candidatures = $this->model->getCandidaturesEtudiant($user['id_etudiant']);
-            $wishlist     = $this->model->getWishlistEtudiant($user['id_etudiant']);
-        }
-        $success = $_GET['success'] ?? null;
-        $erreur  = $_GET['erreur']  ?? null;
+    $this->requireRole(fn() => $this->isConnecte());
+    $user = $this->model->getUtilisateurComplet((int)$_SESSION['user']['id_utilisateur']);
+    $candidatures = [];
+    $wishlist     = [];
 
-        return $this->render('profil.twig.html', [
-            'uri'          => 'profil',
-            'user'         => $user,
-            'candidatures' => $candidatures,
-            'wishlist'     => $wishlist,
-            'success'      => $success,
-            'erreur'       => $erreur,
-        ]);
+    if ($user['role'] === 'etudiant' && !empty($user['id_etudiant'])) {
+        $candidatures = $this->model->getCandidaturesEtudiant($user['id_etudiant']);
+        $wishlist     = $this->model->getWishlistEtudiant($user['id_etudiant']);
     }
 
+    $etudiants_supervises = [];
+    if ($user['role'] === 'pilote') {
+        $etudiants_supervises = $this->model->getEtudiantsSupervises((int)$_SESSION['user']['id_utilisateur']);
+    }
+    
+    $success = $_GET['success'] ?? null;
+    $erreur  = $_GET['erreur']  ?? null;
+
+    // 🔥 ÇA MANquait ! Retourne la vue Twig
+    return $this->render('profil.twig.html', [
+        'uri'              => 'profil',
+        'user'             => $user,
+        'candidatures'     => $candidatures,
+        'wishlist'         => $wishlist,
+        'etudiants_supervises' => $etudiants_supervises,
+        'success'          => $success,
+        'erreur'           => $erreur,
+    ]);
+}
     // POST /?uri=profil_update
     public function update(): void {
         $this->requireRole(fn() => $this->isConnecte());
@@ -75,4 +83,7 @@ class ProfilController extends BaseController {
         session_destroy();
         $this->redirect('/?uri=cherche-stage');
     }
+
+
+ 
 }
