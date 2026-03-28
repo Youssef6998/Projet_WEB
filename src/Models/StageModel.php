@@ -500,21 +500,35 @@ class StageModel {
         return $stmt->execute([':pilote' => $idPilote, ':etudiant' => $idEtudiant]);
     }
 
-    public function getAllPilotes(): array
-    {
-        $stmt = $this->db->query(
-            "SELECT u.id_utilisateur, u.nom, u.prenom, u.email, u.telephone,
-                    p.id_pilote, p.centre, p.promotion,
-                    COUNT(e.id_etudiant) AS nb_etudiants
-             FROM utilisateur u
-             JOIN pilote p ON u.id_utilisateur = p.id_utilisateur
-             LEFT JOIN etudiant e ON p.id_pilote = e.id_pilote
-             WHERE u.actif = 1
-             GROUP BY u.id_utilisateur, p.id_pilote
-             ORDER BY u.nom, u.prenom"
-        );
-        return $stmt->fetchAll();
+    public function getAllPilotes(string $nom = '', string $prenom = ''): array {
+    $conditions = ["u.actif = 1"];
+    $params     = [];
+
+    if ($nom !== '') {
+        $conditions[] = "u.nom LIKE :nom";
+        $params[':nom'] = '%' . $nom . '%';
     }
+    if ($prenom !== '') {
+        $conditions[] = "u.prenom LIKE :prenom";
+        $params[':prenom'] = '%' . $prenom . '%';
+    }
+
+    $where = 'WHERE ' . implode(' AND ', $conditions);
+
+    $stmt = $this->db->prepare(
+        "SELECT u.id_utilisateur, u.nom, u.prenom, u.email, u.telephone,
+                p.promotion, p.centre,
+                COUNT(e.id_etudiant) AS nb_etudiants
+         FROM utilisateur u
+         JOIN pilote p ON u.id_utilisateur = p.id_utilisateur
+         LEFT JOIN etudiant e ON e.id_pilote = p.id_pilote
+         $where
+         GROUP BY u.id_utilisateur, u.nom, u.prenom, u.email, u.telephone, p.promotion, p.centre
+         ORDER BY u.nom, u.prenom"
+    );
+    $stmt->execute($params);
+    return $stmt->fetchAll();
+}
 
     public function getAllEtudiants(string $nom = '', string $prenom = ''): array {
     $conditions = [];

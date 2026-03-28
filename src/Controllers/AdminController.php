@@ -42,14 +42,18 @@ class AdminController extends BaseController {
 
     // GET /?uri=pilote_list
     public function showPiloteList(): string {
-        $this->requireRole(fn() => $this->isAdmin());
-        $pilotes = $this->model->getAllPilotes();
-        return $this->render('pilote_list.twig.html', [
-            'uri'     => 'pilote_list',
-            'pilotes' => $pilotes,
-            'success' => $_GET['success'] ?? null,
-        ]);
-    }
+    $this->requireRole(fn() => $this->isAdmin());
+    $nom    = trim($_GET['nom']    ?? '');
+    $prenom = trim($_GET['prenom'] ?? '');
+    $pilotes = $this->model->getAllPilotes($nom, $prenom);
+    return $this->render('pilote_list.twig.html', [
+        'uri'     => 'pilote_list',
+        'pilotes' => $pilotes,
+        'nom'     => $nom,
+        'prenom'  => $prenom,
+        'success' => $_GET['success'] ?? null,
+    ]);
+}
 
     // POST /?uri=pilote_delete
     public function destroyPilote(): void {

@@ -15,6 +15,27 @@
             </div>
             <a href="/?uri=pilote_create" class="btn btn-fill">+ Créer un pilote</a>
         </div>
+        <form action="/?uri=pilote_list" method="get" style="margin-top:1rem">
+            <input type="hidden" name="uri" value="pilote_list">
+            <div class="field-grid-4">
+                <div class="field">
+                    <label>Prénom</label>
+                    <div class="field-input">
+                        <input name="prenom" value="{{ prenom ?? '' }}" class="cases" placeholder="Ex : Sophie, Pierre...">
+                    </div>
+                </div>
+                <div class="field">
+                    <label>Nom</label>
+                    <div class="field-input">
+                        <input name="nom" value="{{ nom ?? '' }}" class="cases" placeholder="Ex : Martin, Bernard...">
+                    </div>
+                </div>
+            </div>
+            <div class="search-actions">
+                <button type="submit" class="btn btn-fill">Rechercher</button>
+                <a href="/?uri=pilote_list" class="btn btn-outline">Réinitialiser</a>
+            </div>
+        </form>
     </div>
 
     {% if success == 'supprime' %}
