@@ -9,11 +9,11 @@
     <div class="intro-page">
         <div class="intro-small-titre">Évaluation</div>
         <h1 class="titre-principal">Évaluer une entreprise</h1>
-        <p class="sous-titre">Donnez votre avis sur votre expérience en entreprise.</p>
+        <p class="sous-titre">Enregistrez l'évaluation d'un étudiant pour une entreprise partenaire.</p>
     </div>
     <div class="register-card">
         <div class="back-btn-container">
-            <a href="/?uri=entreprises" class="btn-back">← Retour</a>
+            <a href="/?uri=evaluation_list" class="btn-back">← Voir les évaluations</a>
         </div>
         {% if message %}
         <div class="alert alert-success">{{ message }}</div>
@@ -22,7 +22,15 @@
         <div class="alert alert-error">{{ erreur }}</div>
         {% endif %}
         <form method="POST" action="/?uri=avis_create">
-            <input type="hidden" name="id_etudiant" value="{{ session_user.id_etudiant ?? '' }}">
+            <div class="input-group">
+                <label for="id_etudiant">Étudiant concerné *</label>
+                <select id="id_etudiant" name="id_etudiant" required>
+                    <option value="">-- Sélectionner un étudiant --</option>
+                    {% for etudiant in etudiants %}
+                    <option value="{{ etudiant.id_etudiant }}">{{ etudiant.prenom }} {{ etudiant.nom }}</option>
+                    {% endfor %}
+                </select>
+            </div>
             <div class="input-group">
                 <label for="id_entreprise">Entreprise évaluée *</label>
                 <select id="id_entreprise" name="id_entreprise" required>
@@ -35,7 +43,7 @@
             <div class="input-group">
                 <label>Note *</label>
                 <div class="stars">
-                    {% for i in 1..5 %}
+                    {% for i in [5,4,3,2,1] %}
                     <label class="star-label">
                         <input type="radio" name="note" value="{{ i }}" required>
                         <span class="star">★</span>
@@ -45,7 +53,7 @@
             </div>
             <div class="input-group">
                 <label for="commentaire">Commentaire</label>
-                <textarea id="commentaire" name="commentaire" rows="5" placeholder="Décrivez votre expérience..."></textarea>
+                <textarea id="commentaire" name="commentaire" rows="5" placeholder="Décrivez l'expérience de l'étudiant dans cette entreprise..."></textarea>
             </div>
             <button type="submit" class="btn-primary">Envoyer l'évaluation</button>
         </form>

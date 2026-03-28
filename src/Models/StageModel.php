@@ -509,5 +509,41 @@ $whereClause = !empty($whereConditions) ? 'WHERE ' . implode(' AND ', $whereCond
         return $this->db->prepare("DELETE FROM utilisateur WHERE id_utilisateur = :id")->execute([':id' => $idUtilisateur]);
     }
 
+    public function getEvaluationsParEntreprise(int $idEntreprise): array
+    {
+        $stmt = $this->db->prepare(
+            "SELECT ev.id_evaluation, ev.note, ev.commentaire, ev.date_evaluation,
+                    u.nom AS etudiant_nom, u.prenom AS etudiant_prenom
+             FROM evaluation ev
+             JOIN etudiant e ON ev.id_etudiant = e.id_etudiant
+             JOIN utilisateur u ON e.id_utilisateur = u.id_utilisateur
+             WHERE ev.id_entreprise = :id
+             ORDER BY ev.date_evaluation DESC"
+        );
+        $stmt->execute([':id' => $idEntreprise]);
+        return $stmt->fetchAll();
+    }
+
+    public function getAllEvaluations(): array
+    {
+        $stmt = $this->db->query(
+            "SELECT ev.id_evaluation, ev.note, ev.commentaire, ev.date_evaluation,
+                    u.nom AS etudiant_nom, u.prenom AS etudiant_prenom,
+                    ent.nom AS entreprise_nom, ent.id_entreprise
+             FROM evaluation ev
+             JOIN etudiant e ON ev.id_etudiant = e.id_etudiant
+             JOIN utilisateur u ON e.id_utilisateur = u.id_utilisateur
+             JOIN entreprise ent ON ev.id_entreprise = ent.id_entreprise
+             ORDER BY ev.date_evaluation DESC"
+        );
+        return $stmt->fetchAll();
+    }
+
+    public function supprimerEvaluation(int $id): bool
+    {
+        $stmt = $this->db->prepare("DELETE FROM evaluation WHERE id_evaluation = :id");
+        return $stmt->execute([':id' => $id]);
+    }
+
 }
 

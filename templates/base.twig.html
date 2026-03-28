@@ -23,7 +23,7 @@
 
             {% if session_user and session_user.role in ['admin', 'pilote'] %}
             <div class="nav-dropdown" id="nav-gestion">
-                <button class="nav-dropdown-btn {% if uri in ['etudiant_list','entreprise_list','entreprise_create','entreprise_update','pilote_list','pilote_create'] %}active{% endif %}"
+                <button class="nav-dropdown-btn {% if uri in ['etudiant_list','entreprise_list','entreprise_create','entreprise_update','pilote_list','pilote_create','evaluation_list','avis_create'] %}active{% endif %}"
                         onclick="toggleDropdown(this)" type="button">
                     Gestion
                     <svg class="nav-chevron" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4"/></svg>
@@ -40,6 +40,12 @@
                             <svg viewBox="0 0 16 16"><rect x="2" y="6" width="12" height="8" rx="1"/><path d="M5 6V4a3 3 0 0 1 6 0v2"/><path d="M6 10h4"/></svg>
                         </span>
                         Entreprises
+                    </a>
+                    <a href="/?uri=evaluation_list" class="{% if uri in ['evaluation_list','avis_create'] %}active{% endif %}">
+                        <span class="nav-item-icon">
+                            <svg viewBox="0 0 16 16"><path d="M8 1l2 4.5H15l-4 3 1.5 5L8 11l-4.5 2.5L5 8.5 1 5.5h5z"/></svg>
+                        </span>
+                        Évaluations
                     </a>
                     {% if session_user.role == 'admin' %}
                     <a href="/?uri=pilote_list" class="{% if uri in ['pilote_list','pilote_create'] %}active{% endif %}">

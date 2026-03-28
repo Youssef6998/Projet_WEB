@@ -101,6 +101,10 @@ class Router {
                 => $this->admin->storeAvis(),
             $uri === 'avis_create'
                 => $this->admin->showAvisCreate(),
+            $uri === 'evaluation_list'
+                => $this->admin->showEvaluationList(),
+            $uri === 'evaluation_delete' && $method === 'POST'
+                => $this->admin->destroyEvaluation(),
 
             // Pages statiques
             $uri === 'mentions'

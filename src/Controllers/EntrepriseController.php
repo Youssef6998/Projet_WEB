@@ -50,9 +50,11 @@ class EntrepriseController extends BaseController {
         if (!$entreprise) {
             return $this->render('404.twig.html', ['uri' => 'entreprise']);
         }
+        $evaluations = $this->model->getEvaluationsParEntreprise($id);
         return $this->render('entreprise.twig.html', [
-            'uri'        => 'entreprise',
-            'entreprise' => $entreprise,
+            'uri'         => 'entreprise',
+            'entreprise'  => $entreprise,
+            'evaluations' => $evaluations,
         ]);
     }
 
