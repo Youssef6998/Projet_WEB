@@ -575,4 +575,29 @@ class StageModel {
         return $this->db->prepare("DELETE FROM utilisateur WHERE id_utilisateur = :id")
                         ->execute([':id' => $idUtilisateur]);
     }
+    public function getPiloteById(int $id): ?array {
+        $stmt = $this->db->prepare(
+            "SELECT u.id_utilisateur, u.nom, u.prenom, u.email, u.telephone,
+                    p.promotion, p.centre
+             FROM utilisateur u
+             JOIN pilote p ON u.id_utilisateur = p.id_utilisateur
+             WHERE u.id_utilisateur = :id"
+        );
+        $stmt->execute([':id' => $id]);
+        $row = $stmt->fetch();
+        return $row ?: null;
+    }
+
+    public function modifierPilote(int $id, string $nom, string $prenom, string $email, string $telephone, string $promotion): bool {
+        $stmt = $this->db->prepare(
+            "UPDATE utilisateur SET nom=:nom, prenom=:prenom, email=:email, telephone=:tel
+             WHERE id_utilisateur=:id"
+        );
+        $stmt->execute([':nom' => $nom, ':prenom' => $prenom, ':email' => $email, ':tel' => $telephone, ':id' => $id]);
+
+        $stmt2 = $this->db->prepare("UPDATE pilote SET promotion=:promo WHERE id_utilisateur=:id");
+        return $stmt2->execute([':promo' => $promotion, ':id' => $id]);
+    }
+
+} // ← accolade fermante de la classe
 }

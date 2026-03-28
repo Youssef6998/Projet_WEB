@@ -111,4 +111,32 @@ class AdminController extends BaseController {
         );
         $this->redirect('/?uri=avis_create&success=1');
     }
+
+    public function showPiloteUpdate(int $id): string {
+        $this->requireRole(fn() => $this->isAdmin());
+        $pilote = $this->model->getPiloteById($id);
+        if (!$pilote) return $this->render('404.twig.html', ['uri' => 'pilote_update']);
+        return $this->render('modifier_pilote.twig.html', [
+            'uri'    => 'pilote_update',
+            'pilote' => $pilote,
+        ]);
+    }
+
+    public function updatePilote(): void {
+        $this->requireRole(fn() => $this->isAdmin());
+        $id = (int)($_POST['id'] ?? 0);
+        if ($id) {
+            $this->model->modifierPilote(
+                $id,
+                trim($_POST['nom']       ?? ''),
+                trim($_POST['prenom']    ?? ''),
+                trim($_POST['email']     ?? ''),
+                trim($_POST['telephone'] ?? ''),
+                trim($_POST['promotion'] ?? '')
+            );
+        }
+        $this->redirect('/?uri=pilote_list&success=modifie');
+    }
+
+
 }

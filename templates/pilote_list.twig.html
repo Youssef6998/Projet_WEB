@@ -72,8 +72,9 @@
                 {% endif %}
             </div>
             <div class="stage-right">
+                <a href="/?uri=pilote_update&id={{ p.id_utilisateur }}" class="btn btn-dark">Modifier</a>
                 <form method="POST" action="/?uri=pilote_delete"
-                      onsubmit="return confirm('Supprimer le pilote {{ p.prenom }} {{ p.nom }} ? Cette action est irréversible.')">
+                    onsubmit="return confirm('Supprimer le pilote {{ p.prenom }} {{ p.nom }} ? Cette action est irréversible.')">
                     <input type="hidden" name="id" value="{{ p.id_utilisateur }}">
                     <button type="submit" class="btn btn-ghost" style="color:#dc2626; border-color:#fca5a5">
                         Supprimer
