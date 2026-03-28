@@ -5,7 +5,6 @@
 {% endblock %}
 {% block title %}Gestion des pilotes – Stage Finder{% endblock %}
 {% block content %}
-
     <div class="search-card pilote-list-card">
         <div class="search-head">
             <span class="pill pill-r">Administration</span>
@@ -44,7 +43,6 @@
     {% if success == 'supprime' %}
     <div class="alert alert-error">Le compte pilote a bien été supprimé.</div>
     {% endif %}
-
     {% if success == 'modifie' %}
     <div class="alert alert-success">Le compte pilote a bien été modifié.</div>
     {% endif %}
@@ -72,10 +70,8 @@
                 </div>
                 {% endif %}
             </div>
-            <div class="stage-right">
-                <a href="/?uri=pilote_update&id={{ p.id_utilisateur }}" class="btn btn-dark">Modifier</a>
             <div class="stage-right pilote-actions">
-                <a href="/?uri=pilote_update&id={{ p.id_utilisateur }}" class="btn btn-ghost">Modifier</a>
+                <a href="/?uri=pilote_update&id={{ p.id_utilisateur }}" class="btn btn-dark">Modifier</a>
                 <form method="POST" action="/?uri=pilote_delete"
                     onsubmit="return confirm('Supprimer le pilote {{ p.prenom }} {{ p.nom }} ? Cette action est irréversible.')">
                     <input type="hidden" name="id" value="{{ p.id_utilisateur }}">
@@ -87,5 +83,4 @@
         <p class="pilote-empty">Aucun pilote enregistré.</p>
         {% endfor %}
     </div>
-
 {% endblock %}
