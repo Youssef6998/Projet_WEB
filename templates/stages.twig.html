@@ -96,7 +96,13 @@
             {% endif %}
 
             <div class="stage-actions">
-                <a href="/?uri=favori&id={{ stage.id }}" class="btn btn-dark btn-heart">❤️</a>
+                {% if session_user and session_user.role == 'etudiant' %}
+                <form method="post" action="/?uri=wishlist-toggle">
+                    <input type="hidden" name="id_offre" value="{{ stage.id }}">
+                    <input type="hidden" name="redirect" value="/?uri=stages">
+                    <button type="submit" class="btn btn-dark btn-heart">❤️</button>
+                </form>
+                {% endif %}
                 <a href="/?uri=offre&id={{ stage.id }}" class="btn btn-dark">Voir l'offre</a>
             </div>
         </div>

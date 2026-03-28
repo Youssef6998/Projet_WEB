@@ -1,72 +1,64 @@
 {% extends "base.twig.html" %}
-{% block css %}
-{{ parent() }}
-<link rel="stylesheet" href="/assets/creer_entreprise.css">
-{% endblock %}
 {% block title %}Créer une entreprise – Stage Finder{% endblock %}
 {% block content %}
-<div class="page">
 
-    <div class="intro-page">
-        <div class="intro-small-titre">Entreprise</div>
-        <h1 class="titre-principal">Créer une entreprise</h1>
-        <p class="sous-titre">Renseignez les informations principales de l'entreprise partenaire.</p>
+<div class="mgmt-wrap">
+
+    <div class="mgmt-header">
+        <span class="mgmt-eyebrow">Entreprise</span>
+        <h1>Créer une entreprise</h1>
+        <p>Renseignez les informations principales de l'entreprise partenaire.</p>
     </div>
 
-    <div class="register-card">
-        <div class="back-btn-container">
-            <a href="/?uri=entreprise_list" class="btn-back">← Retour</a>
-        </div>
+    <div class="mgmt-card">
+        <a href="/?uri=entreprise_list" class="mgmt-back">← Retour</a>
 
         {% if erreur %}
         <div class="alert alert-error">{{ erreur }}</div>
         {% endif %}
 
         <form method="POST" action="/?uri=entreprise_create">
-            <div class="input-group">
+            <div class="fgrp">
                 <label>Nom de l'entreprise *</label>
                 <input type="text" name="nom" placeholder="Ex : TechCorp" required>
             </div>
 
-            <div class="row">
-                <div class="input-group">
+            <div class="frow">
+                <div class="fgrp">
                     <label>Ville *</label>
                     <input type="text" name="ville" placeholder="Paris" required>
                 </div>
-                <div class="input-group">
+                <div class="fgrp">
                     <label>Adresse</label>
                     <input type="text" name="adresse" placeholder="123 rue de Rivoli">
                 </div>
             </div>
 
-            <div class="row">
-                <div class="input-group">
+            <div class="frow">
+                <div class="fgrp">
                     <label>Email de contact *</label>
                     <input type="email" name="email" placeholder="contact@entreprise.com" required>
                 </div>
-                <div class="input-group">
+                <div class="fgrp">
                     <label>Téléphone</label>
                     <input type="tel" name="telephone" placeholder="+33 6 12 34 56 78">
                 </div>
             </div>
 
-            <div class="input-group">
+            <div class="fgrp">
                 <label>Description</label>
-                <textarea name="description" rows="3" placeholder="Courte présentation de l'entreprise…"
-                          style="resize:vertical"></textarea>
+                <textarea name="description" rows="4" placeholder="Courte présentation de l'entreprise…" style="resize:vertical"></textarea>
             </div>
 
-            <div class="terms">
+            <div class="fcb">
                 <input type="checkbox" id="cgu" required>
                 <label for="cgu">J'accepte les conditions d'utilisation</label>
             </div>
 
-            <button type="submit" class="btn-primary">
-                <svg viewBox="0 0 20 20"><path d="M10 3v14M3 10h14"/></svg>
-                Créer l'entreprise
-            </button>
+            <button type="submit" class="mgmt-submit">Créer l'entreprise</button>
         </form>
     </div>
 
 </div>
+
 {% endblock %}

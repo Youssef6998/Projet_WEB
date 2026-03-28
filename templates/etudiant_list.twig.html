@@ -51,7 +51,7 @@
                     {% endif %}
                 </div>
             </div>
-            {% if session_user.role == 'admin' %}
+            {% if session_user.role == 'admin' or session_user.role == 'pilote' %}
             <div class="stage-right">
                 <form method="POST" action="/?uri=etudiant_delete"
                       onsubmit="return confirm('Supprimer l\'étudiant {{ e.prenom }} {{ e.nom }} ? Cette action est irréversible.')">
