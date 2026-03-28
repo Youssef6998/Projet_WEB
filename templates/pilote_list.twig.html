@@ -72,13 +72,10 @@
                 </div>
                 {% endif %}
             </div>
-<<<<<<< HEAD
             <div class="stage-right">
                 <a href="/?uri=pilote_update&id={{ p.id_utilisateur }}" class="btn btn-dark">Modifier</a>
-=======
             <div class="stage-right pilote-actions">
                 <a href="/?uri=pilote_update&id={{ p.id_utilisateur }}" class="btn btn-ghost">Modifier</a>
->>>>>>> 1ebc0147bc3b6df5bf127cd7476503adf402d952
                 <form method="POST" action="/?uri=pilote_delete"
                     onsubmit="return confirm('Supprimer le pilote {{ p.prenom }} {{ p.nom }} ? Cette action est irréversible.')">
                     <input type="hidden" name="id" value="{{ p.id_utilisateur }}">
