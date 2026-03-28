@@ -213,7 +213,6 @@ class StageModel {
         return $user;
     }
 
-    // ─── NOUVEAU : récupère toutes les infos fraîches depuis la BDD ───────────
     public function getUtilisateurComplet(int $id): ?array {
         $stmt = $this->db->prepare(
             "SELECT id_utilisateur, nom, prenom, email, telephone, role
@@ -241,12 +240,10 @@ class StageModel {
         return $user;
     }
 
-    // ─── NOUVEAU : modifier un champ de l'utilisateur ────────────────────────
     public function updateUtilisateur(int $id, string $champ, string $valeur): bool {
-        $champsAutorisés = ['nom', 'prenom', 'email', 'telephone'];
-        if (!in_array($champ, $champsAutorisés, true)) return false;
+        $champsAutorises = ['nom', 'prenom', 'email', 'telephone'];
+        if (!in_array($champ, $champsAutorises, true)) return false;
 
-        // Si on change l'email, vérifier qu'il n'existe pas déjà pour un autre utilisateur
         if ($champ === 'email') {
             $stmt = $this->db->prepare("SELECT COUNT(*) FROM utilisateur WHERE email = :email AND id_utilisateur != :id");
             $stmt->execute([':email' => $valeur, ':id' => $id]);
@@ -257,7 +254,6 @@ class StageModel {
         return $stmt->execute([':val' => $valeur, ':id' => $id]);
     }
 
-    // ─── NOUVEAU : modifier le mot de passe ──────────────────────────────────
     public function updateMotDePasse(int $id, string $ancienMdp, string $nouveauMdp): bool {
         $stmt = $this->db->prepare("SELECT mot_de_passe FROM utilisateur WHERE id_utilisateur = :id");
         $stmt->execute([':id' => $id]);
@@ -269,16 +265,12 @@ class StageModel {
         return $stmt2->execute([':mdp' => $hash, ':id' => $id]);
     }
 
-    // ─── NOUVEAU : modifier la promotion (pilote) ─────────────────────────────
     public function updatePromotion(int $idUtilisateur, string $promotion): bool {
         $stmt = $this->db->prepare("UPDATE pilote SET promotion = :promo WHERE id_utilisateur = :id");
         return $stmt->execute([':promo' => $promotion, ':id' => $idUtilisateur]);
     }
 
-    // ─── NOUVEAU : supprimer un compte utilisateur ───────────────────────────
     public function supprimerUtilisateur(int $id): bool {
-        // Les suppressions en cascade doivent être configurées en BDD,
-        // sinon supprimer d'abord les données liées
         $stmt = $this->db->prepare("UPDATE utilisateur SET actif = 0 WHERE id_utilisateur = :id");
         return $stmt->execute([':id' => $id]);
     }
@@ -288,8 +280,7 @@ class StageModel {
             "SELECT o.id_offre, o.titre, o.description, o.base_remuneration,
                     o.date_offre, o.duree, o.nb_places, o.date_publication,
                     e.id_entreprise, e.nom AS company, e.description AS company_desc,
-                    e.id_entreprise, e.nom AS company, e.ville AS ville,
-                    e.email_contact, e.telephone_contact
+                    e.ville, e.email_contact, e.telephone_contact
              FROM offre o
              JOIN entreprise e ON o.id_entreprise = e.id_entreprise
              WHERE o.id_offre = :id"
@@ -414,17 +405,16 @@ class StageModel {
              VALUES (:nom, :ville, :adresse, :email, :tel, :desc)"
         );
         return $stmt->execute([
-            ':nom'    => $nom,
-            ':ville'  => $ville,
+            ':nom'     => $nom,
+            ':ville'   => $ville,
             ':adresse' => $adresse,
-            ':email'  => $email,
-            ':tel'    => $telephone,
-            ':desc'   => $description,
+            ':email'   => $email,
+            ':tel'     => $telephone,
+            ':desc'    => $description,
         ]);
     }
 
-    public function modifierEntreprise(int $id, string $nom, string $ville, string $adresse, string $email, string $telephone, string $description): bool
-    {
+    public function modifierEntreprise(int $id, string $nom, string $ville, string $adresse, string $email, string $telephone, string $description): bool {
         $stmt = $this->db->prepare(
             "UPDATE entreprise
              SET nom = :nom, ville = :ville, adresse = :adresse,
@@ -432,13 +422,13 @@ class StageModel {
              WHERE id_entreprise = :id"
         );
         return $stmt->execute([
-            ':id'    => $id,
-            ':nom'   => $nom,
-            ':ville' => $ville,
+            ':id'      => $id,
+            ':nom'     => $nom,
+            ':ville'   => $ville,
             ':adresse' => $adresse,
-            ':email' => $email,
-            ':tel'   => $telephone,
-            ':desc'  => $description,
+            ':email'   => $email,
+            ':tel'     => $telephone,
+            ':desc'    => $description,
         ]);
     }
 
@@ -493,128 +483,80 @@ class StageModel {
         return $stmt->fetchAll();
     }
 
-        public function ajouterEtudiantAuPilote(int $idPilote, int $idEtudiant): bool {
+    public function ajouterEtudiantAuPilote(int $idPilote, int $idEtudiant): bool {
         $stmt = $this->db->prepare(
             "INSERT INTO pilote_etudiant (id_pilote, id_etudiant) VALUES (:pilote, :etudiant)"
         );
         return $stmt->execute([':pilote' => $idPilote, ':etudiant' => $idEtudiant]);
     }
 
-
     public function getAllPilotes(string $nom = '', string $prenom = ''): array {
-    $conditions = ["u.actif = 1"];
-    $params     = [];
+        $conditions = ["u.actif = 1"];
+        $params     = [];
 
-    if ($nom !== '') {
-        $conditions[] = "u.nom LIKE :nom";
-        $params[':nom'] = '%' . $nom . '%';
+        if ($nom !== '') {
+            $conditions[] = "u.nom LIKE :nom";
+            $params[':nom'] = '%' . $nom . '%';
+        }
+        if ($prenom !== '') {
+            $conditions[] = "u.prenom LIKE :prenom";
+            $params[':prenom'] = '%' . $prenom . '%';
+        }
+
+        $where = 'WHERE ' . implode(' AND ', $conditions);
+
+        $stmt = $this->db->prepare(
+            "SELECT u.id_utilisateur, u.nom, u.prenom, u.email, u.telephone,
+                    p.promotion, p.centre,
+                    COUNT(e.id_etudiant) AS nb_etudiants
+             FROM utilisateur u
+             JOIN pilote p ON u.id_utilisateur = p.id_utilisateur
+             LEFT JOIN etudiant e ON e.id_pilote = p.id_pilote
+             $where
+             GROUP BY u.id_utilisateur, u.nom, u.prenom, u.email, u.telephone, p.promotion, p.centre
+             ORDER BY u.nom, u.prenom"
+        );
+        $stmt->execute($params);
+        return $stmt->fetchAll();
     }
-    if ($prenom !== '') {
-        $conditions[] = "u.prenom LIKE :prenom";
-        $params[':prenom'] = '%' . $prenom . '%';
-    }
-
-    $where = 'WHERE ' . implode(' AND ', $conditions);
-
-    $stmt = $this->db->prepare(
-        "SELECT u.id_utilisateur, u.nom, u.prenom, u.email, u.telephone,
-                p.promotion, p.centre,
-                COUNT(e.id_etudiant) AS nb_etudiants
-         FROM utilisateur u
-         JOIN pilote p ON u.id_utilisateur = p.id_utilisateur
-         LEFT JOIN etudiant e ON e.id_pilote = p.id_pilote
-         $where
-         GROUP BY u.id_utilisateur, u.nom, u.prenom, u.email, u.telephone, p.promotion, p.centre
-         ORDER BY u.nom, u.prenom"
-    );
-    $stmt->execute($params);
-    return $stmt->fetchAll();
-}
 
     public function getAllEtudiants(string $nom = '', string $prenom = ''): array {
-    $conditions = [];
-    $params     = [];
+        $conditions = [];
+        $params     = [];
 
-    if ($nom !== '') {
-        $conditions[] = "u.nom LIKE :nom";
-        $params[':nom'] = '%' . $nom . '%';
+        if ($nom !== '') {
+            $conditions[] = "u.nom LIKE :nom";
+            $params[':nom'] = '%' . $nom . '%';
+        }
+        if ($prenom !== '') {
+            $conditions[] = "u.prenom LIKE :prenom";
+            $params[':prenom'] = '%' . $prenom . '%';
+        }
+
+        $where = !empty($conditions) ? 'WHERE ' . implode(' AND ', $conditions) : '';
+
+        $sql = "SELECT u.id_utilisateur, u.nom, u.prenom, u.email, u.telephone,
+                       e.id_etudiant, e.formation, e.niveau_etude,
+                       CONCAT(p.prenom, ' ', p.nom) AS pilote_nom
+                FROM utilisateur u
+                JOIN etudiant e ON u.id_utilisateur = e.id_utilisateur
+                LEFT JOIN pilote pi ON e.id_pilote = pi.id_pilote
+                LEFT JOIN utilisateur p ON pi.id_utilisateur = p.id_utilisateur
+                $where
+                ORDER BY u.nom, u.prenom";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll();
     }
-    if ($prenom !== '') {
-        $conditions[] = "u.prenom LIKE :prenom";
-        $params[':prenom'] = '%' . $prenom . '%';
-    }
 
-    $where = !empty($conditions) ? 'WHERE ' . implode(' AND ', $conditions) : '';
-
-    $sql = "SELECT u.id_utilisateur, u.nom, u.prenom, u.email, u.telephone,
-                   e.id_etudiant, e.formation, e.niveau_etude,
-                   CONCAT(p.prenom, ' ', p.nom) AS pilote_nom
-            FROM utilisateur u
-            JOIN etudiant e ON u.id_utilisateur = e.id_utilisateur
-            LEFT JOIN pilote pi ON e.id_pilote = pi.id_pilote
-            LEFT JOIN utilisateur p ON pi.id_utilisateur = p.id_utilisateur
-            $where
-            ORDER BY u.nom, u.prenom";
-
-    $stmt = $this->db->prepare($sql);
-    $stmt->execute($params);
-    return $stmt->fetchAll();
-}
-
-    public function getPiloteById(int $idUtilisateur): array|false
-    {
+    public function getPiloteById(int $id): ?array {
         $stmt = $this->db->prepare(
             "SELECT u.id_utilisateur, u.nom, u.prenom, u.email, u.telephone,
                     p.id_pilote, p.centre, p.promotion
              FROM utilisateur u
              JOIN pilote p ON u.id_utilisateur = p.id_utilisateur
              WHERE u.id_utilisateur = :id AND u.actif = 1"
-        );
-        $stmt->execute([':id' => $idUtilisateur]);
-        return $stmt->fetch();
-    }
-
-    public function updatePilote(int $idUtilisateur, string $nom, string $prenom, string $email, string $telephone, string $promotion, ?string $motDePasse): bool
-    {
-        if ($motDePasse !== null) {
-            $hash = password_hash($motDePasse, PASSWORD_DEFAULT);
-            $this->db->prepare(
-                "UPDATE utilisateur SET nom=:nom, prenom=:prenom, email=:email, telephone=:tel, mot_de_passe=:mdp
-                 WHERE id_utilisateur=:id"
-            )->execute([':nom' => $nom, ':prenom' => $prenom, ':email' => $email, ':tel' => $telephone, ':mdp' => $hash, ':id' => $idUtilisateur]);
-        } else {
-            $this->db->prepare(
-                "UPDATE utilisateur SET nom=:nom, prenom=:prenom, email=:email, telephone=:tel
-                 WHERE id_utilisateur=:id"
-            )->execute([':nom' => $nom, ':prenom' => $prenom, ':email' => $email, ':tel' => $telephone, ':id' => $idUtilisateur]);
-        }
-        return $this->db->prepare(
-            "UPDATE pilote SET promotion=:promo WHERE id_utilisateur=:id"
-        )->execute([':promo' => $promotion, ':id' => $idUtilisateur]);
-    }
-
-    public function supprimerPilote(int $idUtilisateur): bool
-    {
-        $this->db->prepare("DELETE FROM pilote WHERE id_utilisateur = :id")
-                 ->execute([':id' => $idUtilisateur]);
-        return $this->db->prepare("DELETE FROM utilisateur WHERE id_utilisateur = :id")
-                        ->execute([':id' => $idUtilisateur]);
-    }
-
-    public function supprimerEtudiant(int $idUtilisateur): bool
-    {
-        $this->db->prepare("DELETE FROM etudiant WHERE id_utilisateur = :id")
-                 ->execute([':id' => $idUtilisateur]);
-        return $this->db->prepare("DELETE FROM utilisateur WHERE id_utilisateur = :id")
-                        ->execute([':id' => $idUtilisateur]);
-    }
-    public function getPiloteById(int $id): ?array {
-        $stmt = $this->db->prepare(
-            "SELECT u.id_utilisateur, u.nom, u.prenom, u.email, u.telephone,
-                    p.promotion, p.centre
-             FROM utilisateur u
-             JOIN pilote p ON u.id_utilisateur = p.id_utilisateur
-             WHERE u.id_utilisateur = :id"
         );
         $stmt->execute([':id' => $id]);
         $row = $stmt->fetch();
@@ -632,4 +574,17 @@ class StageModel {
         return $stmt2->execute([':promo' => $promotion, ':id' => $id]);
     }
 
+    public function supprimerPilote(int $idUtilisateur): bool {
+        $this->db->prepare("DELETE FROM pilote WHERE id_utilisateur = :id")
+                 ->execute([':id' => $idUtilisateur]);
+        return $this->db->prepare("DELETE FROM utilisateur WHERE id_utilisateur = :id")
+                        ->execute([':id' => $idUtilisateur]);
+    }
+
+    public function supprimerEtudiant(int $idUtilisateur): bool {
+        $this->db->prepare("DELETE FROM etudiant WHERE id_utilisateur = :id")
+                 ->execute([':id' => $idUtilisateur]);
+        return $this->db->prepare("DELETE FROM utilisateur WHERE id_utilisateur = :id")
+                        ->execute([':id' => $idUtilisateur]);
+    }
 }
