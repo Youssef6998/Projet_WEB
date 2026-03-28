@@ -74,8 +74,9 @@
             </div>
             {% if session_user.role == 'admin' or session_user.role == 'pilote' %}
             <div class="stage-right">
+                <a href="/?uri=etudiant_update&id={{ e.id_utilisateur }}" class="btn btn-dark">Modifier</a>
                 <form method="POST" action="/?uri=etudiant_delete"
-                      onsubmit="return confirm('Supprimer l\'étudiant {{ e.prenom }} {{ e.nom }} ? Cette action est irréversible.')">
+                    onsubmit="return confirm('Supprimer l\'étudiant {{ e.prenom }} {{ e.nom }} ? Cette action est irréversible.')">
                     <input type="hidden" name="id" value="{{ e.id_utilisateur }}">
                     <button type="submit" class="btn btn-ghost" style="color:#dc2626; border-color:#fca5a5">
                         Supprimer
