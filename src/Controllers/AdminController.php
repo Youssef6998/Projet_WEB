@@ -162,21 +162,5 @@ class AdminController extends BaseController {
         ]);
     }
 
-    public function updatePilote(): void {
-        $this->requireRole(fn() => $this->isAdmin());
-        $id = (int)($_POST['id'] ?? 0);
-        if ($id) {
-            $this->model->modifierPilote(
-                $id,
-                trim($_POST['nom']       ?? ''),
-                trim($_POST['prenom']    ?? ''),
-                trim($_POST['email']     ?? ''),
-                trim($_POST['telephone'] ?? ''),
-                trim($_POST['promotion'] ?? '')
-            );
-        }
-        $this->redirect('/?uri=pilote_list&success=modifie');
-    }
-
 
 }
