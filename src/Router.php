@@ -87,6 +87,10 @@ class Router {
                 => $this->admin->storePilote(),
             $uri === 'pilote_create'
                 => $this->admin->showPiloteCreate(),
+            $uri === 'pilote_update' && $method === 'POST'
+                => $this->admin->updatePilote(),
+            $uri === 'pilote_update'
+                => $this->admin->showPiloteEdit($id),
             $uri === 'pilote_delete' && $method === 'POST'
                 => $this->admin->destroyPilote(),
             $uri === 'etudiant_list'

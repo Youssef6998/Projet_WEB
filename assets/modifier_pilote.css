@@ -1,0 +1,15 @@
+.mdp-section {
+    border-top: 1px solid var(--rose-border);
+    margin: 1.25rem 0 1rem;
+    padding-top: 1.25rem;
+}
+
+.mdp-section-label {
+    font-size: .75rem;
+    color: var(--text-muted);
+    margin: 0 0 .75rem;
+}
+
+.mdp-section-hint {
+    font-weight: 400;
+}
