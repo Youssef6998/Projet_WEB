@@ -500,7 +500,7 @@ class StageModel {
         return $stmt->execute([':pilote' => $idPilote, ':etudiant' => $idEtudiant]);
     }
 
-<<<<<<< HEAD
+
     public function getAllPilotes(string $nom = '', string $prenom = ''): array {
     $conditions = ["u.actif = 1"];
     $params     = [];
@@ -561,7 +561,6 @@ class StageModel {
     return $stmt->fetchAll();
 }
 
-=======
     public function getPiloteById(int $idUtilisateur): array|false
     {
         $stmt = $this->db->prepare(
@@ -594,7 +593,6 @@ class StageModel {
         )->execute([':promo' => $promotion, ':id' => $idUtilisateur]);
     }
 
->>>>>>> 1ebc0147bc3b6df5bf127cd7476503adf402d952
     public function supprimerPilote(int $idUtilisateur): bool
     {
         $this->db->prepare("DELETE FROM pilote WHERE id_utilisateur = :id")
