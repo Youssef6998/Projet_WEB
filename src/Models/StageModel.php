@@ -500,6 +500,7 @@ class StageModel {
         return $stmt->execute([':pilote' => $idPilote, ':etudiant' => $idEtudiant]);
     }
 
+<<<<<<< HEAD
     public function getAllPilotes(string $nom = '', string $prenom = ''): array {
     $conditions = ["u.actif = 1"];
     $params     = [];
@@ -560,6 +561,40 @@ class StageModel {
     return $stmt->fetchAll();
 }
 
+=======
+    public function getPiloteById(int $idUtilisateur): array|false
+    {
+        $stmt = $this->db->prepare(
+            "SELECT u.id_utilisateur, u.nom, u.prenom, u.email, u.telephone,
+                    p.id_pilote, p.centre, p.promotion
+             FROM utilisateur u
+             JOIN pilote p ON u.id_utilisateur = p.id_utilisateur
+             WHERE u.id_utilisateur = :id AND u.actif = 1"
+        );
+        $stmt->execute([':id' => $idUtilisateur]);
+        return $stmt->fetch();
+    }
+
+    public function updatePilote(int $idUtilisateur, string $nom, string $prenom, string $email, string $telephone, string $promotion, ?string $motDePasse): bool
+    {
+        if ($motDePasse !== null) {
+            $hash = password_hash($motDePasse, PASSWORD_DEFAULT);
+            $this->db->prepare(
+                "UPDATE utilisateur SET nom=:nom, prenom=:prenom, email=:email, telephone=:tel, mot_de_passe=:mdp
+                 WHERE id_utilisateur=:id"
+            )->execute([':nom' => $nom, ':prenom' => $prenom, ':email' => $email, ':tel' => $telephone, ':mdp' => $hash, ':id' => $idUtilisateur]);
+        } else {
+            $this->db->prepare(
+                "UPDATE utilisateur SET nom=:nom, prenom=:prenom, email=:email, telephone=:tel
+                 WHERE id_utilisateur=:id"
+            )->execute([':nom' => $nom, ':prenom' => $prenom, ':email' => $email, ':tel' => $telephone, ':id' => $idUtilisateur]);
+        }
+        return $this->db->prepare(
+            "UPDATE pilote SET promotion=:promo WHERE id_utilisateur=:id"
+        )->execute([':promo' => $promotion, ':id' => $idUtilisateur]);
+    }
+
+>>>>>>> 1ebc0147bc3b6df5bf127cd7476503adf402d952
     public function supprimerPilote(int $idUtilisateur): bool
     {
         $this->db->prepare("DELETE FROM pilote WHERE id_utilisateur = :id")

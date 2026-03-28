@@ -55,6 +55,46 @@ class AdminController extends BaseController {
     ]);
 }
 
+    // GET /?uri=pilote_update&id=X
+    public function showPiloteEdit(int $id): string {
+        $this->requireRole(fn() => $this->isAdmin());
+        $pilote = $this->model->getPiloteById($id);
+        if (!$pilote) {
+            $this->redirect('/?uri=pilote_list');
+        }
+        return $this->render('modifier_pilote.twig.html', [
+            'uri'    => 'pilote_update',
+            'pilote' => $pilote,
+        ]);
+    }
+
+    // POST /?uri=pilote_update
+    public function updatePilote(): void {
+        $this->requireRole(fn() => $this->isAdmin());
+
+        $id           = (int)($_POST['id']            ?? 0);
+        $nom          = trim($_POST['nom']             ?? '');
+        $prenom       = trim($_POST['prenom']          ?? '');
+        $email        = trim($_POST['email']           ?? '');
+        $telephone    = trim($_POST['telephone']       ?? '');
+        $promotion    = trim($_POST['promotion']       ?? '');
+        $motdepasse   = $_POST['motdepasse']           ?? '';
+        $confirmation = $_POST['confirmation']         ?? '';
+
+        if ($motdepasse !== '' && $motdepasse !== $confirmation) {
+            $pilote = $this->model->getPiloteById($id);
+            echo $this->render('modifier_pilote.twig.html', [
+                'uri'    => 'pilote_update',
+                'pilote' => $pilote,
+                'erreur' => 'Les mots de passe ne correspondent pas.',
+            ]);
+            return;
+        }
+
+        $this->model->updatePilote($id, $nom, $prenom, $email, $telephone, $promotion, $motdepasse !== '' ? $motdepasse : null);
+        $this->redirect('/?uri=pilote_list&success=modifie');
+    }
+
     // POST /?uri=pilote_delete
     public function destroyPilote(): void {
         $this->requireRole(fn() => $this->isAdmin());
