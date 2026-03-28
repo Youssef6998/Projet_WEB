@@ -161,6 +161,35 @@ class AdminController extends BaseController {
             'pilote' => $pilote,
         ]);
     }
+    public function showEtudiantUpdate(int $id): string {
+        $this->requireRole(fn() => $this->isAdminOrPilote());
+        $etudiant = $this->model->getEtudiantById($id);
+        if (!$etudiant) return $this->render('404.twig.html', ['uri' => 'etudiant_update']);
+        return $this->render('modifier_etudiant.twig.html', [
+            'uri'      => 'etudiant_update',
+            'etudiant' => $etudiant,
+        ]);
+    }
+
+    // POST /?uri=etudiant_update
+    public function updateEtudiant(): void {
+        $this->requireRole(fn() => $this->isAdminOrPilote());
+        $id = (int)($_POST['id'] ?? 0);
+        if ($id) {
+            $this->model->modifierEtudiant(
+                $id,
+                trim($_POST['nom']          ?? ''),
+                trim($_POST['prenom']       ?? ''),
+                trim($_POST['email']        ?? ''),
+                trim($_POST['telephone']    ?? ''),
+                trim($_POST['formation']    ?? ''),
+                trim($_POST['niveau_etude'] ?? '')
+            );
+        }
+        $this->redirect('/?uri=etudiant_list&success=modifie');
+    }
+
+}
 
 
 }

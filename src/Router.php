@@ -93,17 +93,17 @@ class Router {
             $uri === 'pilote_update' && $method === 'POST'
                 => $this->admin->updatePilote(),
             $uri === 'pilote_update'
-                => $this->admin->showPiloteEdit($id),
+                => $this->admin->showPiloteUpdate($id),
             $uri === 'pilote_delete' && $method === 'POST'
                 => $this->admin->destroyPilote(),
-            $uri === 'pilote_update' && $method === 'POST'
-                => $this->admin->updatePilote(),
-            $uri === 'pilote_update'
-                => $this->admin->showPiloteUpdate($id),
             $uri === 'etudiant_list'
                 => $this->admin->showEtudiantList(),
             $uri === 'etudiant_delete' && $method === 'POST'
                 => $this->admin->destroyEtudiant(),
+            $uri === 'etudiant_update' && $method === 'POST'
+                => $this->admin->updateEtudiant(),
+            $uri === 'etudiant_update'
+                => $this->admin->showEtudiantUpdate($id),
             $uri === 'avis_create' && $method === 'POST'
                 => $this->admin->storeAvis(),
             $uri === 'avis_create'

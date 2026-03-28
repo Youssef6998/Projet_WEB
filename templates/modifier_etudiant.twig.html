@@ -1,0 +1,58 @@
+{% extends "base.twig.html" %}
+{% block css %}
+{{ parent() }}
+<link rel="stylesheet" href="/assets/creer_compte_pilote.css">
+{% endblock %}
+{% block title %}Modifier un étudiant – Stage Finder{% endblock %}
+{% block content %}
+<div class="page">
+    <div class="intro-page">
+        <div class="intro-small-titre">Étudiant</div>
+        <h1 class="titre-principal">Modifier un étudiant</h1>
+        <p class="sous-titre">Modifiez les informations du compte étudiant.</p>
+    </div>
+    <div class="register-card">
+        <div class="back-btn-container">
+            <a href="/?uri=etudiant_list" class="btn-back">← Retour</a>
+        </div>
+        {% if erreur %}
+        <div class="alert alert-error">{{ erreur }}</div>
+        {% endif %}
+        <form method="POST" action="/?uri=etudiant_update">
+            <input type="hidden" name="id" value="{{ etudiant.id_utilisateur }}">
+            <div class="row">
+                <div class="input-group">
+                    <label>Nom *</label>
+                    <input type="text" name="nom" value="{{ etudiant.nom }}" required>
+                </div>
+                <div class="input-group">
+                    <label>Prénom *</label>
+                    <input type="text" name="prenom" value="{{ etudiant.prenom }}" required>
+                </div>
+            </div>
+            <div class="input-group">
+                <label>Email *</label>
+                <input type="email" name="email" value="{{ etudiant.email }}" required>
+            </div>
+            <div class="input-group">
+                <label>Téléphone</label>
+                <input type="tel" name="telephone" value="{{ etudiant.telephone ?? '' }}">
+            </div>
+            <div class="input-group">
+                <label>Formation</label>
+                <input type="text" name="formation" value="{{ etudiant.formation ?? '' }}" placeholder="Ex : Informatique">
+            </div>
+            <div class="input-group">
+                <label>Niveau d'étude</label>
+                <select name="niveau_etude">
+                    <option value="">-- Sélectionner --</option>
+                    {% for n in ['Bac+1','Bac+2','Bac+3','Bac+4','Bac+5'] %}
+                    <option value="{{ n }}" {{ etudiant.niveau_etude == n ? 'selected' : '' }}>{{ n }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn-primary">Enregistrer les modifications</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

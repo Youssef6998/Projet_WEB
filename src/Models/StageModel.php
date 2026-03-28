@@ -587,4 +587,28 @@ class StageModel {
         return $this->db->prepare("DELETE FROM utilisateur WHERE id_utilisateur = :id")
                         ->execute([':id' => $idUtilisateur]);
     }
+    public function getEtudiantById(int $id): ?array {
+    $stmt = $this->db->prepare(
+        "SELECT u.id_utilisateur, u.nom, u.prenom, u.email, u.telephone,
+                e.id_etudiant, e.formation, e.niveau_etude
+         FROM utilisateur u
+         JOIN etudiant e ON u.id_utilisateur = e.id_utilisateur
+         WHERE u.id_utilisateur = :id"
+    );
+    $stmt->execute([':id' => $id]);
+    $row = $stmt->fetch();
+    return $row ?: null;
+}
+
+    public function modifierEtudiant(int $id, string $nom, string $prenom, string $email, string $telephone, string $formation, string $niveauEtude): bool {
+        $this->db->prepare(
+            "UPDATE utilisateur SET nom=:nom, prenom=:prenom, email=:email, telephone=:tel
+            WHERE id_utilisateur=:id"
+        )->execute([':nom' => $nom, ':prenom' => $prenom, ':email' => $email, ':tel' => $telephone, ':id' => $id]);
+
+        $stmt2 = $this->db->prepare(
+            "UPDATE etudiant SET formation=:formation, niveau_etude=:niveau WHERE id_utilisateur=:id"
+        );
+        return $stmt2->execute([':formation' => $formation, ':niveau' => $niveauEtude, ':id' => $id]);
+    }
 }
