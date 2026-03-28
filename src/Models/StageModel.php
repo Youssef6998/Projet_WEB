@@ -599,5 +599,4 @@ class StageModel {
         return $stmt2->execute([':promo' => $promotion, ':id' => $id]);
     }
 
-} // ← accolade fermante de la classe
 }
