@@ -516,21 +516,35 @@ class StageModel {
         return $stmt->fetchAll();
     }
 
-    public function getAllEtudiants(): array
-    {
-        $stmt = $this->db->query(
-            "SELECT u.id_utilisateur, u.nom, u.prenom, u.email, u.telephone,
-                    e.id_etudiant, e.formation, e.niveau_etude,
-                    CONCAT(up.prenom, ' ', up.nom) AS pilote_nom
-             FROM utilisateur u
-             JOIN etudiant e ON u.id_utilisateur = e.id_utilisateur
-             LEFT JOIN pilote p ON e.id_pilote = p.id_pilote
-             LEFT JOIN utilisateur up ON p.id_utilisateur = up.id_utilisateur
-             WHERE u.actif = 1
-             ORDER BY u.nom, u.prenom"
-        );
-        return $stmt->fetchAll();
+    public function getAllEtudiants(string $nom = '', string $prenom = ''): array {
+    $conditions = [];
+    $params     = [];
+
+    if ($nom !== '') {
+        $conditions[] = "u.nom LIKE :nom";
+        $params[':nom'] = '%' . $nom . '%';
     }
+    if ($prenom !== '') {
+        $conditions[] = "u.prenom LIKE :prenom";
+        $params[':prenom'] = '%' . $prenom . '%';
+    }
+
+    $where = !empty($conditions) ? 'WHERE ' . implode(' AND ', $conditions) : '';
+
+    $sql = "SELECT u.id_utilisateur, u.nom, u.prenom, u.email, u.telephone,
+                   e.id_etudiant, e.formation, e.niveau_etude,
+                   CONCAT(p.prenom, ' ', p.nom) AS pilote_nom
+            FROM utilisateur u
+            JOIN etudiant e ON u.id_utilisateur = e.id_utilisateur
+            LEFT JOIN pilote pi ON e.id_pilote = pi.id_pilote
+            LEFT JOIN utilisateur p ON pi.id_utilisateur = p.id_utilisateur
+            $where
+            ORDER BY u.nom, u.prenom";
+
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute($params);
+    return $stmt->fetchAll();
+}
 
     public function supprimerPilote(int $idUtilisateur): bool
     {

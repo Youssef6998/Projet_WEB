@@ -64,24 +64,26 @@ class AdminController extends BaseController {
     // GET /?uri=etudiant_list
     public function showEtudiantList(): string {
         $this->requireRole(fn() => $this->isAdminOrPilote());
-        $etudiants = $this->model->getAllEtudiants();
+        $nom    = trim($_GET['nom']    ?? '');
+        $prenom = trim($_GET['prenom'] ?? '');
+        $etudiants = $this->model->getAllEtudiants($nom, $prenom);
         return $this->render('etudiant_list.twig.html', [
             'uri'       => 'etudiant_list',
             'etudiants' => $etudiants,
+            'nom'       => $nom,
+            'prenom'    => $prenom,
             'success'   => $_GET['success'] ?? null,
         ]);
     }
-
     // POST /?uri=etudiant_delete
     public function destroyEtudiant(): void {
-        $this->requireRole(fn() => $this->isAdmin());
-        $id = (int)($_POST['id'] ?? 0);
-        if ($id) {
-            $this->model->supprimerEtudiant($id);
-        }
-        $this->redirect('/?uri=etudiant_list&success=supprime');
+    $this->requireRole(fn() => $this->isAdminOrPilote());
+    $id = (int)($_POST['id'] ?? 0);
+    if ($id) {
+        $this->model->supprimerEtudiant($id);
     }
-
+    $this->redirect('/?uri=etudiant_list&success=supprime');
+}
     // GET /?uri=avis_create
     public function showAvisCreate(): string {
         $this->requireRole(fn() => $this->isAdminOrPilote());

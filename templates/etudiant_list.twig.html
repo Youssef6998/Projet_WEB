@@ -12,6 +12,27 @@
             <h2 style="font-size:1.05rem; font-weight:700; color:var(--dark); margin:0">Gestion des Étudiants</h2>
             <p style="font-size:.75rem; color:var(--text-muted); margin:.2rem 0 0">Consultez les comptes étudiants et leur pilote superviseur.</p>
         </div>
+         <form action="/?uri=etudiant_list" method="get" style="margin-top:1rem">
+            <input type="hidden" name="uri" value="etudiant_list">
+            <div class="field-grid-4">
+                <div class="field">
+                    <label>Prénom</label>
+                    <div class="field-input">
+                        <input name="prenom" value="{{ prenom ?? '' }}" class="cases" placeholder="Ex : Alice, Thomas...">
+                    </div>
+                </div>
+                <div class="field">
+                    <label>Nom</label>
+                    <div class="field-input">
+                        <input name="nom" value="{{ nom ?? '' }}" class="cases" placeholder="Ex : Dupont, Martin...">
+                    </div>
+                </div>
+            </div>
+            <div class="search-actions">
+                <button type="submit" class="btn btn-fill">Rechercher</button>
+                <a href="/?uri=etudiant_list" class="btn btn-outline">Réinitialiser</a>
+            </div>
+        </form>
     </div>
 
     {% if success == 'supprime' %}
