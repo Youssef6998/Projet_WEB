@@ -682,5 +682,17 @@ class StageModel {
         $stmt->execute();
         return $stmt->fetchAll();
     }
+    public function getEtudiantsParPiloteUtilisateur(int $idUtilisateur): array {
+    $stmt = $this->db->prepare(
+        "SELECT u.id_utilisateur, u.nom, u.prenom, u.email
+         FROM utilisateur u
+         JOIN etudiant e ON u.id_utilisateur = e.id_utilisateur
+         JOIN pilote p ON e.id_pilote = p.id_pilote
+         WHERE p.id_utilisateur = :id
+         ORDER BY u.nom, u.prenom"
+    );
+    $stmt->execute([':id' => $idUtilisateur]);
+    return $stmt->fetchAll();
+}
 
 }

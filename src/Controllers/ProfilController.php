@@ -11,26 +11,31 @@ class ProfilController extends BaseController {
 
     // GET /?uri=profil
     public function index(): string {
-        $this->requireRole(fn() => $this->isConnecte());
-        $user = $this->model->getUtilisateurComplet((int)$_SESSION['user']['id_utilisateur']);
-        $candidatures = [];
-        $wishlist     = [];
-        if ($user['role'] === 'etudiant' && !empty($user['id_etudiant'])) {
-            $candidatures = $this->model->getCandidaturesEtudiant($user['id_etudiant']);
-            $wishlist     = $this->model->getWishlistEtudiant($user['id_etudiant']);
-        }
-        $success = $_GET['success'] ?? null;
-        $erreur  = $_GET['erreur']  ?? null;
+    $this->requireRole(fn() => $this->isConnecte());
+    $user = $this->model->getUtilisateurComplet((int)$_SESSION['user']['id_utilisateur']);
+    $candidatures = [];
+    $wishlist     = [];
+    $etudiants_supervises = [];
 
-        return $this->render('profil.twig.html', [
-            'uri'          => 'profil',
-            'user'         => $user,
-            'candidatures' => $candidatures,
-            'wishlist'     => $wishlist,
-            'success'      => $success,
-            'erreur'       => $erreur,
-        ]);
+    if ($user['role'] === 'etudiant' && !empty($user['id_etudiant'])) {
+        $candidatures = $this->model->getCandidaturesEtudiant($user['id_etudiant']);
+        $wishlist     = $this->model->getWishlistEtudiant($user['id_etudiant']);
     }
+
+    if ($user['role'] === 'pilote' && !empty($user['id_pilote'])) {
+        $etudiants_supervises = $this->model->getEtudiantsParPiloteUtilisateur($user['id_utilisateur']);
+    }
+
+    return $this->render('profil.twig.html', [
+        'uri'                  => 'profil',
+        'user'                 => $user,
+        'candidatures'         => $candidatures,
+        'wishlist'             => $wishlist,
+        'etudiants_supervises' => $etudiants_supervises,
+        'success'              => $_GET['success'] ?? null,
+        'erreur'               => $_GET['erreur']  ?? null,
+    ]);
+}
 
     // POST /?uri=profil_update
     public function update(): void {
