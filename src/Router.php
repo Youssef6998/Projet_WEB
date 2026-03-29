@@ -117,6 +117,8 @@ class Router {
                 => $this->admin->updateEtudiant(),
             $uri === 'etudiant_update'
                 => $this->admin->showEtudiantUpdate($id),
+            $uri === 'etudiant_affecter' && $method === 'POST'
+                => $this->admin->affecterEtudiant(),
             $uri === 'avis_create' && $method === 'POST'
                 => $this->admin->storeAvis(),
             $uri === 'avis_create'
