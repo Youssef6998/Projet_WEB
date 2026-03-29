@@ -8,10 +8,15 @@
             <span class="pill pill-r">{% if session_user.role == 'admin' %}Administration{% else %}Pilote{% endif %}</span>
             <span class="pill pill-count">{{ etudiants|length }} étudiant{{ etudiants|length != 1 ? 's' : '' }}</span>
         </div>
-        <div style="margin-top:.4rem">
-            <h2 style="font-size:1.05rem; font-weight:700; color:var(--dark); margin:0">Gestion des Étudiants</h2>
-            <p style="font-size:.75rem; color:var(--text-muted); margin:.2rem 0 0">Consultez les comptes étudiants et leur pilote superviseur.</p>
-        </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:.75rem; margin-top:.4rem">
+                <div>
+                    <h2 style="font-size:1.05rem; font-weight:700; color:var(--dark); margin:0">Gestion des Étudiants</h2>
+                    <p style="font-size:.75rem; color:var(--text-muted); margin:.2rem 0 0">Consultez les comptes étudiants et leur pilote superviseur.</p>
+                </div>
+                {% if session_user.role == 'admin' || session_user.role=='pilote' %}
+                <a href="/?uri=register" class="btn btn-fill">+ Créer un étudiant</a>
+                {% endif %}
+            </div>
          <form action="/?uri=etudiant_list" method="get" style="margin-top:1rem">
             <input type="hidden" name="uri" value="etudiant_list">
             <div class="field-grid-4">
