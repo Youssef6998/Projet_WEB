@@ -19,11 +19,13 @@
             <a href="/?uri=cherche-stage" class="{% if uri == 'cherche-stage' or uri == 'home' %}active{% endif %}">Accueil</a>
             <a href="/?uri=stages" class="{% if uri == 'stages' %}active{% endif %}">Stages</a>
             <a href="/?uri=entreprises" class="{% if uri == 'entreprises' %}active{% endif %}">Entreprises</a>
-
+            {% if session_user %}
+            <a href="/?uri=stats_offres" class="{% if uri == 'stats_offres' %}active{% endif %}">Statistiques</a>
+            {% endif %}
 
             {% if session_user and session_user.role in ['admin', 'pilote'] %}
             <div class="nav-dropdown" id="nav-gestion">
-                <button class="nav-dropdown-btn {% if uri in ['etudiant_list','entreprise_list','entreprise_create','entreprise_update','pilote_list','pilote_create'] %}active{% endif %}"
+                <button class="nav-dropdown-btn {% if uri in ['etudiant_list','entreprise_list','entreprise_create','entreprise_update','pilote_list','pilote_create','stats_offres'] %}active{% endif %}"
                         onclick="toggleDropdown(this)" type="button">
                     Gestion
                     <svg class="nav-chevron" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4"/></svg>
