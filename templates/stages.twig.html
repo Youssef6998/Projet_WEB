@@ -7,12 +7,12 @@
 {% block content %}
 
 
-
-
-<div class="search-card">
-    <div class="search-head">
+    <div class="search-card">
         <span class="pill pill-r">Recherche de stage</span>
         <span class="pill pill-count">{{ totalStages }} résultats</span>
+        {% if session_user and session_user.role in ['admin', 'pilote'] %}
+        <a href="/?uri=offre_create" class="btn btn-fill" style="margin-left:auto">+ Créer une offre</a>
+        {% endif %}
     </div>
     <form action="/?uri=stages" method="get">
         <input type="hidden" name="uri" value="stages">
@@ -58,11 +58,6 @@
     </form>
 </div>
 
-
-
-
-
-
 <!-- Liste des stages -->
 <div class="stages-list" style="margin-top:1.5rem">
     {% for stage in stages %}
@@ -104,6 +99,14 @@
                 </form>
                 {% endif %}
                 <a href="/?uri=offre&id={{ stage.id }}" class="btn btn-dark">Voir l'offre</a>
+                {% if session_user and session_user.role in ['admin', 'pilote'] %}
+                <a href="/?uri=offre_update&id={{ stage.id }}" class="btn btn-outline">Modifier</a>
+                <form method="POST" action="/?uri=offre_delete"
+                    onsubmit="return confirm('Supprimer cette offre ? Cette action est irréversible.')">
+                    <input type="hidden" name="id" value="{{ stage.id }}">
+                    <button type="submit" class="btn btn-ghost" style="color:#dc2626; border-color:#fca5a5">Supprimer</button>
+                </form>
+                {% endif %}
             </div>
         </div>
     </article>
