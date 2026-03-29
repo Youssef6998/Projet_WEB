@@ -151,13 +151,13 @@ class StageController extends BaseController {
     }
 
     public function showStats(): string {
-        $this->requireRole(fn() => $this->isAdminOrPilote());
-        $stats       = $this->model->getStatsOffres();
-        $statsOffres = $this->model->getStatsParOffre();
-        return $this->render('stats_offres.twig.html', [
-            'uri'         => 'stats_offres',
-            'stats'       => $stats,
-            'statsOffres' => $statsOffres,
-        ]);
-    }
+    $this->requireRole(fn() => $this->isConnecte());  
+    $stats       = $this->model->getStatsOffres();
+    $statsOffres = $this->model->getStatsParOffre();
+    return $this->render('stats_offres.twig.html', [
+        'uri'         => 'stats_offres',
+        'stats'       => $stats,
+        'statsOffres' => $statsOffres,
+    ]);
+}
 }
