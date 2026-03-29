@@ -611,4 +611,76 @@ class StageModel {
         );
         return $stmt2->execute([':formation' => $formation, ':niveau' => $niveauEtude, ':id' => $id]);
     }
+    public function creerOffre(string $titre, int $idEntreprise, string $domaine, string $description, string $duree, int $nbPlaces, float $remuneration, string $dateOffre): bool {
+        $stmt = $this->db->prepare(
+            "INSERT INTO offre (titre, id_entreprise, domaine, description, duree, nb_places, base_remuneration, date_offre)
+             VALUES (:titre, :entreprise, :domaine, :desc, :duree, :places, :remun, :date)"
+        );
+        return $stmt->execute([
+            ':titre'      => $titre,
+            ':entreprise' => $idEntreprise,
+            ':domaine'    => $domaine,
+            ':desc'       => $description,
+            ':duree'      => $duree,
+            ':places'     => $nbPlaces,
+            ':remun'      => $remuneration,
+            ':date'       => $dateOffre,
+        ]);
+    }
+
+    public function modifierOffre(int $id, string $titre, int $idEntreprise, string $domaine, string $description, string $duree, int $nbPlaces, float $remuneration, string $dateOffre): bool {
+        $stmt = $this->db->prepare(
+            "UPDATE offre SET titre=:titre, id_entreprise=:entreprise, domaine=:domaine,
+             description=:desc, duree=:duree, nb_places=:places, base_remuneration=:remun, date_offre=:date
+             WHERE id_offre=:id"
+        );
+        return $stmt->execute([
+            ':id'         => $id,
+            ':titre'      => $titre,
+            ':entreprise' => $idEntreprise,
+            ':domaine'    => $domaine,
+            ':desc'       => $description,
+            ':duree'      => $duree,
+            ':places'     => $nbPlaces,
+            ':remun'      => $remuneration,
+            ':date'       => $dateOffre,
+        ]);
+    }
+
+    public function supprimerOffre(int $id): bool {
+        $stmt = $this->db->prepare("DELETE FROM offre WHERE id_offre = :id");
+        return $stmt->execute([':id' => $id]);
+    }
+
+    public function getStatsOffres(): array {
+        $stmt = $this->db->prepare(
+            "SELECT 
+                COUNT(DISTINCT o.id_offre) AS nb_offres,
+                COUNT(DISTINCT c.id_etudiant) AS nb_candidatures,
+                COUNT(DISTINCT w.id_etudiant) AS nb_wishlist,
+                COALESCE(AVG(o.base_remuneration), 0) AS remuneration_moyenne
+             FROM offre o
+             LEFT JOIN candidature c ON o.id_offre = c.id_offre
+             LEFT JOIN wishlist w ON o.id_offre = w.id_offre"
+        );
+        $stmt->execute();
+        return $stmt->fetch();
+    }
+
+    public function getStatsParOffre(): array {
+        $stmt = $this->db->prepare(
+            "SELECT o.id_offre, o.titre, e.nom AS entreprise,
+                    COUNT(DISTINCT c.id_etudiant) AS nb_candidatures,
+                    COUNT(DISTINCT w.id_etudiant) AS nb_wishlist
+             FROM offre o
+             JOIN entreprise e ON o.id_entreprise = e.id_entreprise
+             LEFT JOIN candidature c ON o.id_offre = c.id_offre
+             LEFT JOIN wishlist w ON o.id_offre = w.id_offre
+             GROUP BY o.id_offre, o.titre, e.nom
+             ORDER BY nb_candidatures DESC"
+        );
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
 }

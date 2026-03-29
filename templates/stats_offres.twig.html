@@ -1,0 +1,66 @@
+{% extends "base.twig.html" %}
+{% block css %}
+{{ parent() }}
+<link rel="stylesheet" href="/assets/style-stage.css">
+{% endblock %}
+{% block title %}Statistiques des offres – Stage Finder{% endblock %}
+{% block content %}
+<div class="page">
+    <div class="search-card" style="margin-bottom:1.5rem">
+        <div class="search-head">
+            <span class="pill pill-r">{% if session_user.role == 'admin' %}Administration{% else %}Pilote{% endif %}</span>
+        </div>
+        <div style="margin-top:.4rem">
+            <h2 style="font-size:1.05rem; font-weight:700; color:var(--dark); margin:0">Statistiques des offres</h2>
+            <p style="font-size:.75rem; color:var(--text-muted); margin:.2rem 0 0">Vue d'ensemble des offres, candidatures et favoris.</p>
+        </div>
+    </div>
+
+    {# Chiffres clés #}
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:1rem; margin-bottom:2rem">
+        <div class="stage-card" style="flex-direction:column; align-items:flex-start; gap:.4rem">
+            <span style="font-size:.72rem; font-weight:700; text-transform:uppercase; color:var(--text-muted)">Total offres</span>
+            <span style="font-size:2rem; font-weight:800; color:var(--dark)">{{ stats.nb_offres }}</span>
+        </div>
+        <div class="stage-card" style="flex-direction:column; align-items:flex-start; gap:.4rem">
+            <span style="font-size:.72rem; font-weight:700; text-transform:uppercase; color:var(--text-muted)">Candidatures</span>
+            <span style="font-size:2rem; font-weight:800; color:var(--dark)">{{ stats.nb_candidatures }}</span>
+        </div>
+        <div class="stage-card" style="flex-direction:column; align-items:flex-start; gap:.4rem">
+            <span style="font-size:.72rem; font-weight:700; text-transform:uppercase; color:var(--text-muted)">Favoris</span>
+            <span style="font-size:2rem; font-weight:800; color:var(--dark)">{{ stats.nb_wishlist }}</span>
+        </div>
+        <div class="stage-card" style="flex-direction:column; align-items:flex-start; gap:.4rem">
+            <span style="font-size:.72rem; font-weight:700; text-transform:uppercase; color:var(--text-muted)">Rémun. moyenne</span>
+            <span style="font-size:2rem; font-weight:800; color:var(--dark)">{{ stats.remuneration_moyenne|number_format(0, ',', ' ') }} €</span>
+        </div>
+    </div>
+
+    {# Détail par offre #}
+    <div class="stages-list">
+        {% for o in statsOffres %}
+        <article class="stage-card">
+            <div class="stage-info">
+                <div class="stage-top">
+                    <span class="stage-company">{{ o.entreprise }}</span>
+                    <span class="stage-type">{{ o.titre }}</span>
+                </div>
+            </div>
+            <div class="stage-right" style="display:flex; gap:1.5rem; align-items:center">
+                <div style="text-align:center">
+                    <div style="font-size:1.4rem; font-weight:800; color:var(--dark)">{{ o.nb_candidatures }}</div>
+                    <div style="font-size:.65rem; color:var(--text-muted); text-transform:uppercase">Candidatures</div>
+                </div>
+                <div style="text-align:center">
+                    <div style="font-size:1.4rem; font-weight:800; color:var(--dark)">{{ o.nb_wishlist }}</div>
+                    <div style="font-size:.65rem; color:var(--text-muted); text-transform:uppercase">Favoris</div>
+                </div>
+                <a href="/?uri=offre&id={{ o.id_offre }}" class="btn btn-dark">Voir</a>
+            </div>
+        </article>
+        {% else %}
+        <p style="color:var(--text-muted); font-size:.82rem; text-align:center; padding:2rem 0">Aucune offre.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

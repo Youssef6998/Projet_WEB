@@ -56,6 +56,19 @@ class Router {
                 => $this->stage->candidater(),
             $uri === 'wishlist-toggle' && $method === 'POST'
                 => $this->stage->wishlistToggle(),
+            //Offre
+             $uri === 'offre_create' && $method === 'POST'
+                => $this->stage->store(),
+            $uri === 'offre_create'
+                => $this->stage->showCreate(),
+            $uri === 'offre_update' && $method === 'POST'
+                => $this->stage->update(),
+            $uri === 'offre_update'
+                => $this->stage->showUpdate($id),
+            $uri === 'offre_delete' && $method === 'POST'
+                => $this->stage->destroy(),
+            $uri === 'stats_offres'
+                => $this->stage->showStats(),
 
             // Entreprises
             $uri === 'entreprises'
