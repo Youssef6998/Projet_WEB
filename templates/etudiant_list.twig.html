@@ -13,7 +13,7 @@
                     <h2 style="font-size:1.05rem; font-weight:700; color:var(--dark); margin:0">Gestion des Étudiants</h2>
                     <p style="font-size:.75rem; color:var(--text-muted); margin:.2rem 0 0">Consultez les comptes étudiants et leur pilote superviseur.</p>
                 </div>
-                {% if session_user.role == 'admin' || session_user.role=='pilote' %}
+                {% if session_user.role == 'admin' or session_user.role == 'pilote' %}
                 <a href="/?uri=register" class="btn btn-fill">+ Créer un étudiant</a>
                 {% endif %}
             </div>
