@@ -188,6 +188,17 @@ class AdminController extends BaseController {
         }
         $this->redirect('/?uri=etudiant_list&success=modifie');
     }
+    // POST /?uri=etudiant_affecter
+    // POST /?uri=etudiant_affecter
+    public function affecterEtudiant(): void {
+    $this->requireRole(fn() => $this->isPilote());
+    $idEtudiantUtilisateur = (int)($_POST['id_etudiant'] ?? 0);
+    $idPiloteUtilisateur   = (int)$_SESSION['user']['id_utilisateur'];
+    if ($idEtudiantUtilisateur) {
+        $this->model->affecterEtudiantAuPilote($idPiloteUtilisateur, $idEtudiantUtilisateur);
+    }
+    $this->redirect('/?uri=etudiant_list&success=affecte');
+}
 
 }
 

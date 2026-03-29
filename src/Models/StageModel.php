@@ -694,5 +694,19 @@ class StageModel {
     $stmt->execute([':id' => $idUtilisateur]);
     return $stmt->fetchAll();
 }
+    public function affecterEtudiantAuPilote(int $idPiloteUtilisateur, int $idEtudiantUtilisateur): bool {
+    $stmt = $this->db->prepare("SELECT id_pilote FROM pilote WHERE id_utilisateur = :id");
+    $stmt->execute([':id' => $idPiloteUtilisateur]);
+    $pilote = $stmt->fetch();
+    if (!$pilote) return false;
+
+    $stmt2 = $this->db->prepare(
+        "UPDATE etudiant SET id_pilote = :id_pilote WHERE id_utilisateur = :id_etudiant"
+    );
+    return $stmt2->execute([
+        ':id_pilote'   => $pilote['id_pilote'],
+        ':id_etudiant' => $idEtudiantUtilisateur,
+    ]);
+}
 
 }
