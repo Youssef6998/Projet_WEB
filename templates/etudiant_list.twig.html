@@ -87,6 +87,12 @@
                         Supprimer
                     </button>
                 </form>
+                {% if session_user.role == 'pilote' %}
+                <form method="POST" action="/?uri=etudiant_affecter">
+                    <input type="hidden" name="id_etudiant" value="{{ e.id_utilisateur }}">
+                    <button type="submit" class="btn btn-fill">+ Ajouter</button>
+                </form>
+                {% endif %}
             </div>
             {% endif %}
         </article>
