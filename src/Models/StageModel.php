@@ -694,6 +694,9 @@ public function getEtudiantsFiltrees(string $prenom = '', string $nom = ''): arr
             LEFT JOIN pilote p ON e.id_pilote = p.id_pilote
             LEFT JOIN utilisateur pu ON p.id_utilisateur = pu.id_utilisateur
             WHERE u.role = 'etudiant'
+            AND u.id_utilisateur NOT IN (
+                SELECT id_utilisateur FROM pilote
+            )
         ";
         
         $params = [];
