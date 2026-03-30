@@ -507,8 +507,7 @@ $whereClause = !empty($whereConditions) ? 'WHERE ' . implode(' AND ', $whereCond
     {
         $this->db->prepare("DELETE FROM etudiant WHERE id_utilisateur = :id")->execute([':id' => $idUtilisateur]);
         return $this->db->prepare("DELETE FROM utilisateur WHERE id_utilisateur = :id")->execute([':id' => $idUtilisateur]);
-    }
-
+    }   
     public function getEvaluationsParEntreprise(int $idEntreprise): array
     {
         $stmt = $this->db->prepare(
@@ -544,5 +543,4 @@ $whereClause = !empty($whereConditions) ? 'WHERE ' . implode(' AND ', $whereCond
         $stmt = $this->db->prepare("DELETE FROM evaluation WHERE id_evaluation = :id");
         return $stmt->execute([':id' => $id]);
     }
-
 }
