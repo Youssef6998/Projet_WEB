@@ -11,7 +11,6 @@ class StageController extends BaseController {
         $this->model = $model;
     }
 
-    // GET /?uri=cherche-stage ou /?uri=stages
     public function index(int $page = 1): string {
         $domaine    = $_GET['domaine']    ?? '';
         $ville      = $_GET['ville']      ?? '';
@@ -29,7 +28,6 @@ class StageController extends BaseController {
         return $this->render($template, $data);
     }
 
-    // GET /?uri=offre&id=X
     public function show(int $id): string {
         $offre = $this->model->getOffreById($id);
         if (!$offre) {
@@ -53,7 +51,6 @@ class StageController extends BaseController {
         ]);
     }
 
-    // POST /?uri=candidater
     public function candidater(): void {
         $this->requireRole(fn() => $this->isEtudiant());
 
@@ -78,7 +75,6 @@ class StageController extends BaseController {
         $this->redirect("/?uri=offre&id=$idOffre&candidature=ok");
     }
 
-    // POST /?uri=wishlist-toggle
     public function wishlistToggle(): void {
         $this->requireRole(fn() => $this->isEtudiant());
 
@@ -90,4 +86,78 @@ class StageController extends BaseController {
         $redirect = $_POST['redirect'] ?? "/?uri=offre&id=$idOffre";
         $this->redirect($redirect);
     }
+    public function showCreate(): string {
+        $this->requireRole(fn() => $this->isAdminOrPilote());
+        $entreprises = $this->model->getToutesEntreprises();
+        return $this->render('creer_offre.twig.html', [
+            'uri'         => 'offre_create',
+            'entreprises' => $entreprises,
+        ]);
+    }
+
+    public function store(): void {
+        $this->requireRole(fn() => $this->isAdminOrPilote());
+        $this->model->creerOffre(
+            trim($_POST['titre']                ?? ''),
+            (int)($_POST['id_entreprise']       ?? 0),
+            trim($_POST['domaine']              ?? ''),
+            trim($_POST['description']          ?? ''),
+            trim($_POST['duree']                ?? ''),
+            (int)($_POST['nb_places']           ?? 1),
+            (float)($_POST['base_remuneration'] ?? 0),
+            trim($_POST['date_offre']           ?? '')
+        );
+        $this->redirect('/?uri=stages');
+    }
+
+    public function showUpdate(int $id): string {
+        $this->requireRole(fn() => $this->isAdminOrPilote());
+        $offre = $this->model->getOffreById($id);
+        if (!$offre) return $this->render('404.twig.html', ['uri' => 'offre_update']);
+        $entreprises = $this->model->getToutesEntreprises();
+        return $this->render('modifier_offre.twig.html', [
+            'uri'         => 'offre_update',
+            'offre'       => $offre,
+            'entreprises' => $entreprises,
+        ]);
+    }
+
+    public function update(): void {
+        $this->requireRole(fn() => $this->isAdminOrPilote());
+        $id = (int)($_POST['id'] ?? 0);
+        if ($id) {
+            $this->model->modifierOffre(
+                $id,
+                trim($_POST['titre']                ?? ''),
+                (int)($_POST['id_entreprise']       ?? 0),
+                trim($_POST['domaine']              ?? ''),
+                trim($_POST['description']          ?? ''),
+                trim($_POST['duree']                ?? ''),
+                (int)($_POST['nb_places']           ?? 1),
+                (float)($_POST['base_remuneration'] ?? 0),
+                trim($_POST['date_offre']           ?? '')
+            );
+        }
+        $this->redirect('/?uri=stages');
+    }
+
+    public function destroy(): void {
+        $this->requireRole(fn() => $this->isAdminOrPilote());
+        $id = (int)($_POST['id'] ?? 0);
+        if ($id) {
+            $this->model->supprimerOffre($id);
+        }
+        $this->redirect('/?uri=stages');
+    }
+
+    public function showStats(): string {
+    $this->requireRole(fn() => $this->isConnecte());  
+    $stats       = $this->model->getStatsOffres();
+    $statsOffres = $this->model->getStatsParOffre();
+    return $this->render('stats_offres.twig.html', [
+        'uri'         => 'stats_offres',
+        'stats'       => $stats,
+        'statsOffres' => $statsOffres,
+    ]);
+}
 }

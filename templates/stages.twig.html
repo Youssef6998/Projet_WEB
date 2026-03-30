@@ -6,13 +6,13 @@
 
 {% block content %}
 
-
-
-
 <div class="search-card">
     <div class="search-head">
         <span class="pill pill-r">Recherche de stage</span>
         <span class="pill pill-count">{{ totalStages }} résultats</span>
+        {% if session_user and session_user.role in ['admin', 'pilote'] %}
+        <a href="/?uri=offre_create" class="btn btn-fill" style="margin-left:auto">+ Créer une offre</a>
+        {% endif %}
     </div>
     <form action="/?uri=stages" method="get">
         <input type="hidden" name="uri" value="stages">
@@ -20,14 +20,14 @@
             <div class="field">
                 <label>Domaine</label>
                 <div class="field-input">
-                <select name="domaine" id="domaine-select" class="cases select-domaine">
-                    <option value="">Tous les domaines</option>
-                    <option value="informatique">Informatique & Digital</option>
-                    <option value="marketing">Marketing & Communication</option>
-                    <option value="commerce">Commerce & Management</option>
-                    <option value="industrie">Industrie & Ingénierie</option>
-                    <option value="services">Services & Autres</option>
-                </select>
+                    <select name="domaine" id="domaine-select" class="cases select-domaine">
+                        <option value="">Tous les domaines</option>
+                        <option value="informatique">Informatique & Digital</option>
+                        <option value="marketing">Marketing & Communication</option>
+                        <option value="commerce">Commerce & Management</option>
+                        <option value="industrie">Industrie & Ingénierie</option>
+                        <option value="services">Services & Autres</option>
+                    </select>
                 </div>
             </div>
             <div class="field">
@@ -36,32 +36,24 @@
                     <input name="ville" value="{{ ville|default('') }}" class="cases" placeholder="Ex : Paris, Lyon">
                 </div>
             </div>
-
             <div class="field">
                 <label>Compétence</label>
                 <div class="field-input">
                     <input name="competence" value="{{ competence|default('') }}" class="cases" placeholder="Ex : développement, marketing...">
                 </div>
             </div>
-
             <div class="field">
                 <label>Durée</label>
                 <div class="field-input">
                     <input name="duree" value="{{ duree|default('') }}" class="cases" placeholder="Ex : 2 mois">
                 </div>
-            </div>  
-
+            </div>
         </div>
         <div class="search-actions">
             <button type="submit" class="btn btn-fill">Rechercher</button>
         </div>
     </form>
 </div>
-
-
-
-
-
 
 <!-- Liste des stages -->
 <div class="stages-list" style="margin-top:1.5rem">
@@ -74,7 +66,7 @@
                 {% if stage.ville %}
                     <span class="stage-type">{{ stage.ville }}</span>
                 {% else %}
-                    <span class="stage-type"> Lieu Non précisé</span>
+                    <span class="stage-type">Lieu Non précisé</span>
                 {% endif %}
             </div>
             <h3 class="stage-title">{{ stage.title }}</h3>
@@ -87,14 +79,13 @@
                 {% endfor %}
             </div>
         </div>
-                <div class="stage-right">
+        <div class="stage-right">
             {% if stage.duration %}
                 <span class="stage-duration">{{ stage.duration }}</span>
             {% endif %}
             {% if stage.date %}
-                <span class="stage-date"> publié le {{ stage.date }}</span>
+                <span class="stage-date">publié le {{ stage.date }}</span>
             {% endif %}
-
             <div class="stage-actions">
                 {% if session_user and session_user.role == 'etudiant' %}
                 <form method="post" action="/?uri=wishlist-toggle">
@@ -104,6 +95,14 @@
                 </form>
                 {% endif %}
                 <a href="/?uri=offre&id={{ stage.id }}" class="btn btn-dark">Voir l'offre</a>
+                {% if session_user and session_user.role in ['admin', 'pilote'] %}
+                <a href="/?uri=offre_update&id={{ stage.id }}" class="btn btn-outline">Modifier</a>
+                <form method="POST" action="/?uri=offre_delete"
+                      onsubmit="return confirm('Supprimer cette offre ? Cette action est irréversible.')">
+                    <input type="hidden" name="id" value="{{ stage.id }}">
+                    <button type="submit" class="btn btn-ghost" style="color:#dc2626; border-color:#fca5a5">Supprimer</button>
+                </form>
+                {% endif %}
             </div>
         </div>
     </article>
@@ -112,26 +111,16 @@
     {% endfor %}
 </div>
 
-
-
-
-
-
-
-
-
 <div class="pagination">
     {% if currentPage > 1 %}
         <a href="/?uri=stages&page={{ currentPage - 1 }}&domaine={{ domaine }}" class="page-btn arrow">←</a>
     {% endif %}
-
     {% for i in 1..totalPages %}
         <a href="/?uri=stages&page={{ i }}&domaine={{ domaine }}"
            class="page-btn {{ i == currentPage ? 'active' : '' }}">
             {{ i }}
         </a>
     {% endfor %}
-
     {% if currentPage < totalPages %}
         <a href="/?uri=stages&page={{ currentPage + 1 }}&domaine={{ domaine }}" class="page-btn arrow">→</a>
     {% endif %}

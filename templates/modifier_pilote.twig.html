@@ -1,0 +1,63 @@
+{% extends "base.twig.html" %}
+{% block css %}
+{{ parent() }}
+<link rel="stylesheet" href="/assets/style-stage.css">
+<link rel="stylesheet" href="/assets/creer_compte_pilote.css">
+{% endblock %}
+{% block title %}Modifier un compte Pilote – Stage Finder{% endblock %}
+{% block content %}
+<div class="page">
+    <div class="intro-page">
+        <div class="intro-small-titre">Pilote</div>
+        <h1 class="titre-principal">Modifier un compte Pilote</h1>
+        <p class="sous-titre">Modifiez les informations du compte pilote.</p>
+    </div>
+    <div class="register-card">
+        <div class="back-btn-container">
+            <a href="/?uri=pilote_list" class="btn-back">← Retour</a>
+        </div>
+        {% if erreur %}
+        <div class="alert alert-error">{{ erreur }}</div>
+        {% endif %}
+        <form method="POST" action="/?uri=pilote_update">
+            <input type="hidden" name="id" value="{{ pilote.id_utilisateur }}">
+            <div class="row">
+                <div class="input-group">
+                    <label>Nom *</label>
+                    <input type="text" name="nom" value="{{ pilote.nom }}" required>
+                </div>
+                <div class="input-group">
+                    <label>Prénom *</label>
+                    <input type="text" name="prenom" value="{{ pilote.prenom }}" required>
+                </div>
+            </div>
+            <div class="input-group">
+                <label>Email *</label>
+                <input type="email" name="email" value="{{ pilote.email }}" required>
+            </div>
+            <div class="input-group">
+                <label>Téléphone</label>
+                <input type="tel" name="telephone" value="{{ pilote.telephone ?? '' }}">
+            </div>
+            <div class="input-group">
+                <label>Promotion</label>
+                <select name="promotion">
+                    <option value="">-- Sélectionner une promotion --</option>
+                    {% for p in ['CPIA1','CPIA2','FISA A3','FISE A3','FISA A4','FISE A4','FISE A5','FISA A5'] %}
+                    <option value="{{ p }}" {{ pilote.promotion == p ? 'selected' : '' }}>{{ p }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Nouveau mot de passe <span style="font-size:.75rem;color:var(--text-muted)">(laisser vide pour ne pas modifier)</span></label>
+                <input type="password" name="motdepasse" placeholder="Laisser vide pour conserver" autocomplete="new-password">
+            </div>
+            <div class="input-group">
+                <label>Confirmer le mot de passe</label>
+                <input type="password" name="confirmation" placeholder="Confirmer" autocomplete="new-password">
+            </div>
+            <button type="submit" class="btn-primary">Enregistrer les modifications</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

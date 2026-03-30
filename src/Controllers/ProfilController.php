@@ -15,12 +15,17 @@ class ProfilController extends BaseController {
     $user = $this->model->getUtilisateurComplet((int)$_SESSION['user']['id_utilisateur']);
     $candidatures = [];
     $wishlist     = [];
+<<<<<<< HEAD
+=======
+    $etudiants_supervises = [];
+>>>>>>> d52e869404fe3f398a3dec13a9055b8a7fdf6a2c
 
     if ($user['role'] === 'etudiant' && !empty($user['id_etudiant'])) {
         $candidatures = $this->model->getCandidaturesEtudiant($user['id_etudiant']);
         $wishlist     = $this->model->getWishlistEtudiant($user['id_etudiant']);
     }
 
+<<<<<<< HEAD
     $etudiants_supervises = [];
     if ($user['role'] === 'pilote') {
         $etudiants_supervises = $this->model->getEtudiantsSupervises((int)$_SESSION['user']['id_utilisateur']);
@@ -40,6 +45,23 @@ class ProfilController extends BaseController {
         'erreur'           => $erreur,
     ]);
 }
+=======
+    if ($user['role'] === 'pilote' && !empty($user['id_pilote'])) {
+        $etudiants_supervises = $this->model->getEtudiantsParPiloteUtilisateur($user['id_utilisateur']);
+    }
+
+    return $this->render('profil.twig.html', [
+        'uri'                  => 'profil',
+        'user'                 => $user,
+        'candidatures'         => $candidatures,
+        'wishlist'             => $wishlist,
+        'etudiants_supervises' => $etudiants_supervises,
+        'success'              => $_GET['success'] ?? null,
+        'erreur'               => $_GET['erreur']  ?? null,
+    ]);
+}
+
+>>>>>>> d52e869404fe3f398a3dec13a9055b8a7fdf6a2c
     // POST /?uri=profil_update
     public function update(): void {
         $this->requireRole(fn() => $this->isConnecte());

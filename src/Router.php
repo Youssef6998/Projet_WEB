@@ -56,6 +56,19 @@ class Router {
                 => $this->stage->candidater(),
             $uri === 'wishlist-toggle' && $method === 'POST'
                 => $this->stage->wishlistToggle(),
+            //Offre
+             $uri === 'offre_create' && $method === 'POST'
+                => $this->stage->store(),
+            $uri === 'offre_create'
+                => $this->stage->showCreate(),
+            $uri === 'offre_update' && $method === 'POST'
+                => $this->stage->update(),
+            $uri === 'offre_update'
+                => $this->stage->showUpdate($id),
+            $uri === 'offre_delete' && $method === 'POST'
+                => $this->stage->destroy(),
+            $uri === 'stats_offres'
+                => $this->stage->showStats(),
 
             // Entreprises
             $uri === 'entreprises'
@@ -90,12 +103,22 @@ class Router {
                 => $this->admin->storePilote(),
             $uri === 'pilote_create'
                 => $this->admin->showPiloteCreate(),
+            $uri === 'pilote_update' && $method === 'POST'
+                => $this->admin->updatePilote(),
+            $uri === 'pilote_update'
+                => $this->admin->showPiloteUpdate($id),
             $uri === 'pilote_delete' && $method === 'POST'
                 => $this->admin->destroyPilote(),
             $uri === 'etudiant_list'
                 => $this->admin->showEtudiantList(),
             $uri === 'etudiant_delete' && $method === 'POST'
                 => $this->admin->destroyEtudiant(),
+            $uri === 'etudiant_update' && $method === 'POST'
+                => $this->admin->updateEtudiant(),
+            $uri === 'etudiant_update'
+                => $this->admin->showEtudiantUpdate($id),
+            $uri === 'etudiant_affecter' && $method === 'POST'
+                => $this->admin->affecterEtudiant(),
             $uri === 'avis_create' && $method === 'POST'
                 => $this->admin->storeAvis(),
             $uri === 'avis_create'

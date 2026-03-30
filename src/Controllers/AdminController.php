@@ -42,13 +42,57 @@ class AdminController extends BaseController {
 
     // GET /?uri=pilote_list
     public function showPiloteList(): string {
+    $this->requireRole(fn() => $this->isAdmin());
+    $nom    = trim($_GET['nom']    ?? '');
+    $prenom = trim($_GET['prenom'] ?? '');
+    $pilotes = $this->model->getAllPilotes($nom, $prenom);
+    return $this->render('pilote_list.twig.html', [
+        'uri'     => 'pilote_list',
+        'pilotes' => $pilotes,
+        'nom'     => $nom,
+        'prenom'  => $prenom,
+        'success' => $_GET['success'] ?? null,
+    ]);
+}
+
+    // GET /?uri=pilote_update&id=X
+    public function showPiloteEdit(int $id): string {
         $this->requireRole(fn() => $this->isAdmin());
-        $pilotes = $this->model->getAllPilotes();
-        return $this->render('pilote_list.twig.html', [
-            'uri'     => 'pilote_list',
-            'pilotes' => $pilotes,
-            'success' => $_GET['success'] ?? null,
+        $pilote = $this->model->getPiloteById($id);
+        if (!$pilote) {
+            $this->redirect('/?uri=pilote_list');
+        }
+        return $this->render('modifier_pilote.twig.html', [
+            'uri'    => 'pilote_update',
+            'pilote' => $pilote,
         ]);
+    }
+
+    // POST /?uri=pilote_update
+    public function updatePilote(): void {
+        $this->requireRole(fn() => $this->isAdmin());
+
+        $id           = (int)($_POST['id']            ?? 0);
+        $nom          = trim($_POST['nom']             ?? '');
+        $prenom       = trim($_POST['prenom']          ?? '');
+        $email        = trim($_POST['email']           ?? '');
+        $telephone    = trim($_POST['telephone']       ?? '');
+        $promotion    = trim($_POST['promotion']       ?? '');
+        $motdepasse   = $_POST['motdepasse']           ?? '';
+        $confirmation = $_POST['confirmation']         ?? '';
+
+        if ($motdepasse !== '' && $motdepasse !== $confirmation) {
+            $pilote = $this->model->getPiloteById($id);
+            echo $this->render('modifier_pilote.twig.html', [
+                'uri'    => 'pilote_update',
+                'pilote' => $pilote,
+                'erreur' => 'Les mots de passe ne correspondent pas.',
+            ]);
+            return;
+        }
+
+        $this->model->updatePilote($id, $nom, $prenom, $email, $telephone, $promotion, $motdepasse !== '' ? $motdepasse : null);
+        $this->redirect('/?uri=pilote_list&success=modifie');
     }
 
     // POST /?uri=pilote_delete
@@ -64,24 +108,26 @@ class AdminController extends BaseController {
     // GET /?uri=etudiant_list
     public function showEtudiantList(): string {
         $this->requireRole(fn() => $this->isAdminOrPilote());
-        $etudiants = $this->model->getAllEtudiants();
+        $nom    = trim($_GET['nom']    ?? '');
+        $prenom = trim($_GET['prenom'] ?? '');
+        $etudiants = $this->model->getAllEtudiants($nom, $prenom);
         return $this->render('etudiant_list.twig.html', [
             'uri'       => 'etudiant_list',
             'etudiants' => $etudiants,
+            'nom'       => $nom,
+            'prenom'    => $prenom,
             'success'   => $_GET['success'] ?? null,
         ]);
     }
-
     // POST /?uri=etudiant_delete
     public function destroyEtudiant(): void {
-        $this->requireRole(fn() => $this->isAdmin());
-        $id = (int)($_POST['id'] ?? 0);
-        if ($id) {
-            $this->model->supprimerEtudiant($id);
-        }
-        $this->redirect('/?uri=etudiant_list&success=supprime');
+    $this->requireRole(fn() => $this->isAdminOrPilote());
+    $id = (int)($_POST['id'] ?? 0);
+    if ($id) {
+        $this->model->supprimerEtudiant($id);
     }
-
+    $this->redirect('/?uri=etudiant_list&success=supprime');
+}
     // GET /?uri=avis_create
     public function showAvisCreate(): string {
         $this->requireRole(fn() => $this->isAdminOrPilote());
@@ -105,4 +151,56 @@ class AdminController extends BaseController {
         );
         $this->redirect('/?uri=avis_create&success=1');
     }
+
+    public function showPiloteUpdate(int $id): string {
+        $this->requireRole(fn() => $this->isAdmin());
+        $pilote = $this->model->getPiloteById($id);
+        if (!$pilote) return $this->render('404.twig.html', ['uri' => 'pilote_update']);
+        return $this->render('modifier_pilote.twig.html', [
+            'uri'    => 'pilote_update',
+            'pilote' => $pilote,
+        ]);
+    }
+    public function showEtudiantUpdate(int $id): string {
+        $this->requireRole(fn() => $this->isAdminOrPilote());
+        $etudiant = $this->model->getEtudiantById($id);
+        if (!$etudiant) return $this->render('404.twig.html', ['uri' => 'etudiant_update']);
+        return $this->render('modifier_etudiant.twig.html', [
+            'uri'      => 'etudiant_update',
+            'etudiant' => $etudiant,
+        ]);
+    }
+
+    // POST /?uri=etudiant_update
+    public function updateEtudiant(): void {
+        $this->requireRole(fn() => $this->isAdminOrPilote());
+        $id = (int)($_POST['id'] ?? 0);
+        if ($id) {
+            $this->model->modifierEtudiant(
+                $id,
+                trim($_POST['nom']          ?? ''),
+                trim($_POST['prenom']       ?? ''),
+                trim($_POST['email']        ?? ''),
+                trim($_POST['telephone']    ?? ''),
+                trim($_POST['formation']    ?? ''),
+                trim($_POST['niveau_etude'] ?? '')
+            );
+        }
+        $this->redirect('/?uri=etudiant_list&success=modifie');
+    }
+    // POST /?uri=etudiant_affecter
+    // POST /?uri=etudiant_affecter
+    public function affecterEtudiant(): void {
+    $this->requireRole(fn() => $this->isPilote());
+    $idEtudiantUtilisateur = (int)($_POST['id_etudiant'] ?? 0);
+    $idPiloteUtilisateur   = (int)$_SESSION['user']['id_utilisateur'];
+    if ($idEtudiantUtilisateur) {
+        $this->model->affecterEtudiantAuPilote($idPiloteUtilisateur, $idEtudiantUtilisateur);
+    }
+    $this->redirect('/?uri=etudiant_list&success=affecte');
 }
+
+}
+
+
+
