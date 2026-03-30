@@ -1,5 +1,4 @@
 <?php
-
 require_once __DIR__ . '/Models/StageModel.php';
 require_once __DIR__ . '/Controllers/AuthController.php';
 require_once __DIR__ . '/Controllers/StageController.php';
@@ -57,6 +56,19 @@ class Router {
                 => $this->stage->candidater(),
             $uri === 'wishlist-toggle' && $method === 'POST'
                 => $this->stage->wishlistToggle(),
+            //Offre
+             $uri === 'offre_create' && $method === 'POST'
+                => $this->stage->store(),
+            $uri === 'offre_create'
+                => $this->stage->showCreate(),
+            $uri === 'offre_update' && $method === 'POST'
+                => $this->stage->update(),
+            $uri === 'offre_update'
+                => $this->stage->showUpdate($id),
+            $uri === 'offre_delete' && $method === 'POST'
+                => $this->stage->destroy(),
+            $uri === 'stats_offres'
+                => $this->stage->showStats(),
 
             // Entreprises
             $uri === 'entreprises'
@@ -79,6 +91,10 @@ class Router {
             // Profil
             $uri === 'profil'
                 => $this->profil->index(),
+            $uri === 'profil_update' && $method === 'POST'
+                => $this->profil->update(),
+            $uri === 'profil_delete' && $method === 'POST'
+                => $this->profil->delete(),
 
             // Admin / Pilote
             $uri === 'pilote_list'
@@ -90,13 +106,21 @@ class Router {
             $uri === 'pilote_update' && $method === 'POST'
                 => $this->admin->updatePilote(),
             $uri === 'pilote_update'
-                => $this->admin->showPiloteEdit($id),
+                => $this->admin->showPiloteUpdate($id),
             $uri === 'pilote_delete' && $method === 'POST'
                 => $this->admin->destroyPilote(),
             $uri === 'etudiant_list'
                 => $this->admin->showEtudiantList(),
             $uri === 'etudiant_delete' && $method === 'POST'
                 => $this->admin->destroyEtudiant(),
+            $uri === 'etudiant_update' && $method === 'POST'
+                => $this->admin->updateEtudiant(),
+            $uri === 'etudiant_update'
+                => $this->admin->showEtudiantUpdate($id),
+            $uri === 'etudiant_offres'
+                => $this->admin->showEtudiantOffres($id),
+            $uri === 'etudiant_affecter' && $method === 'POST'
+                => $this->admin->affecterEtudiant(),
             $uri === 'avis_create' && $method === 'POST'
                 => $this->admin->storeAvis(),
             $uri === 'avis_create'
@@ -105,10 +129,6 @@ class Router {
                 => $this->admin->showEvaluationList(),
             $uri === 'evaluation_delete' && $method === 'POST'
                 => $this->admin->destroyEvaluation(),
-
-            //etudiants list
-            $uri === 'etudiant_list'
-                => $this->admin->showEtudiantList(),    
 
             // Pages statiques
             $uri === 'mentions'

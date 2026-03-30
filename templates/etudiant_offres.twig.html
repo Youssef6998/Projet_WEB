@@ -1,0 +1,43 @@
+{% extends "base.twig.html" %}
+{% block title %}Candidatures de {{ etudiant.prenom }} {{ etudiant.nom }} – Stage Finder{% endblock %}
+{% block content %}
+<div class="page">
+    <div class="search-card" style="margin-bottom:1.5rem">
+        <div class="back-btn-container">
+            <a href="/?uri=profil" class="btn-back">← Retour</a>
+        </div>
+        <h2 style="font-size:1.05rem; font-weight:700; color:var(--dark); margin:.5rem 0 0">
+            Candidatures de {{ etudiant.prenom }} {{ etudiant.nom }}
+        </h2>
+        <p style="font-size:.75rem; color:var(--text-muted)">{{ etudiant.email }}</p>
+    </div>
+
+    <div class="stages-list">
+        {% for c in candidatures %}
+        <article class="stage-card">
+            <div class="stage-info">
+                <div class="stage-top">
+                    <span class="stage-company">{{ c.entreprise }}</span>
+                    <span class="stage-type">{{ c.titre }}</span>
+                </div>
+                {% if c.duree %}
+                <p class="stage-desc">Durée : {{ c.duree }}</p>
+                {% endif %}
+            </div>
+            <div class="stage-right">
+                <span class="stage-date">{{ c.date_candidature|date('d/m/Y') }}</span>
+                <span class="badge badge-{{ c.statut }}">
+                    {% if c.statut == 'en_attente' %}En attente
+                    {% elseif c.statut == 'acceptee' %}Acceptée
+                    {% else %}Refusée{% endif %}
+                </span>
+            </div>
+        </article>
+        {% else %}
+        <p style="color:var(--text-muted); font-size:.82rem; text-align:center; padding:2rem 0">
+            Cet étudiant n'a pas encore postulé à un stage.
+        </p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

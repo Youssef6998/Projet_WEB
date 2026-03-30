@@ -106,22 +106,19 @@ class AdminController extends BaseController {
     }
 
     // GET /?uri=etudiant_list
-public function showEtudiantList(int $page = 1): string {
-    // 🔥 REMPLACE isPiloteOuAdmin() par ÇA :
-    $this->requireRole(fn() => $this->isAdmin() || $this->isPilote());
-    
-    $prenom = trim($_GET['prenom'] ?? '');
-    $nom = trim($_GET['nom'] ?? '');
-    $etudiants = $this->model->getEtudiantsFiltrees($prenom, $nom);
-    
-    return $this->render('etudiant_list.twig.html', [
-        'uri' => 'etudiant_list',
-        'etudiants' => $etudiants,
-        'prenom' => $prenom,
-        'nom' => $nom,
-        'success' => $_GET['success'] ?? null
-    ]);
-}
+    public function showEtudiantList(): string {
+        $this->requireRole(fn() => $this->isAdminOrPilote());
+        $nom    = trim($_GET['nom']    ?? '');
+        $prenom = trim($_GET['prenom'] ?? '');
+        $etudiants = $this->model->getAllEtudiants($nom, $prenom);
+        return $this->render('etudiant_list.twig.html', [
+            'uri'       => 'etudiant_list',
+            'etudiants' => $etudiants,
+            'nom'       => $nom,
+            'prenom'    => $prenom,
+            'success'   => $_GET['success'] ?? null,
+        ]);
+    }
     // POST /?uri=etudiant_delete
     public function destroyEtudiant(): void {
     $this->requireRole(fn() => $this->isAdminOrPilote());
@@ -236,7 +233,18 @@ public function showEtudiantList(int $page = 1): string {
         }
         $this->redirect('/?uri=evaluation_list&success=supprime');
     }
-    
+    // GET /?uri=etudiant_offres&id=X
+    public function showEtudiantOffres(int $id): string {
+        $this->requireRole(fn() => $this->isAdminOrPilote());
+        $etudiant     = $this->model->getEtudiantById($id);
+        if (!$etudiant) return $this->render('404.twig.html', ['uri' => 'etudiant_offres']);
+        $candidatures = $this->model->getCandidaturesEtudiant($etudiant['id_etudiant']);
+        return $this->render('etudiant_offres.twig.html', [
+            'uri'          => 'etudiant_offres',
+            'etudiant'     => $etudiant,
+            'candidatures' => $candidatures,
+        ]);
+    }
 
 }
 

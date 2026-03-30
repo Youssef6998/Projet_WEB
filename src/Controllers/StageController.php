@@ -90,4 +90,15 @@ class StageController extends BaseController {
         $redirect = $_POST['redirect'] ?? "/?uri=offre&id=$idOffre";
         $this->redirect($redirect);
     }
+    // GET /?uri=stats_offres
+    public function showStats(): string {
+        $this->requireRole(fn() => $this->isConnecte());
+        $stats       = $this->model->getStatsOffres();
+        $statsOffres = $this->model->getStatsParOffre();
+        return $this->render('stats_offres.twig.html', [
+            'uri'         => 'stats_offres',
+            'stats'       => $stats,
+            'statsOffres' => $statsOffres,
+        ]);
+    }
 }
