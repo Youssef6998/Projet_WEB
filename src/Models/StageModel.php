@@ -10,7 +10,7 @@ class StageModel {
         $this->db = Database::getConnection();
     }
 
-    public function getPaginatedStages(int $page = 1, int $perPage = 6, string $domaine = '', string $ville ='', string $duree='',string $competence=''): array {
+    public function getPaginatedStages(int $page = 1, int $perPage = 6, string $domaine = '', string $ville ='', string $duree='',string $competence='', string $tri = 'date_desc'): array {
         $page   = max(1, $page);
         $offset = ($page - 1) * $perPage;
 
@@ -45,6 +45,12 @@ class StageModel {
 
 $whereClause = !empty($whereConditions) ? 'WHERE ' . implode(' AND ', $whereConditions) : '';
 
+        $orderBy = match($tri) {
+            'date_asc'   => 'o.date_publication ASC',
+            'alpha_asc'  => 'o.titre ASC',
+            'alpha_desc' => 'o.titre DESC',
+            default      => 'o.date_publication DESC',
+        };
 
         $countSql = "SELECT COUNT(*) 
               FROM offre o
@@ -67,7 +73,7 @@ $whereClause = !empty($whereConditions) ? 'WHERE ' . implode(' AND ', $whereCond
                 FROM offre o
                 JOIN entreprise e ON o.id_entreprise = e.id_entreprise
                 $whereClause
-                ORDER BY o.date_publication DESC
+                ORDER BY $orderBy
                 LIMIT :limit OFFSET :offset";
 
         $stmt = $this->db->prepare($sql);
