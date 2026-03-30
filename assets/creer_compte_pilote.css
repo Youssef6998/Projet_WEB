@@ -1,163 +1,194 @@
 :root {
-    --vert: #a2d766;
-    --vert-fonce: #4e9a4e;
-    --dark: #1a1a2e;
-    --text-muted: #6b7280;
-    --border: #e5e7eb;
-    --red: #e53e3e;
+  --white: #ffffff;
+  --rose: #7c3d12;
+  --rose-vivid: #6b2d0f;
+  --dark: #1a0a04;
+  --rose-light: #fdf4ed;
+  --rose-mid: #e8c4a4;
+  --rose-border: rgba(124, 61, 18, 0.16);
+  --rose-body: rgba(124, 61, 18, 0.12);
+  --text-muted: #8b6555;
+  --rose-deep: #3d1508;
+  --r: 1.1rem;
 }
-*, *::before, *::after {
-    box-sizing: border-box;
-    margin: 0;
-}
-a {
-    text-decoration: none;
-    color: inherit;
-}
-.page {
-    width: 100%;
-    max-width: 700px;
-    margin: 0 auto;
-    padding: 30px 20px;
-}
-.intro-page {
-    text-align: center;
-    margin-bottom: 30px;
-}
-.intro-small-titre {
-    font-size: 13px;
-    color: var(--vert);
-    font-weight: 600;
-    margin-bottom: 6px;
-}
-.titre-principal {
-    font-size: 28px;
-    margin-bottom: 8px;
-}
-.sous-titre {
-    color: var(--text-muted);
-    font-size: 14px;
-}
+
+
 .register-card {
-    background: white;
-    width: 100%;
-    padding: 50px 45px 35px;
-    border-radius: 14px;
-    box-shadow: 0 18px 40px rgba(0,0,0,0.08);
-    position: relative;
-    animation: fadeIn .5s ease;
+  background: var(--white);
+  width: 100%;
+  padding: 50px 45px 35px;
+  border-radius: 14px;
+  box-shadow: 0 18px 40px rgba(0,0,0,0.08);
+  position: relative;
+  animation: fadeIn 0.5s ease;
+  margin-bottom: 2rem;
 }
+
+.intro-page {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.intro-small-titre {
+  font-size: 13px;
+  color: var(--rose);
+  font-weight: 600;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.titre-principal {
+  font-size: 28px;
+  margin-bottom: 8px;
+  color: var(--dark);
+  font-weight: 700;
+}
+
+.sous-titre {
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
 .back-btn-container {
-    position: absolute;
-    top: 20px;
-    left: 20px;
+  position: absolute;
+  top: 20px;
+  left: 20px;
 }
+
 .btn-back {
-    padding: 6px 10px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    font-size: 13px;
-    transition: .2s;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--rose-border);
+  font-size: 13px;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  background: transparent;
 }
+
 .btn-back:hover {
-    border-color: var(--vert);
-    color: var(--vert);
+  border-color: var(--rose);
+  color: var(--rose);
+  background: var(--rose-light);
 }
-form {
-    display: flex;
-    flex-direction: column;
+
+.register-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
+
 .input-group {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0;
 }
+
 .input-group label {
-    font-size: 13px;
-    font-weight: 500;
-    margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: var(--dark);
 }
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1rem;
+}
+
 .input-group input,
 .input-group select {
-    padding: 12px 13px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    font-size: 14px;
-    background: #fafafa;
-    transition: .2s;
-    font-family: inherit;
+  padding: 14px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--rose-border);
+  font-size: 14px;
+  background: #fafafa;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  height: 48px;
 }
+
 .input-group input:focus,
 .input-group select:focus {
-    border-color: var(--vert);
-    background: white;
-    outline: none;
-    box-shadow: 0 0 0 2px rgba(162,215,102,0.15);
+  border-color: var(--rose);
+  background: var(--white);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(124, 61, 18, 0.1);
 }
-.row {
-    display: flex;
-    gap: 14px;
-}
-.row .input-group {
-    flex: 1;
-}
+
 .alert {
-    padding: 12px 16px;
-    border-radius: 8px;
-    font-size: 14px;
-    margin-bottom: 16px;
+  padding: 14px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  margin-bottom: 20px;
 }
+
 .alert-error {
-    background: #fff5f5;
-    color: var(--red);
-    border: 1px solid #fecaca;
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
 }
-.terms {
-    font-size: 13px;
-    color: var(--text-muted);
-    margin: 10px 0 20px;
-}
-.terms input {
-    margin-right: 6px;
-}
+
 .btn-primary {
-    width: 100%;
-    padding: 13px;
-    border: none;
-    border-radius: 8px;
-    background: var(--vert);
-    color: white;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: .25s;
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 8px;
+  background: var(--rose);
+  color: var(--white);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  margin-top: 1rem;
 }
+
 .btn-primary:hover {
-    background: var(--vert-fonce);
-    transform: translateY(-1px);
+  background: var(--rose-vivid);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 25px rgba(124, 61, 18, 0.3);
 }
-.login-link {
-    margin-top: 22px;
-    text-align: center;
-    font-size: 14px;
-    color: var(--text-muted);
+
+.btn-primary:active {
+  transform: translateY(0);
 }
-.login-link a {
-    color: var(--vert);
-    font-weight: 600;
-}
-.login-link a:hover {
-    text-decoration: underline;
-}
+
+/* RESPONSIVE */
 @media (max-width: 650px) {
-    .register-card {
-        padding: 35px 25px;
-    }
-    .row {
-        flex-direction: column;
-    }
+  .register-card {
+    padding: 35px 25px;
+    margin: 0 10px;
+  }
+  
+  .row {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .back-btn-container {
+    position: static;
+    margin-bottom: 20px;
+  }
+  
+  .btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
 }
+
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(15px); }
-    to   { opacity: 1; transform: translateY(0); }
+  from { 
+    opacity: 0; 
+    transform: translateY(15px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
 }
