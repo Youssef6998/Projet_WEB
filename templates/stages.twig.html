@@ -48,6 +48,19 @@
                     <input name="duree" value="{{ duree|default('') }}" class="cases" placeholder="Ex : 2 mois">
                 </div>
             </div>
+
+            <div class="field">
+                <label>Trier par</label>
+                <div class="field-input">
+                    <select name="tri" class="cases">
+                        <option value="date_desc" {{ tri|default('date_desc') == 'date_desc' ? 'selected' : '' }}>Date (plus récent)</option>
+                        <option value="date_asc"  {{ tri|default('') == 'date_asc'  ? 'selected' : '' }}>Date (plus ancien)</option>
+                        <option value="alpha_asc" {{ tri|default('') == 'alpha_asc' ? 'selected' : '' }}>Titre (A → Z)</option>
+                        <option value="alpha_desc"{{ tri|default('') == 'alpha_desc'? 'selected' : '' }}>Titre (Z → A)</option>
+                    </select>
+                </div>
+            </div>
+
         </div>
         <div class="search-actions">
             <button type="submit" class="btn btn-fill">Rechercher</button>
@@ -113,16 +126,16 @@
 
 <div class="pagination">
     {% if currentPage > 1 %}
-        <a href="/?uri=stages&page={{ currentPage - 1 }}&domaine={{ domaine }}" class="page-btn arrow">←</a>
+        <a href="/?uri=stages&page={{ currentPage - 1 }}&domaine={{ domaine }}&tri={{ tri }}" class="page-btn arrow">←</a>
     {% endif %}
     {% for i in 1..totalPages %}
-        <a href="/?uri=stages&page={{ i }}&domaine={{ domaine }}"
+        <a href="/?uri=stages&page={{ i }}&domaine={{ domaine }}&tri={{ tri }}"
            class="page-btn {{ i == currentPage ? 'active' : '' }}">
             {{ i }}
         </a>
     {% endfor %}
     {% if currentPage < totalPages %}
-        <a href="/?uri=stages&page={{ currentPage + 1 }}&domaine={{ domaine }}" class="page-btn arrow">→</a>
+        <a href="/?uri=stages&page={{ currentPage + 1 }}&domaine={{ domaine }}&tri={{ tri }}" class="page-btn arrow">→</a>
     {% endif %}
 </div>
 
