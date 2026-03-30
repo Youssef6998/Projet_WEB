@@ -654,6 +654,15 @@ public function getEtudiantsParPiloteUtilisateur(int $idUtilisateur): array {
     return $stmt->fetchAll();
 }
 
+public function getEtudiantById(int $id): ?array {
+    $stmt = $this->db->prepare("
+        SELECT * FROM etudiant 
+        WHERE id_etudiant = :id
+    ");
+    $stmt->execute([':id' => $id]);
+    return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+}
+
 public function affecterEtudiantAuPilote(int $idPiloteUtilisateur, int $idEtudiantUtilisateur): bool {
     $stmt = $this->db->prepare("SELECT id_pilote FROM pilote WHERE id_utilisateur = :id");
     $stmt->execute([':id' => $idPiloteUtilisateur]);

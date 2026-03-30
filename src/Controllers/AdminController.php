@@ -175,6 +175,7 @@ class AdminController extends BaseController {
             'pilote' => $pilote,
         ]);
     }
+
     public function showEtudiantUpdate(int $id): string {
         $this->requireRole(fn() => $this->isAdminOrPilote());
         $etudiant = $this->model->getEtudiantById($id);
