@@ -656,8 +656,11 @@ public function getEtudiantsParPiloteUtilisateur(int $idUtilisateur): array {
 
 public function getEtudiantById(int $id): ?array {
     $stmt = $this->db->prepare("
-        SELECT * FROM etudiant 
-        WHERE id_etudiant = :id
+        SELECT 
+            u.*, e.formation, e.niveau_etude
+        FROM utilisateur u
+        INNER JOIN etudiant e ON u.id_utilisateur = e.id_utilisateur
+        WHERE u.id_utilisateur = :id AND u.role = 'etudiant'
     ");
     $stmt->execute([':id' => $id]);
     return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
@@ -717,6 +720,52 @@ public function getEtudiantsFiltrees(string $prenom = '', string $nom = ''): arr
     } catch (PDOException $e) {
         error_log("Erreur getEtudiantsFiltrees: " . $e->getMessage());
         return [];
+    }
+}
+public function modifierEtudiant(
+    int $idUtilisateur,
+    string $nom,
+    string $prenom,
+    string $email,
+    string $telephone,
+    string $formation,
+    string $niveauEtude
+): bool {
+    try {
+        // UPDATE utilisateur
+        $stmt = $this->db->prepare("
+            UPDATE utilisateur 
+            SET nom = :nom, 
+                prenom = :prenom, 
+                email = :email, 
+                telephone = :telephone 
+            WHERE id_utilisateur = :id
+        ");
+        $stmt->execute([
+            ':nom' => $nom,
+            ':prenom' => $prenom,
+            ':email' => $email,
+            ':telephone' => $telephone,
+            ':id' => $idUtilisateur
+        ]);
+
+        // UPDATE etudiant
+        $stmt = $this->db->prepare("
+            UPDATE etudiant 
+            SET formation = :formation, 
+                niveau_etude = :niveau_etude 
+            WHERE id_utilisateur = :id
+        ");
+        $stmt->execute([
+            ':formation' => $formation,
+            ':niveau_etude' => $niveauEtude,
+            ':id' => $idUtilisateur
+        ]);
+
+        return true;
+    } catch (PDOException $e) {
+        error_log("Erreur modifierEtudiant: " . $e->getMessage());
+        return false;
     }
 }
 }

@@ -19,7 +19,7 @@
             <a href="/?uri=cherche-stage" class="{% if uri == 'cherche-stage' or uri == 'home' %}active{% endif %}">Accueil</a>
             <a href="/?uri=stages" class="{% if uri == 'stages' %}active{% endif %}">Stages</a>
             <a href="/?uri=entreprises" class="{% if uri == 'entreprises' %}active{% endif %}">Entreprises</a>
-            {% if session_user %}
+            {% if session_user and session_user.role in ['admin', 'pilote'] %}
             <a href="/?uri=stats_offres" class="{% if uri == 'stats_offres' %}active{% endif %}">Statistiques</a>
             {% endif %}
 
