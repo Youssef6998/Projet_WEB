@@ -80,7 +80,3 @@ class ProfilController extends BaseController {
         session_destroy();
         $this->redirect('/?uri=cherche-stage');
     }
-
-
- 
-}

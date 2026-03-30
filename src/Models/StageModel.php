@@ -662,6 +662,7 @@ public function affecterEtudiantAuPilote(int $idPiloteUtilisateur, int $idEtudia
         ':id_etudiant' => $idEtudiantUtilisateur,
     ]);
 }
+
 public function getEtudiantsFiltrees(string $prenom = '', string $nom = ''): array {
     try {
         $sql = "
@@ -700,4 +701,5 @@ public function getEtudiantsFiltrees(string $prenom = '', string $nom = ''): arr
         return [];
     }
 }
+
 }
