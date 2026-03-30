@@ -654,6 +654,15 @@ public function getEtudiantsParPiloteUtilisateur(int $idUtilisateur): array {
     return $stmt->fetchAll();
 }
 
+public function getEtudiantById(int $id): ?array {
+    $stmt = $this->db->prepare("
+        SELECT * FROM etudiant 
+        WHERE id_etudiant = :id
+    ");
+    $stmt->execute([':id' => $id]);
+    return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+}
+
 public function affecterEtudiantAuPilote(int $idPiloteUtilisateur, int $idEtudiantUtilisateur): bool {
     $stmt = $this->db->prepare("SELECT id_pilote FROM pilote WHERE id_utilisateur = :id");
     $stmt->execute([':id' => $idPiloteUtilisateur]);
@@ -675,12 +684,19 @@ public function getEtudiantsFiltrees(string $prenom = '', string $nom = ''): arr
             SELECT 
                 u.id_utilisateur, u.prenom, u.nom, u.email, u.telephone,
                 e.formation, e.niveau_etude,
-                CONCAT(COALESCE(pu.prenom, ''), ' ', COALESCE(pu.nom, '')) as pilote_nom
+                CASE 
+                    WHEN pu.id_utilisateur IS NOT NULL 
+                    THEN CONCAT(pu.prenom, ' ', pu.nom)
+                    ELSE NULL 
+                END as pilote_nom
             FROM utilisateur u
-            LEFT JOIN etudiant e ON u.id_utilisateur = e.id_utilisateur
+            INNER JOIN etudiant e ON u.id_utilisateur = e.id_utilisateur  
             LEFT JOIN pilote p ON e.id_pilote = p.id_pilote
             LEFT JOIN utilisateur pu ON p.id_utilisateur = pu.id_utilisateur
-            WHERE u.role = 'etudiant'  
+            WHERE u.role = 'etudiant'
+            AND u.id_utilisateur NOT IN (
+                SELECT id_utilisateur FROM pilote
+            )
         ";
         
         $params = [];
@@ -698,12 +714,12 @@ public function getEtudiantsFiltrees(string $prenom = '', string $nom = ''): arr
         $stmt = $this->db->prepare($sql);
         $stmt->execute($params);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
     } catch (PDOException $e) {
         error_log("Erreur getEtudiantsFiltrees: " . $e->getMessage());
         return [];
     }
 }
+<<<<<<< HEAD
 public function getEtudiantById(int $id): ?array {
     $stmt = $this->db->prepare(
         "SELECT u.id_utilisateur, u.nom, u.prenom, u.email, u.telephone,
@@ -729,4 +745,6 @@ public function modifierEtudiant(int $id, string $nom, string $prenom, string $e
     return $stmt2->execute([':formation' => $formation, ':niveau' => $niveauEtude, ':id' => $id]);
 }
 
+=======
+>>>>>>> 96fa56ca3a65b63cb190bd69eb6459465a75f3eb
 }
