@@ -1,9 +1,9 @@
 :root {
-    --vert: #a2d766;
-    --vert-fonce: #4e9a4e;
+    --rose: #7c3d12;
+    --rose-vivid: #6b2d0f;
     --dark: #1a1a2e;
     --text-muted: #6b7280;
-    --border: #e5e7eb;
+    --rose-border: #e5e7eb;
     --red: #e53e3e;
 }
 *, *::before, *::after {
