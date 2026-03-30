@@ -166,54 +166,6 @@ class AdminController extends BaseController {
         $this->redirect('/?uri=avis_create&success=1');
     }
 
-<<<<<<< HEAD
-    public function showPiloteUpdate(int $id): string {
-        $this->requireRole(fn() => $this->isAdmin());
-        $pilote = $this->model->getPiloteById($id);
-        if (!$pilote) return $this->render('404.twig.html', ['uri' => 'pilote_update']);
-        return $this->render('modifier_pilote.twig.html', [
-            'uri'    => 'pilote_update',
-            'pilote' => $pilote,
-        ]);
-    }
-    public function showEtudiantUpdate(int $id): string {
-        $this->requireRole(fn() => $this->isAdminOrPilote());
-        $etudiant = $this->model->getEtudiantById($id);
-        if (!$etudiant) return $this->render('404.twig.html', ['uri' => 'etudiant_update']);
-        return $this->render('modifier_etudiant.twig.html', [
-            'uri'      => 'etudiant_update',
-            'etudiant' => $etudiant,
-        ]);
-    }
-
-    // POST /?uri=etudiant_update
-    public function updateEtudiant(): void {
-        $this->requireRole(fn() => $this->isAdminOrPilote());
-        $id = (int)($_POST['id'] ?? 0);
-        if ($id) {
-            $this->model->modifierEtudiant(
-                $id,
-                trim($_POST['nom']          ?? ''),
-                trim($_POST['prenom']       ?? ''),
-                trim($_POST['email']        ?? ''),
-                trim($_POST['telephone']    ?? ''),
-                trim($_POST['formation']    ?? ''),
-                trim($_POST['niveau_etude'] ?? '')
-            );
-        }
-        $this->redirect('/?uri=etudiant_list&success=modifie');
-    }
-    // POST /?uri=etudiant_affecter
-    // POST /?uri=etudiant_affecter
-    public function affecterEtudiant(): void {
-    $this->requireRole(fn() => $this->isPilote());
-    $idEtudiantUtilisateur = (int)($_POST['id_etudiant'] ?? 0);
-    $idPiloteUtilisateur   = (int)$_SESSION['user']['id_utilisateur'];
-    if ($idEtudiantUtilisateur) {
-        $this->model->affecterEtudiantAuPilote($idPiloteUtilisateur, $idEtudiantUtilisateur);
-    }
-    $this->redirect('/?uri=etudiant_list&success=affecte');
-=======
     // GET /?uri=evaluation_list
     public function showEvaluationList(): string {
         $this->requireRole(fn() => $this->isAdminOrPilote());
@@ -234,10 +186,9 @@ class AdminController extends BaseController {
         }
         $this->redirect('/?uri=evaluation_list&success=supprime');
     }
->>>>>>> 7d47800e5b075e7ffe0ffb65269b57edc7a53cba
 }
 
-}
+
 
 
 
