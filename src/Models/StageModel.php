@@ -662,4 +662,42 @@ public function affecterEtudiantAuPilote(int $idPiloteUtilisateur, int $idEtudia
         ':id_etudiant' => $idEtudiantUtilisateur,
     ]);
 }
+public function getEtudiantsFiltrees(string $prenom = '', string $nom = ''): array {
+    try {
+        $sql = "
+            SELECT 
+                u.id_utilisateur, u.prenom, u.nom, u.email, u.telephone,
+                e.formation, e.niveau_etude,
+                CONCAT(pu.prenom, ' ', pu.nom) as pilote_nom
+            FROM utilisateur u
+            LEFT JOIN etudiant e ON u.id_utilisateur = e.id_utilisateur
+            LEFT JOIN pilote p ON e.id_pilote = p.id_pilote
+            LEFT JOIN utilisateur pu ON p.id_utilisateur = pu.id_utilisateur
+            WHERE 1=1
+        ";
+        
+        $params = [];
+        
+        // 🔥 FILTRES DYNAMIQUES
+        if (!empty($prenom)) {
+            $sql .= " AND u.prenom LIKE ?";
+            $params[] = "%$prenom%";
+        }
+        if (!empty($nom)) {
+            $sql .= " AND u.nom LIKE ?";
+            $params[] = "%$nom%";
+        }
+        
+        $sql .= " ORDER BY u.nom, u.prenom";
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+    } catch (PDOException $e) {
+        error_log("Erreur getEtudiantsFiltrees: " . $e->getMessage());
+        return [];
+    }
+}
 }
