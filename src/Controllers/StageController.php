@@ -103,6 +103,7 @@ class StageController extends BaseController {
             'statsOffres' => $statsOffres,
         ]);
     }
+<<<<<<< HEAD
 public function showUpdate(int $id): string {
     $this->requireRole(fn() => $this->isAdminOrPilote());
 
@@ -188,5 +189,74 @@ public function destroy(): void {
     }
     
     $this->redirect('/?uri=stages&success=supprimee');
+=======
+    // GET /?uri=offre_create
+public function showCreate(): string {
+    $this->requireRole(fn() => $this->isAdminOrPilote());
+    $entreprises = $this->model->getToutesEntreprises();
+    return $this->render('creer_offre.twig.html', [
+        'uri'         => 'offre_create',
+        'entreprises' => $entreprises,
+    ]);
+}
+
+// POST /?uri=offre_create
+public function store(): void {
+    $this->requireRole(fn() => $this->isAdminOrPilote());
+    $this->model->creerOffre(
+        trim($_POST['titre']                ?? ''),
+        (int)($_POST['id_entreprise']       ?? 0),
+        trim($_POST['domaine']              ?? ''),
+        trim($_POST['description']          ?? ''),
+        trim($_POST['duree']                ?? ''),
+        (int)($_POST['nb_places']           ?? 1),
+        (float)($_POST['base_remuneration'] ?? 0),
+        trim($_POST['date_offre']           ?? '')
+    );
+    $this->redirect('/?uri=stages');
+}
+
+// GET /?uri=offre_update&id=X
+public function showUpdate(int $id): string {
+    $this->requireRole(fn() => $this->isAdminOrPilote());
+    $offre = $this->model->getOffreById($id);
+    if (!$offre) return $this->render('404.twig.html', ['uri' => 'offre_update']);
+    $entreprises = $this->model->getToutesEntreprises();
+    return $this->render('modifier_offre.twig.html', [
+        'uri'         => 'offre_update',
+        'offre'       => $offre,
+        'entreprises' => $entreprises,
+    ]);
+}
+
+// POST /?uri=offre_update
+public function update(): void {
+    $this->requireRole(fn() => $this->isAdminOrPilote());
+    $id = (int)($_POST['id'] ?? 0);
+    if ($id) {
+        $this->model->modifierOffre(
+            $id,
+            trim($_POST['titre']                ?? ''),
+            (int)($_POST['id_entreprise']       ?? 0),
+            trim($_POST['domaine']              ?? ''),
+            trim($_POST['description']          ?? ''),
+            trim($_POST['duree']                ?? ''),
+            (int)($_POST['nb_places']           ?? 1),
+            (float)($_POST['base_remuneration'] ?? 0),
+            trim($_POST['date_offre']           ?? '')
+        );
+    }
+    $this->redirect('/?uri=stages');
+}
+
+// POST /?uri=offre_delete
+public function destroy(): void {
+    $this->requireRole(fn() => $this->isAdminOrPilote());
+    $id = (int)($_POST['id'] ?? 0);
+    if ($id) {
+        $this->model->supprimerOffre($id);
+    }
+    $this->redirect('/?uri=stages');
+>>>>>>> 0c4dcece05172c2dcbb4d8a83f1fad34c512fbae
 }
 }

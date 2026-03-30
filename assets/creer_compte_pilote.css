@@ -1,4 +1,44 @@
 :root {
+<<<<<<< HEAD
+    --rose: #7c3d12;
+    --rose-vivid: #6b2d0f;
+    --dark: #1a1a2e;
+    --text-muted: #6b7280;
+    --rose-border: #e5e7eb;
+    --red: #e53e3e;
+}
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+}
+a {
+    text-decoration: none;
+    color: inherit;
+}
+.page {
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 30px 20px;
+}
+.intro-page {
+    text-align: center;
+    margin-bottom: 30px;
+}
+.intro-small-titre {
+    font-size: 13px;
+    color: var(--vert);
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+.titre-principal {
+    font-size: 28px;
+    margin-bottom: 8px;
+}
+.sous-titre {
+    color: var(--text-muted);
+    font-size: 14px;
+=======
   --white: #ffffff;
   --rose: #7c3d12;
   --rose-vivid: #6b2d0f;
@@ -10,6 +50,7 @@
   --text-muted: #8b6555;
   --rose-deep: #3d1508;
   --r: 1.1rem;
+>>>>>>> 96fa56ca3a65b63cb190bd69eb6459465a75f3eb
 }
 
 
