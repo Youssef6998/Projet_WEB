@@ -132,9 +132,11 @@ class AdminController extends BaseController {
     public function showAvisCreate(): string {
         $this->requireRole(fn() => $this->isAdminOrPilote());
         $entreprises = $this->model->getToutesEntreprises();
+        $etudiants   = $this->model->getAllEtudiants();
         return $this->render('Avis.twig.html', [
             'uri'         => 'avis_create',
             'entreprises' => $entreprises,
+            'etudiants'   => $etudiants,
             'message'     => isset($_GET['success']) ? 'Évaluation envoyée avec succès !' : null,
         ]);
     }
@@ -143,15 +145,28 @@ class AdminController extends BaseController {
     public function storeAvis(): void {
         $this->requireRole(fn() => $this->isAdminOrPilote());
 
-        $this->model->creerEvaluation(
-            (int)($_POST['id_etudiant']   ?? 0),
-            (int)($_POST['id_entreprise'] ?? 0),
-            (int)($_POST['note']          ?? 0),
-            trim($_POST['commentaire']    ?? '')
-        );
+        $idEtudiant   = (int)($_POST['id_etudiant']   ?? 0);
+        $idEntreprise = (int)($_POST['id_entreprise'] ?? 0);
+        $note         = (int)($_POST['note']          ?? 0);
+        $commentaire  = trim($_POST['commentaire']    ?? '');
+
+        if (!$idEtudiant || !$idEntreprise || $note < 1 || $note > 5) {
+            $entreprises = $this->model->getToutesEntreprises();
+            $etudiants   = $this->model->getAllEtudiants();
+            echo $this->render('Avis.twig.html', [
+                'uri'         => 'avis_create',
+                'entreprises' => $entreprises,
+                'etudiants'   => $etudiants,
+                'erreur'      => 'Veuillez remplir tous les champs obligatoires.',
+            ]);
+            return;
+        }
+
+        $this->model->creerEvaluation($idEtudiant, $idEntreprise, $note, $commentaire);
         $this->redirect('/?uri=avis_create&success=1');
     }
 
+<<<<<<< HEAD
     public function showPiloteUpdate(int $id): string {
         $this->requireRole(fn() => $this->isAdmin());
         $pilote = $this->model->getPiloteById($id);
@@ -198,6 +213,28 @@ class AdminController extends BaseController {
         $this->model->affecterEtudiantAuPilote($idPiloteUtilisateur, $idEtudiantUtilisateur);
     }
     $this->redirect('/?uri=etudiant_list&success=affecte');
+=======
+    // GET /?uri=evaluation_list
+    public function showEvaluationList(): string {
+        $this->requireRole(fn() => $this->isAdminOrPilote());
+        $evaluations = $this->model->getAllEvaluations();
+        return $this->render('evaluation_list.twig.html', [
+            'uri'         => 'evaluation_list',
+            'evaluations' => $evaluations,
+            'success'     => $_GET['success'] ?? null,
+        ]);
+    }
+
+    // POST /?uri=evaluation_delete
+    public function destroyEvaluation(): void {
+        $this->requireRole(fn() => $this->isAdminOrPilote());
+        $id = (int)($_POST['id'] ?? 0);
+        if ($id) {
+            $this->model->supprimerEvaluation($id);
+        }
+        $this->redirect('/?uri=evaluation_list&success=supprime');
+    }
+>>>>>>> 7d47800e5b075e7ffe0ffb65269b57edc7a53cba
 }
 
 }

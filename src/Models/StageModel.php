@@ -703,6 +703,7 @@ class StageModel {
     $pilote = $stmt->fetch();
     if (!$pilote) return false;
 
+<<<<<<< HEAD
     $stmt2 = $this->db->prepare(
         "UPDATE etudiant SET id_pilote = :id_pilote WHERE id_utilisateur = :id_etudiant"
     );
@@ -710,6 +711,44 @@ class StageModel {
         ':id_pilote'   => $pilote['id_pilote'],
         ':id_etudiant' => $idEtudiantUtilisateur,
     ]);
+=======
+    public function getEvaluationsParEntreprise(int $idEntreprise): array
+    {
+        $stmt = $this->db->prepare(
+            "SELECT ev.id_evaluation, ev.note, ev.commentaire, ev.date_evaluation,
+                    u.nom AS etudiant_nom, u.prenom AS etudiant_prenom
+             FROM evaluation ev
+             JOIN etudiant e ON ev.id_etudiant = e.id_etudiant
+             JOIN utilisateur u ON e.id_utilisateur = u.id_utilisateur
+             WHERE ev.id_entreprise = :id
+             ORDER BY ev.date_evaluation DESC"
+        );
+        $stmt->execute([':id' => $idEntreprise]);
+        return $stmt->fetchAll();
+    }
+
+    public function getAllEvaluations(): array
+    {
+        $stmt = $this->db->query(
+            "SELECT ev.id_evaluation, ev.note, ev.commentaire, ev.date_evaluation,
+                    u.nom AS etudiant_nom, u.prenom AS etudiant_prenom,
+                    ent.nom AS entreprise_nom, ent.id_entreprise
+             FROM evaluation ev
+             JOIN etudiant e ON ev.id_etudiant = e.id_etudiant
+             JOIN utilisateur u ON e.id_utilisateur = u.id_utilisateur
+             JOIN entreprise ent ON ev.id_entreprise = ent.id_entreprise
+             ORDER BY ev.date_evaluation DESC"
+        );
+        return $stmt->fetchAll();
+    }
+
+    public function supprimerEvaluation(int $id): bool
+    {
+        $stmt = $this->db->prepare("DELETE FROM evaluation WHERE id_evaluation = :id");
+        return $stmt->execute([':id' => $id]);
+    }
+
+>>>>>>> 7d47800e5b075e7ffe0ffb65269b57edc7a53cba
 }
 
 }

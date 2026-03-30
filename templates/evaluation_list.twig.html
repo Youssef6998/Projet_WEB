@@ -1,0 +1,67 @@
+{% extends "base.twig.html" %}
+{% block css %}
+{{ parent() }}
+<link rel="stylesheet" href="/assets/evaluation.css">
+{% endblock %}
+{% block title %}Gestion des évaluations – Stage Finder{% endblock %}
+{% block content %}
+<div class="page">
+
+    <div class="search-card" style="margin-bottom:1.5rem">
+        <div class="search-head">
+            <span class="pill pill-r">{% if session_user.role == 'admin' %}Administration{% else %}Pilote{% endif %}</span>
+            <span class="pill pill-count">{{ evaluations|length }} évaluation{{ evaluations|length != 1 ? 's' : '' }}</span>
+        </div>
+        <div class="eval-list-head">
+            <div>
+                <h2 class="eval-list-title">Gestion des Évaluations</h2>
+                <p class="eval-list-subtitle">Consultez et supprimez les évaluations d'entreprises.</p>
+            </div>
+            <a href="/?uri=avis_create" class="btn btn-fill">+ Nouvelle évaluation</a>
+        </div>
+    </div>
+
+    {% if success == 'supprime' %}
+    <div class="eval-alert-delete">L'évaluation a bien été supprimée.</div>
+    {% endif %}
+
+    <div class="stages-list">
+        {% for ev in evaluations %}
+        <article class="stage-card">
+            <div class="stage-info">
+                <div class="stage-top">
+                    <span class="stage-company">{{ ev.entreprise_nom }}</span>
+                    <span class="stage-type">
+                        <span class="eval-list-stars">
+                            {% for i in 1..5 %}
+                            <span class="{{ i <= ev.note ? 'star-filled' : 'star-empty' }}">★</span>
+                            {% endfor %}
+                            <span class="eval-note-text">{{ ev.note }}/5</span>
+                        </span>
+                    </span>
+                </div>
+                <p class="eval-meta">
+                    Étudiant : {{ ev.etudiant_prenom }} {{ ev.etudiant_nom }}
+                    &nbsp;·&nbsp;
+                    {{ ev.date_evaluation|date('d/m/Y') }}
+                </p>
+                {% if ev.commentaire %}
+                <p class="eval-excerpt">"{{ ev.commentaire|slice(0,150) }}{% if ev.commentaire|length > 150 %}…{% endif %}"</p>
+                {% endif %}
+            </div>
+            <div class="stage-right">
+                <a href="/?uri=entreprise&id={{ ev.id_entreprise }}" class="btn btn-outline">Voir l'entreprise</a>
+                <form method="POST" action="/?uri=evaluation_delete"
+                      onsubmit="return confirm('Supprimer cette évaluation ? Cette action est irréversible.')">
+                    <input type="hidden" name="id" value="{{ ev.id_evaluation }}">
+                    <button type="submit" class="btn btn-ghost btn-danger">Supprimer</button>
+                </form>
+            </div>
+        </article>
+        {% else %}
+        <p class="eval-empty-center">Aucune évaluation enregistrée.</p>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}
