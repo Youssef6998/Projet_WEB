@@ -590,33 +590,6 @@ class StageModel {
         return $this->db->prepare("DELETE FROM utilisateur WHERE id_utilisateur = :id")
                         ->execute([':id' => $idUtilisateur]);
     }
-<<<<<<< HEAD
-    public function getEtudiantsSupervises(int $id_utilisateur_pilote): array {
-    try {
-        $sql = "
-            SELECT 
-                u.id_utilisateur,
-                u.prenom, u.nom, u.email,
-                e.formation, e.niveau_etude
-            FROM etudiant e
-            JOIN utilisateur u ON e.id_utilisateur = u.id_utilisateur
-            JOIN pilote p ON e.id_pilote = p.id_pilote
-            WHERE p.id_utilisateur = ?
-            ORDER BY u.nom, u.prenom
-        ";
-        
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([$id_utilisateur_pilote]);
-        
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-    } catch (PDOException $e) {
-        error_log("Erreur getEtudiantsSupervises: " . $e->getMessage());
-        return [];
-    }
-}
-}
-=======
     public function getEtudiantById(int $id): ?array {
     $stmt = $this->db->prepare(
         "SELECT u.id_utilisateur, u.nom, u.prenom, u.email, u.telephone,
@@ -740,4 +713,3 @@ class StageModel {
 }
 
 }
->>>>>>> d52e869404fe3f398a3dec13a9055b8a7fdf6a2c
