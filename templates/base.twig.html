@@ -4,6 +4,7 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>{% block title %}Stage Finder{% endblock %}</title>
+
 {% block css %}
 <link rel="stylesheet" href="/assets/style-stage.css">
 {% endblock %}
@@ -97,6 +98,11 @@
         </div>
     </footer>
 </div>
+
+    {% block js %}
+        <script src="/assets/js/form-validation.js" defer></script>
+    {% endblock %}
+
 <script>
 function toggleDropdown(btn) {
     const menu = btn.nextElementSibling;

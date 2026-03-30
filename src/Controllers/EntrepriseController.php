@@ -81,16 +81,20 @@ class EntrepriseController extends BaseController {
 
     // GET /?uri=entreprise_update&id=X
     public function showUpdate(int $id): string {
-        $this->requireRole(fn() => $this->isAdminOrPilote());
-        $entreprise = $this->model->getEntrepriseById($id);
-        if (!$entreprise) {
-            return $this->render('404.twig.html', ['uri' => 'entreprise_update']);
-        }
-        return $this->render('modifier_entreprise.twig.html', [
-            'uri'        => 'entreprise_update',
-            'entreprise' => $entreprise,
-        ]);
+    $this->requireRole(fn() => $this->isAdminOrPilote());
+    $entreprise = $this->model->getEntrepriseById($id);
+    
+    if (!$entreprise) {
+        $_SESSION['flash']['error'] = "Entreprise ID $id introuvable.";
+        $this->redirect('/?uri=entreprise_list');  // ou offre_list
+        return '';
     }
+    
+    return $this->render('modifier_entreprise.twig.html', [
+        'uri'        => 'offre_update',
+        'entreprise' => $entreprise,
+    ]);
+}
 
     // POST /?uri=entreprise_update
     public function update(): void {

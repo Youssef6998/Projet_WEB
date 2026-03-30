@@ -103,4 +103,90 @@ class StageController extends BaseController {
             'statsOffres' => $statsOffres,
         ]);
     }
+public function showUpdate(int $id): string {
+    $this->requireRole(fn() => $this->isAdminOrPilote());
+
+    $offre = $this->model->getOffreById($id);
+    if (!$offre) {
+        return $this->render('404.twig.html', ['uri' => 'offre_update']);
+    }
+
+    $entreprises = $this->model->getToutesEntreprises();
+
+    return $this->render('modifier_offre.twig.html', [
+        'uri' => 'offre_update',
+        'offre' => $offre,
+        'entreprises' => $entreprises,
+    ]);
+}
+public function update(): void {
+    $this->requireRole(fn() => $this->isAdminOrPilote());
+
+    $idOffre = (int)($_POST['id'] ?? 0);
+    if ($idOffre) {
+        $this->model->modifierOffre(
+            $idOffre,
+            (int)($_POST['id_entreprise'] ?? 0),
+            trim($_POST['intitule'] ?? ''),
+            trim($_POST['description'] ?? ''),
+            trim($_POST['duree'] ?? ''),
+            trim($_POST['date_debut'] ?? ''),
+            trim($_POST['salaire'] ?? '') ?: null
+        );
+    }
+
+    $this->redirect('/?uri=stages&success=modifie');
+}
+public function showCreate(): string {
+    $this->requireRole(fn() => $this->isAdminOrPilote());
+    
+    return $this->render('creer_offre.twig.html', [
+        'uri' => 'offre_create',
+        'entreprises' => $this->model->getToutesEntreprises(),
+    ]);
+}
+public function store(): void {
+    $this->requireRole(fn() => $this->isAdminOrPilote());
+    
+    // Noms exacts de ton HTML
+    $idEntreprise = (int)($_POST['id_entreprise'] ?? 0);
+    $titre = trim($_POST['titre'] ?? '');
+    $domaine = trim($_POST['domaine'] ?? '');
+    $description = trim($_POST['description'] ?? '');
+    $baseRemuneration = !empty($_POST['base_remuneration']) ? (float)$_POST['base_remuneration'] : null;
+    $dateOffre = trim($_POST['date_offre'] ?? '');
+    $duree = trim($_POST['duree'] ?? '');
+    $nbPlaces = (int)($_POST['nb_places'] ?? 1); // Ignoré car DEFAULT 1
+    
+    if ($idEntreprise && $titre && $dateOffre) {  // Minimum requis
+        $success = $this->model->creerOffre(
+            $idEntreprise, $titre, $domaine, $description,
+            $baseRemuneration, $dateOffre, $duree
+        );
+        
+        if ($success) {
+            $this->redirect('/?uri=stages&success=creee');
+            return;
+        }
+    }
+    
+    // Erreur
+    echo $this->render('creer_offre.twig.html', [
+    'uri' => 'offre_create',
+    'entreprises' => $this->model->getToutesEntreprises(),
+    'erreur' => 'Champs obligatoires manquants.',
+    'old' => $_POST  // ← AJOUTE ÇA !
+]);
+}
+public function destroy(): void {
+    $this->requireRole(fn() => $this->isAdminOrPilote());
+    
+    $idOffre = (int)($_POST['id'] ?? 0);
+    if ($idOffre) {
+        $this->model->supprimerCandidaturesOffre($idOffre);
+        $this->model->supprimerOffre($idOffre);
+    }
+    
+    $this->redirect('/?uri=stages&success=supprimee');
+}
 }

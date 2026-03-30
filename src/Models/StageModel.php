@@ -768,4 +768,56 @@ public function modifierEtudiant(
         return false;
     }
 }
+
+public function creerOffre(
+    int $idEntreprise,
+    string $titre,
+    ?string $domaine,
+    ?string $description,
+    ?float $baseRemuneration,
+    string $dateOffre,
+    ?string $duree
+): bool {
+    try {
+        $stmt = $this->db->prepare("
+            INSERT INTO offre (
+                id_entreprise, titre, domaine, description, 
+                base_remuneration, date_offre, duree
+            ) VALUES (
+                :id_entreprise, :titre, :domaine, :description,
+                :base_remuneration, :date_offre, :duree
+            )
+        ");
+        return $stmt->execute([
+            ':id_entreprise' => $idEntreprise,
+            ':titre' => $titre,
+            ':domaine' => $domaine,
+            ':description' => $description,
+            ':base_remuneration' => $baseRemuneration,
+            ':date_offre' => $dateOffre,     // ← Nom exact !
+            ':duree' => $duree
+        ]);
+    } catch (PDOException $e) {
+        error_log("Erreur creerOffre: " . $e->getMessage());
+        return false;
+    }
+}
+public function supprimerOffre(int $idOffre): bool {
+    try {
+        $stmt = $this->db->prepare("DELETE FROM offre WHERE id_offre = :id");
+        return $stmt->execute([':id' => $idOffre]);
+    } catch (PDOException $e) {
+        error_log("Erreur supprimerOffre: " . $e->getMessage());
+        return false;
+    }
+}
+
+public function supprimerCandidaturesOffre(int $idOffre): bool {
+    try {
+        $stmt = $this->db->prepare("DELETE FROM candidature WHERE id_offre = :id");
+        return $stmt->execute([':id' => $idOffre]);
+    } catch (PDOException $e) {
+        return false;
+    }
+}
 }
