@@ -543,4 +543,123 @@ $whereClause = !empty($whereConditions) ? 'WHERE ' . implode(' AND ', $whereCond
         $stmt = $this->db->prepare("DELETE FROM evaluation WHERE id_evaluation = :id");
         return $stmt->execute([':id' => $id]);
     }
+    public function getStatsOffres(): array {
+    $stmt = $this->db->prepare(
+        "SELECT 
+            COUNT(DISTINCT o.id_offre) AS nb_offres,
+            COUNT(DISTINCT c.id_etudiant) AS nb_candidatures,
+            COUNT(DISTINCT w.id_etudiant) AS nb_wishlist,
+            COALESCE(AVG(o.base_remuneration), 0) AS remuneration_moyenne
+         FROM offre o
+         LEFT JOIN candidature c ON o.id_offre = c.id_offre
+         LEFT JOIN wishlist w ON o.id_offre = w.id_offre"
+    );
+    $stmt->execute();
+    return $stmt->fetch();
+}
+
+public function getStatsParOffre(): array {
+    $stmt = $this->db->prepare(
+        "SELECT o.id_offre, o.titre, e.nom AS entreprise,
+                COUNT(DISTINCT c.id_etudiant) AS nb_candidatures,
+                COUNT(DISTINCT w.id_etudiant) AS nb_wishlist
+         FROM offre o
+         JOIN entreprise e ON o.id_entreprise = e.id_entreprise
+         LEFT JOIN candidature c ON o.id_offre = c.id_offre
+         LEFT JOIN wishlist w ON o.id_offre = w.id_offre
+         GROUP BY o.id_offre, o.titre, e.nom
+         ORDER BY nb_candidatures DESC"
+    );
+    $stmt->execute();
+    return $stmt->fetchAll();
+}
+public function getUtilisateurComplet(int $id): ?array {
+    $stmt = $this->db->prepare(
+        "SELECT id_utilisateur, nom, prenom, email, telephone, role
+         FROM utilisateur WHERE id_utilisateur = :id"
+    );
+    $stmt->execute([':id' => $id]);
+    $user = $stmt->fetch();
+    if (!$user) return null;
+
+    if ($user['role'] === 'etudiant') {
+        $s = $this->db->prepare("SELECT id_etudiant FROM etudiant WHERE id_utilisateur = :id");
+        $s->execute([':id' => $id]);
+        $row = $s->fetch();
+        $user['id_etudiant'] = $row ? (int)$row['id_etudiant'] : null;
+    }
+
+    if ($user['role'] === 'pilote') {
+        $s = $this->db->prepare("SELECT id_pilote, promotion FROM pilote WHERE id_utilisateur = :id");
+        $s->execute([':id' => $id]);
+        $row = $s->fetch();
+        $user['id_pilote'] = $row ? (int)$row['id_pilote'] : null;
+        $user['promotion'] = $row['promotion'] ?? null;
+    }
+
+    return $user;
+}
+
+public function updateUtilisateur(int $id, string $champ, string $valeur): bool {
+    $champsAutorises = ['nom', 'prenom', 'email', 'telephone'];
+    if (!in_array($champ, $champsAutorises, true)) return false;
+
+    if ($champ === 'email') {
+        $stmt = $this->db->prepare("SELECT COUNT(*) FROM utilisateur WHERE email = :email AND id_utilisateur != :id");
+        $stmt->execute([':email' => $valeur, ':id' => $id]);
+        if ((int)$stmt->fetchColumn() > 0) return false;
+    }
+
+    $stmt = $this->db->prepare("UPDATE utilisateur SET $champ = :val WHERE id_utilisateur = :id");
+    return $stmt->execute([':val' => $valeur, ':id' => $id]);
+}
+
+public function updateMotDePasse(int $id, string $ancienMdp, string $nouveauMdp): bool {
+    $stmt = $this->db->prepare("SELECT mot_de_passe FROM utilisateur WHERE id_utilisateur = :id");
+    $stmt->execute([':id' => $id]);
+    $row = $stmt->fetch();
+    if (!$row || !password_verify($ancienMdp, $row['mot_de_passe'])) return false;
+
+    $hash = password_hash($nouveauMdp, PASSWORD_DEFAULT);
+    $stmt2 = $this->db->prepare("UPDATE utilisateur SET mot_de_passe = :mdp WHERE id_utilisateur = :id");
+    return $stmt2->execute([':mdp' => $hash, ':id' => $id]);
+}
+
+public function updatePromotion(int $idUtilisateur, string $promotion): bool {
+    $stmt = $this->db->prepare("UPDATE pilote SET promotion = :promo WHERE id_utilisateur = :id");
+    return $stmt->execute([':promo' => $promotion, ':id' => $idUtilisateur]);
+}
+
+public function supprimerUtilisateur(int $id): bool {
+    $stmt = $this->db->prepare("UPDATE utilisateur SET actif = 0 WHERE id_utilisateur = :id");
+    return $stmt->execute([':id' => $id]);
+}
+
+public function getEtudiantsParPiloteUtilisateur(int $idUtilisateur): array {
+    $stmt = $this->db->prepare(
+        "SELECT u.id_utilisateur, u.nom, u.prenom, u.email
+         FROM utilisateur u
+         JOIN etudiant e ON u.id_utilisateur = e.id_utilisateur
+         JOIN pilote p ON e.id_pilote = p.id_pilote
+         WHERE p.id_utilisateur = :id
+         ORDER BY u.nom, u.prenom"
+    );
+    $stmt->execute([':id' => $idUtilisateur]);
+    return $stmt->fetchAll();
+}
+
+public function affecterEtudiantAuPilote(int $idPiloteUtilisateur, int $idEtudiantUtilisateur): bool {
+    $stmt = $this->db->prepare("SELECT id_pilote FROM pilote WHERE id_utilisateur = :id");
+    $stmt->execute([':id' => $idPiloteUtilisateur]);
+    $pilote = $stmt->fetch();
+    if (!$pilote) return false;
+
+    $stmt2 = $this->db->prepare(
+        "UPDATE etudiant SET id_pilote = :id_pilote WHERE id_utilisateur = :id_etudiant"
+    );
+    return $stmt2->execute([
+        ':id_pilote'   => $pilote['id_pilote'],
+        ':id_etudiant' => $idEtudiantUtilisateur,
+    ]);
+}
 }

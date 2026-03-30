@@ -106,6 +106,10 @@ class Router {
             $uri === 'evaluation_delete' && $method === 'POST'
                 => $this->admin->destroyEvaluation(),
 
+            //etudiants list
+            $uri === 'etudiant_list'
+                => $this->admin->showEtudiantList(),    
+
             // Pages statiques
             $uri === 'mentions'
                 => $this->twig->render('mentions.twig.html', ['uri' => $uri, 'session_user' => $_SESSION['user'] ?? null]),
