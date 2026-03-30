@@ -166,7 +166,6 @@ class AdminController extends BaseController {
         $this->redirect('/?uri=avis_create&success=1');
     }
 
-<<<<<<< HEAD
     public function showPiloteUpdate(int $id): string {
         $this->requireRole(fn() => $this->isAdmin());
         $pilote = $this->model->getPiloteById($id);
@@ -213,7 +212,7 @@ class AdminController extends BaseController {
         $this->model->affecterEtudiantAuPilote($idPiloteUtilisateur, $idEtudiantUtilisateur);
     }
     $this->redirect('/?uri=etudiant_list&success=affecte');
-=======
+    }
     // GET /?uri=evaluation_list
     public function showEvaluationList(): string {
         $this->requireRole(fn() => $this->isAdminOrPilote());
@@ -234,10 +233,9 @@ class AdminController extends BaseController {
         }
         $this->redirect('/?uri=evaluation_list&success=supprime');
     }
->>>>>>> 7d47800e5b075e7ffe0ffb65269b57edc7a53cba
-}
 
 }
+
 
 
 
