@@ -10,7 +10,7 @@ class StageModel {
         $this->db = Database::getConnection();
     }
 
-    public function getPaginatedStages(int $page = 1, int $perPage = 6, string $domaine = '', string $ville ='', string $duree='',string $competence=''): array {
+    public function getPaginatedStages(int $page = 1, int $perPage = 6, string $domaine = '', string $ville ='', string $duree='',string $competence='', string $tri = 'date_desc'): array {
         $page   = max(1, $page);
         $offset = ($page - 1) * $perPage;
 
@@ -45,6 +45,12 @@ class StageModel {
 
 $whereClause = !empty($whereConditions) ? 'WHERE ' . implode(' AND ', $whereConditions) : '';
 
+        $orderBy = match($tri) {
+            'date_asc'   => 'o.date_publication ASC',
+            'alpha_asc'  => 'o.titre ASC',
+            'alpha_desc' => 'o.titre DESC',
+            default      => 'o.date_publication DESC',
+        };
 
         $countSql = "SELECT COUNT(*) 
               FROM offre o
@@ -67,7 +73,7 @@ $whereClause = !empty($whereConditions) ? 'WHERE ' . implode(' AND ', $whereCond
                 FROM offre o
                 JOIN entreprise e ON o.id_entreprise = e.id_entreprise
                 $whereClause
-                ORDER BY o.date_publication DESC
+                ORDER BY $orderBy
                 LIMIT :limit OFFSET :offset";
 
         $stmt = $this->db->prepare($sql);
@@ -433,7 +439,8 @@ $whereClause = !empty($whereConditions) ? 'WHERE ' . implode(' AND ', $whereCond
         return $ok;
     }
 
-    public function getAllPilotes(string $nom = '', string $prenom = ''): array    {
+    public function getAllPilotes(): array
+    {
         $stmt = $this->db->query(
             "SELECT u.id_utilisateur, u.nom, u.prenom, u.email, u.telephone,
                     p.id_pilote, p.centre, p.promotion,
@@ -448,35 +455,21 @@ $whereClause = !empty($whereConditions) ? 'WHERE ' . implode(' AND ', $whereCond
         return $stmt->fetchAll();
     }
 
-    public function getAllEtudiants(string $nom = '', string $prenom = ''): array {
-    $conditions = ["u.actif = 1"];
-    $params     = [];
-
-    if ($nom !== '') {
-        $conditions[] = "u.nom LIKE :nom";
-        $params[':nom'] = '%' . $nom . '%';
+    public function getAllEtudiants(): array
+    {
+        $stmt = $this->db->query(
+            "SELECT u.id_utilisateur, u.nom, u.prenom, u.email, u.telephone,
+                    e.id_etudiant, e.formation, e.niveau_etude,
+                    CONCAT(up.prenom, ' ', up.nom) AS pilote_nom
+             FROM utilisateur u
+             JOIN etudiant e ON u.id_utilisateur = e.id_utilisateur
+             LEFT JOIN pilote p ON e.id_pilote = p.id_pilote
+             LEFT JOIN utilisateur up ON p.id_utilisateur = up.id_utilisateur
+             WHERE u.actif = 1
+             ORDER BY u.nom, u.prenom"
+        );
+        return $stmt->fetchAll();
     }
-    if ($prenom !== '') {
-        $conditions[] = "u.prenom LIKE :prenom";
-        $params[':prenom'] = '%' . $prenom . '%';
-    }
-
-    $where = 'WHERE ' . implode(' AND ', $conditions);
-
-    $stmt = $this->db->prepare(
-        "SELECT u.id_utilisateur, u.nom, u.prenom, u.email, u.telephone,
-                e.id_etudiant, e.formation, e.niveau_etude,
-                CONCAT(up.prenom, ' ', up.nom) AS pilote_nom
-         FROM utilisateur u
-         JOIN etudiant e ON u.id_utilisateur = e.id_utilisateur
-         LEFT JOIN pilote p ON e.id_pilote = p.id_pilote
-         LEFT JOIN utilisateur up ON p.id_utilisateur = up.id_utilisateur
-         $where
-         ORDER BY u.nom, u.prenom"
-    );
-    $stmt->execute($params);
-    return $stmt->fetchAll();
-}
 
     public function getPiloteById(int $idUtilisateur): array|false
     {
@@ -675,27 +668,41 @@ public function affecterEtudiantAuPilote(int $idPiloteUtilisateur, int $idEtudia
         ':id_etudiant' => $idEtudiantUtilisateur,
     ]);
 }
-public function getEtudiantById(int $id): ?array {
-    $stmt = $this->db->prepare(
-        "SELECT u.id_utilisateur, u.nom, u.prenom, u.email, u.telephone,
-                e.id_etudiant, e.formation, e.niveau_etude
-         FROM utilisateur u
-         JOIN etudiant e ON u.id_utilisateur = e.id_utilisateur
-         WHERE u.id_utilisateur = :id"
-    );
-    $stmt->execute([':id' => $id]);
-    $row = $stmt->fetch();
-    return $row ?: null;
-}
-public function modifierEtudiant(int $id, string $nom, string $prenom, string $email, string $telephone, string $formation, string $niveauEtude): bool {
-    $this->db->prepare(
-        "UPDATE utilisateur SET nom=:nom, prenom=:prenom, email=:email, telephone=:tel
-         WHERE id_utilisateur=:id"
-    )->execute([':nom' => $nom, ':prenom' => $prenom, ':email' => $email, ':tel' => $telephone, ':id' => $id]);
 
-    $stmt2 = $this->db->prepare(
-        "UPDATE etudiant SET formation=:formation, niveau_etude=:niveau WHERE id_utilisateur=:id"
-    );
-    return $stmt2->execute([':formation' => $formation, ':niveau' => $niveauEtude, ':id' => $id]);
+public function getEtudiantsFiltrees(string $prenom = '', string $nom = ''): array {
+    try {
+        $sql = "
+            SELECT 
+                u.id_utilisateur, u.prenom, u.nom, u.email, u.telephone,
+                e.formation, e.niveau_etude,
+                CONCAT(COALESCE(pu.prenom, ''), ' ', COALESCE(pu.nom, '')) as pilote_nom
+            FROM utilisateur u
+            LEFT JOIN etudiant e ON u.id_utilisateur = e.id_utilisateur
+            LEFT JOIN pilote p ON e.id_pilote = p.id_pilote
+            LEFT JOIN utilisateur pu ON p.id_utilisateur = pu.id_utilisateur
+            WHERE u.role = 'etudiant'  
+        ";
+        
+        $params = [];
+        if (!empty($prenom)) {
+            $sql .= " AND u.prenom LIKE ?";
+            $params[] = "%$prenom%";
+        }
+        if (!empty($nom)) {
+            $sql .= " AND u.nom LIKE ?";
+            $params[] = "%$nom%";
+        }
+        
+        $sql .= " ORDER BY u.nom, u.prenom";
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+    } catch (PDOException $e) {
+        error_log("Erreur getEtudiantsFiltrees: " . $e->getMessage());
+        return [];
+    }
 }
+
 }

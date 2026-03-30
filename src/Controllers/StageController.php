@@ -17,13 +17,15 @@ class StageController extends BaseController {
         $ville      = $_GET['ville']      ?? '';
         $duree      = $_GET['duree']      ?? '';
         $competence = $_GET['competence'] ?? '';
+        $tri        = $_GET['tri']        ?? 'date_desc';
 
-        $data = $this->model->getPaginatedStages($page, 6, $domaine, $ville, $duree, $competence);
+        $data = $this->model->getPaginatedStages($page, 6, $domaine, $ville, $duree, $competence, $tri);
         $data['uri']        = $_GET['uri'] ?? 'cherche-stage';
         $data['domaine']    = $domaine;
         $data['ville']      = $ville;
         $data['duree']      = $duree;
         $data['competence'] = $competence;
+        $data['tri']        = $tri;
 
         $template = ($data['uri'] === 'stages') ? 'stages.twig.html' : 'cherche_stage.twig.html';
         return $this->render($template, $data);
