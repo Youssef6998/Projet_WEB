@@ -1,0 +1,36 @@
+User-agent: *
+Allow: /
+
+# Pages publiques autorisées
+Allow: /?uri=cherche-stage
+Allow: /?uri=stages
+Allow: /?uri=entreprises
+Allow: /?uri=stats
+Allow: /?uri=nous
+Allow: /?uri=mentions
+
+# Pages privées interdites
+Disallow: /?uri=login
+Disallow: /?uri=register
+Disallow: /?uri=profil
+Disallow: /?uri=logout
+Disallow: /?uri=etudiant_list
+Disallow: /?uri=etudiant_offres
+Disallow: /?uri=etudiant_update
+Disallow: /?uri=etudiant_delete
+Disallow: /?uri=etudiant_affecter
+Disallow: /?uri=pilote_list
+Disallow: /?uri=pilote_create
+Disallow: /?uri=offre_create
+Disallow: /?uri=offre_update
+Disallow: /?uri=offre_delete
+Disallow: /?uri=entreprise_create
+Disallow: /?uri=entreprise_update
+Disallow: /?uri=entreprise_delete
+Disallow: /?uri=evaluation_list
+Disallow: /?uri=avis_create
+Disallow: /?uri=stats_offres
+Disallow: /?uri=cv_download
+Disallow: /uploads/
+
+Sitemap: https://projet-web.fr/sitemap.xml
