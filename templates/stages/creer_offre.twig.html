@@ -52,7 +52,7 @@
             <div class="frow">
                 <div class="fgrp">
                     <label>Date de début *</label>
-                    <input type="date" name="date_offre" value="{{ old.date_offre ?? '' }}" required>
+                    <input type="date" name="date_offre" value="{{ old.date_offre ?? '' }}" min="{{ "now"|date("Y-m-d") }}" required>
                 </div>
                 <div class="fgrp">
                     <label>Rémunération (€/mois)</label>

@@ -139,6 +139,16 @@ class StageController extends BaseController {
             return;
         }
 
+        if ($dateOffre < date('Y-m-d')) {
+            echo $this->render('stages/creer_offre.twig.html', [
+                'uri'         => 'offre_create',
+                'entreprises' => $this->model->getToutesEntreprises(),
+                'erreur'      => 'La date de début ne peut pas être dans le passé.',
+                'old'         => $_POST,
+            ]);
+            return;
+        }
+
         $this->model->creerOffre($idEntreprise, $titre, $domaine, $description, $baseRemuneration, $dateOffre, $duree);
         $this->redirect('/?uri=stages&success=creee');
     }
