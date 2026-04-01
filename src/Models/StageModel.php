@@ -181,6 +181,12 @@ class StageModel {
         ]);
     }
 
+    public function getWishlistIds(int $idEtudiant): array {
+        $stmt = $this->db->prepare("SELECT id_offre FROM wishlist WHERE id_etudiant = :id");
+        $stmt->execute([':id' => $idEtudiant]);
+        return $stmt->fetchAll(PDO::FETCH_COLUMN);
+    }
+
     public function getWishlistEtudiant(int $idEtudiant): array {
         $stmt = $this->db->prepare(
             "SELECT o.id_offre, o.titre, o.duree, o.date_publication, e.nom AS company, w.date_ajout
@@ -288,5 +294,37 @@ class StageModel {
         );
         $stmt->execute();
         return $stmt->fetchAll();
+    }
+
+    public function getPaginatedStatsParOffre(int $page = 1, int $perPage = 6): array {
+        $page = max(1, $page);
+
+        $countStmt   = $this->db->query("SELECT COUNT(*) FROM offre");
+        $totalOffres = (int) $countStmt->fetchColumn();
+        $totalPages  = max(1, (int) ceil($totalOffres / $perPage));
+        $page        = min($page, $totalPages);
+        $offset      = ($page - 1) * $perPage;
+
+        $stmt = $this->db->prepare(
+            "SELECT o.id_offre, o.titre, e.nom AS entreprise,
+                    COUNT(DISTINCT c.id_etudiant) AS nb_candidatures,
+                    COUNT(DISTINCT w.id_etudiant) AS nb_wishlist
+             FROM offre o
+             JOIN entreprise e ON o.id_entreprise = e.id_entreprise
+             LEFT JOIN candidature c ON o.id_offre = c.id_offre
+             LEFT JOIN wishlist w    ON o.id_offre = w.id_offre
+             GROUP BY o.id_offre, o.titre, e.nom
+             ORDER BY nb_candidatures DESC
+             LIMIT :limit OFFSET :offset"
+        );
+        $stmt->bindValue(':limit',  $perPage, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset,  PDO::PARAM_INT);
+        $stmt->execute();
+
+        return [
+            'statsOffres' => $stmt->fetchAll(),
+            'currentPage' => $page,
+            'totalPages'  => $totalPages,
+        ];
     }
 }

@@ -1,0 +1,99 @@
+/* ── Animations favoris ─────────────────────────────────────────────────── */
+
+/* Bouton : pop au clic "Ajouter" */
+@keyframes favori-pop {
+    0%   { transform: scale(1); }
+    35%  { transform: scale(1.25); }
+    65%  { transform: scale(.93); }
+    100% { transform: scale(1); }
+}
+
+@keyframes favori-glow {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(124, 61, 18, 0); }
+    50%       { box-shadow: 0 0 0 7px rgba(124, 61, 18, 0.18); }
+}
+
+.btn-favori.adding {
+    animation: favori-pop .4s cubic-bezier(.36,.07,.19,.97),
+               favori-glow .4s ease;
+    background: var(--marron-clair) !important;
+    border-color: var(--marron) !important;
+    color: var(--marron) !important;
+    pointer-events: none;
+}
+
+/* Carte favori qui disparaît (profil) */
+.favori-card.removing {
+    opacity: 0;
+    transform: translateX(24px);
+    transition: opacity .28s ease, transform .28s ease;
+    pointer-events: none;
+}
+
+/* Cœur actif sur la liste des stages — toujours visible */
+.stage-card .btn-heart.actif {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    transform: translateX(0) !important;
+    color: #e53e3e;
+}
+
+/* ── Toast "Retiré des favoris" ─────────────────────────────────────────── */
+.toast-favoris {
+    position: fixed;
+    bottom: 2.2rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(1.5rem);
+    background: #fff;
+    border: 1.5px solid var(--marron-bordure);
+    border-radius: 14px;
+    padding: .85rem 1.4rem .85rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: .7rem;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, .13);
+    font-family: 'DM Sans', sans-serif;
+    font-size: .88rem;
+    font-weight: 500;
+    color: var(--dark);
+    opacity: 0;
+    transition: opacity .24s ease, transform .3s cubic-bezier(.22,.68,0,1.35);
+    z-index: 9999;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+.toast-favoris.visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+.toast-favoris-icon {
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 50%;
+    background: #fee2e2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 1rem;
+    line-height: 1;
+}
+
+.toast-favoris-text {
+    display: flex;
+    flex-direction: column;
+    gap: .05rem;
+}
+
+.toast-favoris-title {
+    font-weight: 600;
+    font-size: .88rem;
+    color: var(--dark);
+}
+
+.toast-favoris-sub {
+    font-size: .74rem;
+    color: var(--text-muted);
+}

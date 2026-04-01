@@ -7,6 +7,7 @@
 {% block css %}
 <link rel="stylesheet" href="/assets/css/variables.css">
 <link rel="stylesheet" href="/assets/style-stage.css">
+<link rel="stylesheet" href="/assets/confirm-modal.css">
 {% endblock %}
 </head>
 <body>
@@ -24,7 +25,7 @@
 
             {% if session_user and session_user.role in ['admin', 'pilote'] %}
             <div class="nav-dropdown" id="nav-gestion">
-                <button class="nav-dropdown-btn {% if uri in ['etudiant_list','entreprise_list','entreprise_create','entreprise_update','pilote_list','pilote_create','evaluation_list','avis_create','offre_create','offre_update'] %}active{% endif %}"
+                <button class="nav-dropdown-btn {% if uri in ['etudiant_list','entreprise_list','entreprise_create','entreprise_update','pilote_list','register','evaluation_list','avis_create','offre_create','offre_update'] %}active{% endif %}"
                         onclick="toggleDropdown(this)" type="button">
                     Gestion
                     <svg class="nav-chevron" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4"/></svg>
@@ -61,7 +62,7 @@
                         Stats offres
                     </a>
                     {% if session_user.role == 'admin' %}
-                    <a href="/?uri=pilote_list" class="{% if uri in ['pilote_list','pilote_create'] %}active{% endif %}">
+                    <a href="/?uri=pilote_list" class="{% if uri == 'pilote_list' %}active{% endif %}">
                         <span class="nav-item-icon">
                             <svg viewBox="0 0 16 16"><circle cx="8" cy="5" r="2.5"/><path d="M3 13c0-2.8 2.2-4.5 5-4.5s5 1.7 5 4.5"/><path d="M5 8.5l1.5 2.5L8 9.5l1.5 1.5L11 8.5"/></svg>
                         </span>
@@ -96,6 +97,7 @@
     </footer>
 </div>
 <script src="/assets/js/main.js"></script>
+<script src="/assets/js/confirm-modal.js"></script>
 <script src="/assets/js/CV.js" defer></script>
 <script src="/assets/js/bouton-haut.js" defer></script>
 <script src="/assets/js/bouton-retour.js" defer></script>

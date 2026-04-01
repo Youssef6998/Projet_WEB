@@ -117,7 +117,24 @@ class EntrepriseModel {
     }
 
     public function supprimerEntreprise(int $id): bool {
-        $stmt = $this->db->prepare("DELETE FROM entreprise WHERE id_entreprise = :id");
-        return $stmt->execute([':id' => $id]);
+        // Supprimer wishlist et candidatures liées aux offres de cette entreprise
+        $this->db->prepare(
+            "DELETE w FROM wishlist w
+             JOIN offre o ON w.id_offre = o.id_offre
+             WHERE o.id_entreprise = :id"
+        )->execute([':id' => $id]);
+        $this->db->prepare(
+            "DELETE c FROM candidature c
+             JOIN offre o ON c.id_offre = o.id_offre
+             WHERE o.id_entreprise = :id"
+        )->execute([':id' => $id]);
+        $this->db->prepare(
+            "DELETE oc FROM offre_competence oc
+             JOIN offre o ON oc.id_offre = o.id_offre
+             WHERE o.id_entreprise = :id"
+        )->execute([':id' => $id]);
+        $this->db->prepare("DELETE FROM offre WHERE id_entreprise = :id")->execute([':id' => $id]);
+        return $this->db->prepare("DELETE FROM entreprise WHERE id_entreprise = :id")
+                        ->execute([':id' => $id]);
     }
 }

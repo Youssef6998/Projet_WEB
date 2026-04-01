@@ -61,7 +61,9 @@
         <div class="danger-zone">
             <p>Zone dangereuse</p>
             <form method="POST" action="/?uri=offre_delete"
-                  onsubmit="return confirm('Supprimer l\'offre « {{ offre.titre }} » ? Cette action supprimera aussi toutes les candidatures associées.')">
+                  data-confirm-title="Supprimer l'offre"
+                  data-confirm-name="{{ offre.titre }}"
+                  data-confirm-detail="Les candidatures associées à cette offre seront également supprimées.">
                 <input type="hidden" name="id" value="{{ offre.id_offre }}">
                 <button type="submit" class="btn-danger">Supprimer cette offre</button>
             </form>

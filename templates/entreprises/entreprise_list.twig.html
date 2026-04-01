@@ -58,7 +58,9 @@
             <div class="stage-right">
                 <a href="/?uri=entreprise_update&id={{ e.id_entreprise }}" class="btn btn-outline">Modifier</a>
                 <form method="POST" action="/?uri=entreprise_delete"
-                      onsubmit="return confirm('Supprimer l\'entreprise {{ e.nom }} ? Cette action supprimera aussi ses offres.')">
+                      data-confirm-title="Supprimer l'entreprise"
+                      data-confirm-name="{{ e.nom }}"
+                      data-confirm-detail="Toutes ses offres et les candidatures associées seront définitivement supprimées.">
                     <input type="hidden" name="id" value="{{ e.id_entreprise }}">
                     <button type="submit" class="btn btn-ghost btn-danger">Supprimer</button>
                 </form>

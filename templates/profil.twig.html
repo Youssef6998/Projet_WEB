@@ -6,6 +6,7 @@
 <link rel="stylesheet" href="/assets/css/variables.css">
 <link rel="stylesheet" href="/assets/style-stage.css">
 <link rel="stylesheet" href="/assets/profil.css">
+<link rel="stylesheet" href="/assets/favoris.css">
 {% endblock %}
 
 {% block content %}
@@ -185,10 +186,13 @@
         <h2>Zone dangereuse</h2>
         <p class="danger-desc">La suppression de votre compte est irréversible. Toutes vos données seront désactivées.</p>
         <form method="POST" action="/?uri=profil_delete"
-              onsubmit="return confirm('Supprimer définitivement votre compte ? Cette action est irréversible.')">
+              data-confirm-title="Supprimer mon compte"
+              data-confirm-detail="Vos données personnelles seront effacées et votre accès révoqué. Vos candidatures restent conservées."
+              data-confirm-label="Supprimer mon compte">
             <button type="submit" class="btn-danger">Supprimer mon compte</button>
         </form>
     </section>
 
 </main>
+<script src="/assets/js/favoris.js"></script>
 {% endblock %}

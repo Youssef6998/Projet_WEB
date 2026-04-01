@@ -1,14 +1,12 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <title>Créer un compte</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="/assets/css/variables.css">
-  <link rel="stylesheet" href="/assets/inscription.css">
-</head>
-<body>
+{% extends "base.twig.html" %}
+{% block css %}
+<link rel="stylesheet" href="/assets/css/variables.css">
+{{ parent() }}
+<link rel="stylesheet" href="/assets/inscription.css">
+{% endblock %}
+{% block title %}Créer un compte – Stage Finder{% endblock %}
 
+{% block content %}
 <div class="page-inscription">
 
   <div class="intro-page">
@@ -26,7 +24,7 @@
   <section class="formulaire-carte">
 
     <div class="back-btn-container">
-      {% if type == 'pilote' %}
+      {% if type == 'pilote' or type == 'admin' %}
         <a href="/?uri=pilote_list" class="btn-back">← Retour</a>
       {% else %}
         <a href="/?uri=etudiant_list" class="btn-back">← Retour</a>
@@ -37,7 +35,7 @@
     <div class="champ">
       <label for="type-select">Type de compte</label>
       <select id="type-select" class="champ-input" onchange="changerType(this.value)">
-        <option value="etudiant" {% if type == 'etudiant' %}selected{% endif %}>Étudiant</option>
+        <option value="etudiant" {% if type == 'etudiant' or not type %}selected{% endif %}>Étudiant</option>
         {% if session_user.role == 'admin' %}
         <option value="pilote" {% if type == 'pilote' %}selected{% endif %}>Pilote</option>
         <option value="admin"  {% if type == 'admin'  %}selected{% endif %}>Administrateur</option>
@@ -50,7 +48,7 @@
     {% endif %}
 
     <form method="POST" action="/?uri=register" id="form-creation">
-      <input type="hidden" name="type" id="input-type" value="{{ type }}">
+      <input type="hidden" name="type" id="input-type" value="{{ type ?: 'etudiant' }}">
 
       <div class="champ">
         <label for="nom">Nom *</label>
@@ -111,10 +109,11 @@ function changerType(val) {
     document.getElementById('champ-promotion').hidden = (val !== 'pilote');
     const sous = document.querySelector('.sous-titre');
     if (val === 'pilote')       sous.textContent = 'Renseignez les informations du nouveau pilote.';
-    else if (val === 'admin')   sous.textContent = 'Renseignez les informations du nouvel administrateur.';
-    else                        sous.textContent = 'Renseignez les informations du nouvel étudiant.';
+    else if (val === 'admin')   sous.textContent = "Renseignez les informations du nouvel administrateur.";
+    else                        sous.textContent = "Renseignez les informations du nouvel étudiant.";
+    // Adapte le lien retour
+    const back = document.querySelector('.btn-back');
+    if (back) back.href = (val === 'pilote' || val === 'admin') ? '/?uri=pilote_list' : '/?uri=etudiant_list';
 }
 </script>
-
-</body>
-</html>
+{% endblock %}

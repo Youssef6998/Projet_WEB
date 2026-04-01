@@ -27,6 +27,11 @@ class StageController extends BaseController {
         $data['competence'] = $competence;
         $data['tri']        = $tri;
 
+        $data['wishlist_ids'] = [];
+        if (!empty($_SESSION['user']['id_etudiant'])) {
+            $data['wishlist_ids'] = $this->model->getWishlistIds((int)$_SESSION['user']['id_etudiant']);
+        }
+
         $template = ($data['uri'] === 'stages') ? 'stages/stages.twig.html' : 'stages/cherche_stage.twig.html';
         return $this->render($template, $data);
     }
@@ -86,9 +91,19 @@ class StageController extends BaseController {
 
         $idOffre    = (int)($_POST['id_offre'] ?? 0);
         $idEtudiant = (int)$_SESSION['user']['id_etudiant'];
+        $isNowInWishlist = false;
         if ($idOffre > 0) {
-            $this->model->toggleWishlist($idEtudiant, $idOffre);
+            $isNowInWishlist = $this->model->toggleWishlist($idEtudiant, $idOffre);
         }
+
+        $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH'])
+               && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+        if ($isAjax) {
+            header('Content-Type: application/json');
+            echo json_encode(['en_favori' => $isNowInWishlist]);
+            exit;
+        }
+
         $redirect = $_POST['redirect'] ?? "/?uri=offre&id=$idOffre";
         $this->redirect($redirect);
     }
@@ -162,10 +177,14 @@ class StageController extends BaseController {
     // GET /?uri=stats_offres
     public function showStats(): string {
         $this->requireRole(fn() => $this->isAdminOrPilote());
+        $page           = max(1, (int)($_GET['page'] ?? 1));
+        $paginatedStats = $this->model->getPaginatedStatsParOffre($page, 6);
         return $this->render('stages/stats_offres.twig.html', [
             'uri'         => 'stats_offres',
             'stats'       => $this->model->getStatsOffres(),
-            'statsOffres' => $this->model->getStatsParOffre(),
+            'statsOffres' => $paginatedStats['statsOffres'],
+            'currentPage' => $paginatedStats['currentPage'],
+            'totalPages'  => $paginatedStats['totalPages'],
         ]);
     }
 
