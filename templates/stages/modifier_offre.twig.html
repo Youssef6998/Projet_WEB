@@ -59,7 +59,6 @@
         </form>
 
         <div class="danger-zone">
-            <p>Zone dangereuse</p>
             <form method="POST" action="/?uri=offre_delete"
                   onsubmit="return confirm('Supprimer l\'offre « {{ offre.titre }} » ? Cette action supprimera aussi toutes les candidatures associées.')">
                 <input type="hidden" name="id" value="{{ offre.id_offre }}">
