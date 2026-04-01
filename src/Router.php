@@ -133,6 +133,8 @@ class Router {
                 => $this->pilote->affecterEtudiant(),
             $uri === 'etudiant_offres'
                 => $this->pilote->showEtudiantOffres($id),
+            $uri === 'cv_download'
+                => $this->pilote->downloadCv(),
             $uri === 'etudiant_delete' && $method === 'POST'
                 => $this->pilote->destroyEtudiant(),
 

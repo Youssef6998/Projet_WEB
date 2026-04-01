@@ -9,6 +9,7 @@
 <div class="page">
 
     <div class="search-card search-card--mb">
+        <a href="/?uri=etudiant_list" class="eo-btn-retour">← Retour</a>
         <div class="search-head">
             <span class="pill pill-r">{% if session_user.role == 'admin' %}Administration{% else %}Pilote{% endif %}</span>
             <span class="pill pill-count">{{ candidatures|length }} candidature{{ candidatures|length != 1 ? 's' : '' }}</span>
@@ -18,7 +19,6 @@
                 <h2 class="list-title">{{ etudiant.prenom }} {{ etudiant.nom }}</h2>
                 <p class="list-subtitle">{{ etudiant.email }}{% if etudiant.formation %} · {{ etudiant.formation }}{% endif %}</p>
             </div>
-            <a href="/?uri=etudiant_list" class="btn btn-outline">← Retour</a>
         </div>
     </div>
 
@@ -49,7 +49,19 @@
             </div>
             <div class="stage-right">
                 <a href="/?uri=offre&id={{ c.id_offre }}" class="btn btn-dark btn-sm">Voir l'offre</a>
+                {% if c.cv_path is not empty %}
+                <button type="button" class="btn btn-outline btn-sm eo-cv-dl" data-cv="/?uri=cv_download&id_etudiant={{ c.id_etudiant }}&id_offre={{ c.id_offre }}" data-nom="{{ etudiant.prenom }} {{ etudiant.nom }}">CV</button>
+                {% endif %}
+                {% if c.lettre_motivation %}
+                <button type="button" class="btn btn-outline btn-sm eo-lm-toggle" data-target="lm-{{ loop.index }}">Lettre de motivation</button>
+                {% endif %}
             </div>
+            {% if c.lettre_motivation %}
+            <div class="eo-lettre" id="lm-{{ loop.index }}" hidden>
+                <p class="eo-lettre-titre">Lettre de motivation</p>
+                <p class="eo-lettre-texte">{{ c.lettre_motivation|nl2br }}</p>
+            </div>
+            {% endif %}
         </article>
         {% else %}
         <p class="liste-vide">Cet étudiant n'a pas encore postulé à un stage.</p>
@@ -57,4 +69,70 @@
     </div>
 
 </div>
+
+<!-- Modal téléchargement CV -->
+<div id="eo-cv-modal" class="eo-cv-overlay" role="dialog" aria-modal="true">
+    <div class="eo-cv-modal">
+        <div class="eo-cv-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 15V3m0 12l-4-4m4 4l4-4"/>
+                <path d="M2 17l.621 2.485A2 2 0 0 0 4.561 21h14.878a2 2 0 0 0 1.94-1.515L22 17"/>
+            </svg>
+        </div>
+        <h3 class="eo-cv-title">Télécharger le CV</h3>
+        <p class="eo-cv-message">Voulez-vous télécharger le CV de <strong id="eo-cv-nom"></strong> ?</p>
+        <div class="eo-cv-actions">
+            <button class="cm-cancel" id="eo-cv-cancel" type="button">Annuler</button>
+            <button class="eo-cv-confirm" id="eo-cv-confirm" type="button">Télécharger</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// ── Lettre de motivation toggle ──
+document.querySelectorAll('.eo-lm-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const target = document.getElementById(btn.dataset.target);
+        target.hidden = !target.hidden;
+        btn.textContent = target.hidden ? 'Lettre de motivation' : 'Masquer';
+    });
+});
+
+// ── Modal téléchargement CV ──
+const cvOverlay  = document.getElementById('eo-cv-modal');
+const cvNomEl    = document.getElementById('eo-cv-nom');
+const cvCancel   = document.getElementById('eo-cv-cancel');
+const cvConfirm  = document.getElementById('eo-cv-confirm');
+let pendingCvUrl = null;
+
+function openCvModal(url, nom) {
+    pendingCvUrl = url;
+    cvNomEl.textContent = nom;
+    cvOverlay.classList.add('eo-cv-visible');
+    cvCancel.focus();
+}
+function closeCvModal() {
+    cvOverlay.classList.remove('eo-cv-visible');
+    pendingCvUrl = null;
+}
+
+document.querySelectorAll('.eo-cv-dl').forEach(btn => {
+    btn.addEventListener('click', () => openCvModal(btn.dataset.cv, btn.dataset.nom));
+});
+
+cvCancel.addEventListener('click', closeCvModal);
+cvOverlay.addEventListener('click', e => { if (e.target === cvOverlay) closeCvModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && cvOverlay.classList.contains('eo-cv-visible')) closeCvModal(); });
+
+cvConfirm.addEventListener('click', () => {
+    if (!pendingCvUrl) return;
+    const a = document.createElement('a');
+    a.href = pendingCvUrl;
+    a.download = '';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    closeCvModal();
+});
+</script>
 {% endblock %}

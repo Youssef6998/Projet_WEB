@@ -164,6 +164,33 @@ class PiloteController extends BaseController {
         ]);
     }
 
+    // GET /?uri=cv_download&id_etudiant=X&id_offre=Y
+    public function downloadCv(): void {
+        $this->requireRole(fn() => $this->isAdminOrPilote());
+        $idEtudiant = (int)($_GET['id_etudiant'] ?? 0);
+        $idOffre    = (int)($_GET['id_offre']    ?? 0);
+        $cvPath     = $this->stageModel->getCvPath($idEtudiant, $idOffre);
+
+        if (!$cvPath) {
+            http_response_code(404);
+            exit('CV introuvable.');
+        }
+
+        $fullPath = __DIR__ . '/../../' . ltrim($cvPath, '/');
+        if (!file_exists($fullPath)) {
+            http_response_code(404);
+            exit('Fichier introuvable.');
+        }
+
+        $filename = basename($fullPath);
+        $mime     = mime_content_type($fullPath) ?: 'application/octet-stream';
+        header('Content-Type: ' . $mime);
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Content-Length: ' . filesize($fullPath));
+        readfile($fullPath);
+        exit;
+    }
+
     // POST /?uri=etudiant_retirer
     public function retirerEtudiant(): void {
         $this->requireRole(fn() => $this->isPilote());

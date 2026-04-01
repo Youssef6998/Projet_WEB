@@ -217,6 +217,15 @@ class StageModel {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function getCvPath(int $idEtudiant, int $idOffre): ?string {
+        $stmt = $this->db->prepare(
+            "SELECT cv_path FROM candidature WHERE id_etudiant = :e AND id_offre = :o"
+        );
+        $stmt->execute([':e' => $idEtudiant, ':o' => $idOffre]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ? $row['cv_path'] : null;
+    }
+
     public function getToutesEntreprises(): array {
         return $this->db->query(
             "SELECT id_entreprise, nom FROM entreprise ORDER BY nom ASC"

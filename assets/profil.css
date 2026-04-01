@@ -215,3 +215,120 @@
 .alert { border-radius: 10px; padding: .7rem 1rem; font-size: .82rem; margin-bottom: .5rem; }
 .alert-success { background: #f0fdf4; border: 1.5px solid #86efac; color: #166534; }
 .alert-error   { background: #fef2f2; border: 1.5px solid #fca5a5; color: #991b1b; }
+
+/* ── Page etudiant_offres ── */
+.eo-btn-retour {
+    display: inline-block;
+    margin-bottom: .75rem;
+    font-size: .78rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color .15s;
+}
+.eo-btn-retour:hover {
+    color: var(--dark);
+}
+
+/* ── Modal CV ── */
+.eo-cv-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(26, 10, 4, 0.5);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    display: grid;
+    place-items: center;
+    z-index: 9999;
+    padding: 1rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s ease;
+}
+.eo-cv-overlay.eo-cv-visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+.eo-cv-modal {
+    background: var(--white);
+    border-radius: var(--r);
+    padding: 2rem;
+    max-width: 420px;
+    width: 100%;
+    box-shadow: 0 24px 64px rgba(26, 10, 4, 0.22);
+    transform: translateY(16px) scale(0.96);
+    opacity: 0;
+    transition: transform .25s cubic-bezier(.34,1.56,.64,1), opacity .2s ease;
+}
+.eo-cv-overlay.eo-cv-visible .eo-cv-modal {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+}
+.eo-cv-icon {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    margin-bottom: 1.25rem;
+    background: var(--marron-clair);
+    color: var(--marron-vif);
+}
+.eo-cv-icon svg {
+    width: 1.4rem;
+    height: 1.4rem;
+}
+.eo-cv-title {
+    font: 700 1.1rem 'DM Sans', sans-serif;
+    color: var(--dark);
+    margin: 0 0 .5rem;
+}
+.eo-cv-message {
+    font: 400 .875rem 'DM Sans', sans-serif;
+    color: var(--text-muted);
+    margin: 0 0 1.75rem;
+    line-height: 1.6;
+}
+.eo-cv-message strong { color: var(--dark); font-weight: 600; }
+.eo-cv-actions {
+    display: flex;
+    gap: .625rem;
+    justify-content: flex-end;
+}
+.eo-cv-confirm {
+    padding: .55rem 1.25rem;
+    border-radius: 2rem;
+    border: none;
+    font: 600 .85rem 'DM Sans', sans-serif;
+    cursor: pointer;
+    background: var(--marron-vif);
+    color: var(--white);
+    transition: background .15s, box-shadow .15s;
+    line-height: 1;
+}
+.eo-cv-confirm:hover {
+    background: var(--marron-profond);
+    box-shadow: 0 4px 14px rgba(124,61,18,0.35);
+}
+
+.eo-lettre {
+    padding: 1rem 1.25rem;
+    border-top: 1.5px solid var(--marron-bordure);
+    background: #fdf8f5;
+    border-radius: 0 0 12px 12px;
+}
+.eo-lettre-titre {
+    font-size: .72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--text-muted);
+    margin: 0 0 .5rem;
+}
+.eo-lettre-texte {
+    font-size: .85rem;
+    color: var(--dark);
+    line-height: 1.6;
+    margin: 0;
+    white-space: pre-wrap;
+}
