@@ -121,6 +121,59 @@ class UserModel {
         return $stmt->fetchAll();
     }
 
+    public function getPaginatedPilotes(int $page = 1, int $perPage = 6, string $nom = '', string $prenom = ''): array {
+        $page       = max(1, $page);
+        $conditions = ["u.actif = 1"];
+        $params     = [];
+        if ($nom !== '') {
+            $conditions[]   = "u.nom LIKE :nom";
+            $params[':nom'] = '%' . $nom . '%';
+        }
+        if ($prenom !== '') {
+            $conditions[]      = "u.prenom LIKE :prenom";
+            $params[':prenom'] = '%' . $prenom . '%';
+        }
+        $where = implode(' AND ', $conditions);
+
+        $countStmt = $this->db->prepare(
+            "SELECT COUNT(*)
+             FROM utilisateur u
+             JOIN pilote p ON u.id_utilisateur = p.id_utilisateur
+             WHERE $where"
+        );
+        $countStmt->execute($params);
+        $totalPilotes = (int) $countStmt->fetchColumn();
+        $totalPages   = max(1, (int) ceil($totalPilotes / $perPage));
+        $page         = min($page, $totalPages);
+        $offset       = ($page - 1) * $perPage;
+
+        $stmt = $this->db->prepare(
+            "SELECT u.id_utilisateur, u.nom, u.prenom, u.email, u.telephone,
+                    p.id_pilote, p.centre, p.promotion,
+                    COUNT(e.id_etudiant) AS nb_etudiants
+             FROM utilisateur u
+             JOIN pilote p ON u.id_utilisateur = p.id_utilisateur
+             LEFT JOIN etudiant e ON p.id_pilote = e.id_pilote
+             WHERE $where
+             GROUP BY u.id_utilisateur, p.id_pilote
+             ORDER BY u.nom, u.prenom
+             LIMIT :limit OFFSET :offset"
+        );
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value);
+        }
+        $stmt->bindValue(':limit',  $perPage, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset,  PDO::PARAM_INT);
+        $stmt->execute();
+
+        return [
+            'pilotes'      => $stmt->fetchAll(),
+            'currentPage'  => $page,
+            'totalPages'   => $totalPages,
+            'totalPilotes' => $totalPilotes,
+        ];
+    }
+
     public function getAllEtudiants(): array {
         $stmt = $this->db->query(
             "SELECT u.id_utilisateur, u.nom, u.prenom, u.email, u.telephone,
@@ -167,13 +220,37 @@ class UserModel {
     }
 
     public function supprimerPilote(int $idUtilisateur): bool {
-        $this->db->prepare("DELETE FROM pilote WHERE id_utilisateur = :id")->execute([':id' => $idUtilisateur]);
-        return $this->db->prepare("DELETE FROM utilisateur WHERE id_utilisateur = :id")->execute([':id' => $idUtilisateur]);
+        // Désaffecter tous les étudiants supervisés par ce pilote
+        $this->db->prepare(
+            "UPDATE etudiant e
+             JOIN pilote p ON e.id_pilote = p.id_pilote
+             SET e.id_pilote = NULL
+             WHERE p.id_utilisateur = :id"
+        )->execute([':id' => $idUtilisateur]);
+        // Anonymiser les données personnelles et désactiver le compte
+        return $this->db->prepare(
+            "UPDATE utilisateur
+             SET nom = '[Supprimé]', prenom = '[Supprimé]',
+                 email = CONCAT('supprime_', id_utilisateur, '@supprime.local'),
+                 telephone = '', mot_de_passe = 'DELETED', actif = 0
+             WHERE id_utilisateur = :id"
+        )->execute([':id' => $idUtilisateur]);
     }
 
     public function supprimerEtudiant(int $idUtilisateur): bool {
-        $this->db->prepare("DELETE FROM etudiant WHERE id_utilisateur = :id")->execute([':id' => $idUtilisateur]);
-        return $this->db->prepare("DELETE FROM utilisateur WHERE id_utilisateur = :id")->execute([':id' => $idUtilisateur]);
+        // Désaffecter du pilote (le lien de supervision n'a plus de sens)
+        $this->db->prepare(
+            "UPDATE etudiant SET id_pilote = NULL WHERE id_utilisateur = :id"
+        )->execute([':id' => $idUtilisateur]);
+        // Anonymiser les données personnelles et désactiver le compte
+        // Les candidatures et favoris sont conservés pour l'intégrité des statistiques
+        return $this->db->prepare(
+            "UPDATE utilisateur
+             SET nom = '[Supprimé]', prenom = '[Supprimé]',
+                 email = CONCAT('supprime_', id_utilisateur, '@supprime.local'),
+                 telephone = '', mot_de_passe = 'DELETED', actif = 0
+             WHERE id_utilisateur = :id"
+        )->execute([':id' => $idUtilisateur]);
     }
 
     public function getEtudiantById(int $idUtilisateur): array|false {
@@ -229,6 +306,59 @@ class UserModel {
         );
         $stmt->execute($params);
         return $stmt->fetchAll();
+    }
+
+    public function getPaginatedEtudiants(int $page = 1, int $perPage = 6, string $prenom = '', string $nom = ''): array {
+        $page       = max(1, $page);
+        $conditions = ["u.actif = 1"];
+        $params     = [];
+        if ($prenom !== '') {
+            $conditions[]      = "u.prenom LIKE :prenom";
+            $params[':prenom'] = '%' . $prenom . '%';
+        }
+        if ($nom !== '') {
+            $conditions[]   = "u.nom LIKE :nom";
+            $params[':nom'] = '%' . $nom . '%';
+        }
+        $where = implode(' AND ', $conditions);
+
+        $countStmt = $this->db->prepare(
+            "SELECT COUNT(*)
+             FROM utilisateur u
+             JOIN etudiant e ON u.id_utilisateur = e.id_utilisateur
+             WHERE $where"
+        );
+        $countStmt->execute($params);
+        $totalEtudiants = (int) $countStmt->fetchColumn();
+        $totalPages     = max(1, (int) ceil($totalEtudiants / $perPage));
+        $page           = min($page, $totalPages);
+        $offset         = ($page - 1) * $perPage;
+
+        $stmt = $this->db->prepare(
+            "SELECT u.id_utilisateur, u.nom, u.prenom, u.email, u.telephone,
+                    e.id_etudiant, e.formation, e.niveau_etude,
+                    CONCAT(up.prenom, ' ', up.nom) AS pilote_nom
+             FROM utilisateur u
+             JOIN etudiant e ON u.id_utilisateur = e.id_utilisateur
+             LEFT JOIN pilote p ON e.id_pilote = p.id_pilote
+             LEFT JOIN utilisateur up ON p.id_utilisateur = up.id_utilisateur
+             WHERE $where
+             ORDER BY u.nom, u.prenom
+             LIMIT :limit OFFSET :offset"
+        );
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value);
+        }
+        $stmt->bindValue(':limit',  $perPage, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset,  PDO::PARAM_INT);
+        $stmt->execute();
+
+        return [
+            'etudiants'      => $stmt->fetchAll(),
+            'currentPage'    => $page,
+            'totalPages'     => $totalPages,
+            'totalEtudiants' => $totalEtudiants,
+        ];
     }
 
     public function getUtilisateurComplet(int $id): ?array {
@@ -287,8 +417,25 @@ class UserModel {
     }
 
     public function supprimerUtilisateur(int $id): bool {
-        return $this->db->prepare("UPDATE utilisateur SET actif = 0 WHERE id_utilisateur = :id")
-                        ->execute([':id' => $id]);
+        // Désaffecter si étudiant (pilote → étudiant)
+        $this->db->prepare(
+            "UPDATE etudiant SET id_pilote = NULL WHERE id_utilisateur = :id"
+        )->execute([':id' => $id]);
+        // Désaffecter les étudiants supervisés si pilote
+        $this->db->prepare(
+            "UPDATE etudiant e
+             JOIN pilote p ON e.id_pilote = p.id_pilote
+             SET e.id_pilote = NULL
+             WHERE p.id_utilisateur = :id"
+        )->execute([':id' => $id]);
+        // Anonymiser les données personnelles et désactiver le compte
+        return $this->db->prepare(
+            "UPDATE utilisateur
+             SET nom = '[Supprimé]', prenom = '[Supprimé]',
+                 email = CONCAT('supprime_', id_utilisateur, '@supprime.local'),
+                 telephone = '', mot_de_passe = 'DELETED', actif = 0
+             WHERE id_utilisateur = :id"
+        )->execute([':id' => $id]);
     }
 
     public function retirerEtudiantPilote(int $idEtudiantUtilisateur): bool {

@@ -2,6 +2,7 @@
 {% block css %}
 <link rel="stylesheet" href="/assets/css/variables.css">
 <link rel="stylesheet" href="/assets/style-stage.css">
+<link rel="stylesheet" href="/assets/favoris.css">
 {% endblock %}
 {% block title %}Stage Finder – Tous les stages{% endblock %}
 
@@ -109,17 +110,18 @@
 
             <div class="stage-actions">
                 {% if session_user and session_user.role == 'etudiant' %}
-                <form method="post" action="/?uri=wishlist-toggle">
-                    <input type="hidden" name="id_offre" value="{{ stage.id }}">
-                    <input type="hidden" name="redirect" value="/?uri=stages">
-                    <button type="submit" class="btn btn-dark btn-heart">❤️</button>
-                </form>
+                <button type="button"
+                        class="btn btn-dark btn-heart {% if stage.id in wishlist_ids %}actif{% endif %}"
+                        data-offre-id="{{ stage.id }}"
+                        title="{{ stage.id in wishlist_ids ? 'Retirer des favoris' : 'Ajouter aux favoris' }}">❤</button>
                 {% endif %}
                 <a href="/?uri=offre&id={{ stage.id }}" class="btn btn-dark">Voir l'offre</a>
                 {% if session_user and session_user.role in ['admin', 'pilote'] %}
                 <a href="/?uri=offre_update&id={{ stage.id }}" class="btn btn-outline">Modifier</a>
                 <form method="post" action="/?uri=offre_delete"
-                      onsubmit="return confirm('Supprimer l\'offre « {{ stage.title }} » ? Cette action est irréversible.')">
+                      data-confirm-title="Supprimer l'offre"
+                      data-confirm-name="{{ stage.title }}"
+                      data-confirm-detail="Les candidatures associées à cette offre seront également supprimées.">
                     <input type="hidden" name="id" value="{{ stage.id }}">
                     <button type="submit" class="btn btn-ghost btn-danger">Supprimer</button>
                 </form>
@@ -157,4 +159,5 @@
     {% endif %}
 </div>
 
+<script src="/assets/js/favoris.js"></script>
 {% endblock %}

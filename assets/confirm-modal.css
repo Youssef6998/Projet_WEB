@@ -1,0 +1,140 @@
+/* ═══════════════════════════════════════════
+   Modale de confirmation — confirm-modal.css
+   ═══════════════════════════════════════════ */
+
+.cm-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(26, 10, 4, 0.5);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    display: grid;
+    place-items: center;
+    z-index: 9999;
+    padding: 1rem;
+    /* Caché par défaut via pointer-events + opacity (évite le conflit avec display:none) */
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s ease;
+}
+
+.cm-overlay.cm-visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* ── Carte centrale ── */
+.cm-modal {
+    background: var(--white);
+    border-radius: var(--r);
+    padding: 2rem;
+    max-width: 420px;
+    width: 100%;
+    box-shadow: 0 24px 64px rgba(26, 10, 4, 0.22);
+    transform: translateY(16px) scale(0.96);
+    opacity: 0;
+    transition: transform .25s cubic-bezier(.34, 1.56, .64, 1), opacity .2s ease;
+}
+
+.cm-overlay.cm-visible .cm-modal {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+}
+
+/* ── Icône ── */
+.cm-icon {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    margin-bottom: 1.25rem;
+}
+
+.cm-icon svg {
+    width: 1.4rem;
+    height: 1.4rem;
+}
+
+.cm-overlay[data-type="danger"] .cm-icon {
+    background: var(--danger-fond);
+    color: var(--danger);
+}
+
+.cm-overlay[data-type="warning"] .cm-icon {
+    background: var(--statut-attente-fond);
+    color: var(--statut-attente);
+}
+
+/* ── Texte ── */
+.cm-title {
+    font: 700 1.1rem 'DM Sans', sans-serif;
+    color: var(--dark);
+    margin: 0 0 .5rem;
+}
+
+.cm-message {
+    font: 400 .875rem 'DM Sans', sans-serif;
+    color: var(--text-muted);
+    margin: 0 0 1.75rem;
+    line-height: 1.6;
+}
+
+.cm-message strong {
+    color: var(--dark);
+    font-weight: 600;
+}
+
+/* ── Actions ── */
+.cm-actions {
+    display: flex;
+    gap: .625rem;
+    justify-content: flex-end;
+}
+
+.cm-cancel {
+    padding: .55rem 1.25rem;
+    border-radius: 2rem;
+    border: 1.5px solid var(--marron-bordure);
+    background: transparent;
+    color: var(--text-muted);
+    font: 500 .85rem 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: background .15s, color .15s;
+    line-height: 1;
+}
+
+.cm-cancel:hover {
+    background: var(--marron-clair);
+    color: var(--dark);
+}
+
+.cm-confirm {
+    padding: .55rem 1.25rem;
+    border-radius: 2rem;
+    border: none;
+    font: 600 .85rem 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: background .15s, box-shadow .15s;
+    line-height: 1;
+}
+
+.cm-overlay[data-type="danger"] .cm-confirm {
+    background: var(--danger);
+    color: var(--white);
+}
+
+.cm-overlay[data-type="danger"] .cm-confirm:hover {
+    background: #b91c1c;
+    box-shadow: 0 4px 14px rgba(220, 38, 38, 0.38);
+}
+
+.cm-overlay[data-type="warning"] .cm-confirm {
+    background: #92400e;
+    color: var(--white);
+}
+
+.cm-overlay[data-type="warning"] .cm-confirm:hover {
+    background: #78350f;
+    box-shadow: 0 4px 14px rgba(146, 64, 14, 0.35);
+}

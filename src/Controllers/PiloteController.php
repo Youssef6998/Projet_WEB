@@ -13,33 +13,10 @@ class PiloteController extends BaseController {
         $this->stageModel = $stageModel;
     }
 
-    // GET /?uri=pilote_create
+    // GET /?uri=pilote_create — redirige vers la page de création unifiée
     public function showCreate(): string {
         $this->requireRole(fn() => $this->isAdmin());
-        return $this->render('admin/creer_compte_pilote.twig.html', ['uri' => 'pilote_create']);
-    }
-
-    // POST /?uri=pilote_create
-    public function store(): void {
-        $this->requireRole(fn() => $this->isAdmin());
-
-        $nom          = trim($_POST['nom']       ?? '');
-        $prenom       = trim($_POST['prenom']    ?? '');
-        $email        = trim($_POST['email']     ?? '');
-        $telephone    = trim($_POST['telephone'] ?? '');
-        $promotion    = trim($_POST['promotion'] ?? '');
-        $motdepasse   = $_POST['motdepasse']     ?? '';
-        $confirmation = $_POST['confirmation']   ?? '';
-
-        if ($motdepasse !== $confirmation) {
-            echo $this->render('admin/creer_compte_pilote.twig.html', [
-                'uri'    => 'pilote_create',
-                'erreur' => 'Les mots de passe ne correspondent pas.',
-            ]);
-            return;
-        }
-        $this->userModel->creerPilote($nom, $prenom, $email, $motdepasse, $telephone, $promotion);
-        $this->redirect('/?uri=pilote_list');
+        $this->redirect('/?uri=register&type=pilote');
     }
 
     // GET /?uri=pilote_list
@@ -47,12 +24,17 @@ class PiloteController extends BaseController {
         $this->requireRole(fn() => $this->isAdmin());
         $nom    = trim($_GET['nom']    ?? '');
         $prenom = trim($_GET['prenom'] ?? '');
+        $page   = max(1, (int)($_GET['page'] ?? 1));
+        $data   = $this->userModel->getPaginatedPilotes($page, 6, $nom, $prenom);
         return $this->render('admin/pilote_list.twig.html', [
-            'uri'     => 'pilote_list',
-            'pilotes' => $this->userModel->getAllPilotes($nom, $prenom),
-            'nom'     => $nom,
-            'prenom'  => $prenom,
-            'success' => $_GET['success'] ?? null,
+            'uri'          => 'pilote_list',
+            'pilotes'      => $data['pilotes'],
+            'currentPage'  => $data['currentPage'],
+            'totalPages'   => $data['totalPages'],
+            'totalPilotes' => $data['totalPilotes'],
+            'nom'          => $nom,
+            'prenom'       => $prenom,
+            'success'      => $_GET['success'] ?? null,
         ]);
     }
 
@@ -111,12 +93,17 @@ class PiloteController extends BaseController {
         $this->requireRole(fn() => $this->isAdminOrPilote());
         $prenom = trim($_GET['prenom'] ?? '');
         $nom    = trim($_GET['nom']    ?? '');
+        $page   = max(1, (int)($_GET['page'] ?? 1));
+        $data   = $this->userModel->getPaginatedEtudiants($page, 6, $prenom, $nom);
         return $this->render('admin/etudiant_list.twig.html', [
-            'uri'       => 'etudiant_list',
-            'etudiants' => $this->userModel->getEtudiantsFiltrees($prenom, $nom),
-            'prenom'    => $prenom,
-            'nom'       => $nom,
-            'success'   => $_GET['success'] ?? null,
+            'uri'            => 'etudiant_list',
+            'etudiants'      => $data['etudiants'],
+            'currentPage'    => $data['currentPage'],
+            'totalPages'     => $data['totalPages'],
+            'totalEtudiants' => $data['totalEtudiants'],
+            'prenom'         => $prenom,
+            'nom'            => $nom,
+            'success'        => $_GET['success'] ?? null,
         ]);
     }
 

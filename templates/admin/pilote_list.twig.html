@@ -11,14 +11,14 @@
     <div class="search-card search-card--mb">
         <div class="search-head">
             <span class="pill pill-r">Administration</span>
-            <span class="pill pill-count">{{ pilotes|length }} pilote{{ pilotes|length != 1 ? 's' : '' }}</span>
+            <span class="pill pill-count">{{ totalPilotes }} pilote{{ totalPilotes != 1 ? 's' : '' }}</span>
         </div>
         <div class="list-header">
             <div>
                 <h2 class="list-title">Gestion des Pilotes</h2>
                 <p class="list-subtitle">Créez, consultez et supprimez les comptes pilotes.</p>
             </div>
-            <a href="/?uri=pilote_create" class="btn btn-fill">+ Créer un pilote</a>
+            <a href="/?uri=register&type=pilote" class="btn btn-fill">+ Créer un pilote</a>
         </div>
         <form action="/?uri=pilote_list" method="get" class="search-form">
             <input type="hidden" name="uri" value="pilote_list">
@@ -79,7 +79,9 @@
             <div class="stage-right pilote-actions">
                 <a href="/?uri=pilote_update&id={{ p.id_utilisateur }}" class="btn btn-ghost">Modifier</a>
                 <form method="POST" action="/?uri=pilote_delete"
-                      onsubmit="return confirm('Supprimer le pilote {{ p.prenom }} {{ p.nom }} ? Cette action est irréversible.')">
+                      data-confirm-title="Supprimer le compte pilote"
+                      data-confirm-name="{{ p.prenom }} {{ p.nom }}"
+                      data-confirm-detail="Les données personnelles seront effacées. Ses étudiants seront désaffectés.">
                     <input type="hidden" name="id" value="{{ p.id_utilisateur }}">
                     <button type="submit" class="btn btn-ghost btn-danger">Supprimer</button>
                 </form>
@@ -89,6 +91,21 @@
         <p class="liste-vide">Aucun pilote enregistré.</p>
         {% endfor %}
     </div>
+
+    {% if totalPages > 1 %}
+    <div class="pagination">
+        {% if currentPage > 1 %}
+            <a href="/?uri=pilote_list&page={{ currentPage - 1 }}&nom={{ nom }}&prenom={{ prenom }}" class="page-btn arrow">←</a>
+        {% endif %}
+        {% for i in 1..totalPages %}
+            <a href="/?uri=pilote_list&page={{ i }}&nom={{ nom }}&prenom={{ prenom }}"
+               class="page-btn {{ i == currentPage ? 'active' : '' }}">{{ i }}</a>
+        {% endfor %}
+        {% if currentPage < totalPages %}
+            <a href="/?uri=pilote_list&page={{ currentPage + 1 }}&nom={{ nom }}&prenom={{ prenom }}" class="page-btn arrow">→</a>
+        {% endif %}
+    </div>
+    {% endif %}
 
 </div>
 {% endblock %}

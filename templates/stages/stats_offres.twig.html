@@ -60,5 +60,20 @@
         {% endfor %}
     </div>
 
+    {% if totalPages > 1 %}
+    <div class="pagination">
+        {% if currentPage > 1 %}
+            <a href="/?uri=stats_offres&page={{ currentPage - 1 }}" class="page-btn arrow">←</a>
+        {% endif %}
+        {% for i in 1..totalPages %}
+            <a href="/?uri=stats_offres&page={{ i }}"
+               class="page-btn {{ i == currentPage ? 'active' : '' }}">{{ i }}</a>
+        {% endfor %}
+        {% if currentPage < totalPages %}
+            <a href="/?uri=stats_offres&page={{ currentPage + 1 }}" class="page-btn arrow">→</a>
+        {% endif %}
+    </div>
+    {% endif %}
+
 </div>
 {% endblock %}

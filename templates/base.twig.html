@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>{% block title %}Stage Finder{% endblock %}</title>
-  {% block css %}
-  <link rel="stylesheet" href="/assets/css/variables.css">
-  <link rel="stylesheet" href="/assets/style-stage.css">
-  {% endblock %}
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>{% block title %}Stage Finder{% endblock %}</title>
+{% block css %}
+<link rel="stylesheet" href="/assets/css/variables.css">
+<link rel="stylesheet" href="/assets/style-stage.css">
+<link rel="stylesheet" href="/assets/confirm-modal.css">
+{% endblock %}
 </head>
 <body>
   <div class="page">
@@ -16,77 +17,76 @@
         <div class="logo-icon">SF</div>
         <span class="logo-name">Stage Finder</span>
       </a>
-      <nav>
-        <a href="/?uri=cherche-stage" class="{% if uri == 'cherche-stage' or uri == 'home' %}active{% endif %}">Accueil</a>
-        <a href="/?uri=stages" class="{% if uri == 'stages' %}active{% endif %}">Stages</a>
-        <a href="/?uri=entreprises" class="{% if uri == 'entreprises' %}active{% endif %}">Entreprises</a>
+<nav>
+            <a href="/?uri=cherche-stage" class="{% if uri == 'cherche-stage' or uri == 'home' %}active{% endif %}">Accueil</a>
+            <a href="/?uri=stages" class="{% if uri == 'stages' %}active{% endif %}">Stages</a>
+            <a href="/?uri=entreprises" class="{% if uri == 'entreprises' %}active{% endif %}">Entreprises</a>
 
-        {% if session_user and session_user.role in ['admin', 'pilote'] %}
-        <div class="nav-dropdown" id="nav-gestion">
-          <button class="nav-dropdown-btn
-            {% if uri in ['etudiant_list','entreprise_list','entreprise_create','entreprise_update','pilote_list','pilote_create','evaluation_list','avis_create','offre_create','offre_update'] %}active{% endif %}"
-            onclick="toggleDropdown(this)" type="button">
-            Gestion
-            <svg class="nav-chevron" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4"/></svg>
-          </button>
-          <div class="nav-dropdown-menu">
-            <a href="/?uri=stages" class="{% if uri in ['stages','offre_create','offre_update'] %}active{% endif %}">
-              <span class="nav-item-icon">
-                <svg viewBox="0 0 16 16"><path d="M2 4h12M2 8h12M2 12h8"/></svg>
-              </span>
-              Offres
-            </a>
-            <a href="/?uri=etudiant_list" class="{% if uri == 'etudiant_list' %}active{% endif %}">
-              <span class="nav-item-icon">
-                <svg viewBox="0 0 16 16"><path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0 1c-3.5 0-6 1.8-6 3.5V14h12v-1.5C14 9.8 11.5 8 8 8z"/></svg>
-              </span>
-              Étudiants
-            </a>
-            <a href="/?uri=entreprise_list" class="{% if uri in ['entreprise_list','entreprise_create','entreprise_update'] %}active{% endif %}">
-              <span class="nav-item-icon">
-                <svg viewBox="0 0 16 16"><rect x="2" y="6" width="12" height="8" rx="1"/><path d="M5 6V4a3 3 0 0 1 6 0v2"/><path d="M6 10h4"/></svg>
-              </span>
-              Entreprises
-            </a>
-            <a href="/?uri=evaluation_list" class="{% if uri in ['evaluation_list','avis_create'] %}active{% endif %}">
-              <span class="nav-item-icon">
-                <svg viewBox="0 0 16 16"><path d="M8 1l2 4.5H15l-4 3 1.5 5L8 11l-4.5 2.5L5 8.5 1 5.5h5z"/></svg>
-              </span>
-              Évaluations
-            </a>
-            <a href="/?uri=stats_offres" class="{% if uri == 'stats_offres' %}active{% endif %}">
-              <span class="nav-item-icon">
-                <svg viewBox="0 0 16 16"><path d="M2 12h2V8H2zm4 0h2V4H6zm4 0h2V2h-2z"/></svg>
-              </span>
-              Stats offres
-            </a>
-            {% if session_user.role == 'admin' %}
-            <a href="/?uri=pilote_list" class="{% if uri in ['pilote_list','pilote_create'] %}active{% endif %}">
-              <span class="nav-item-icon">
-                <svg viewBox="0 0 16 16"><circle cx="8" cy="5" r="2.5"/><path d="M3 13c0-2.8 2.2-4.5 5-4.5s5 1.7 5 4.5"/><path d="M5 8.5l1.5 2.5L8 9.5l1.5 1.5L11 8.5"/></svg>
-              </span>
-              Pilotes
-            </a>
+
+            {% if session_user and session_user.role in ['admin', 'pilote'] %}
+            <div class="nav-dropdown" id="nav-gestion">
+                <button class="nav-dropdown-btn {% if uri in ['etudiant_list','entreprise_list','entreprise_create','entreprise_update','pilote_list','register','evaluation_list','avis_create','offre_create','offre_update'] %}active{% endif %}"
+                        onclick="toggleDropdown(this)" type="button">
+                    Gestion
+                    <svg class="nav-chevron" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4"/></svg>
+                </button>
+                <div class="nav-dropdown-menu">
+                    <a href="/?uri=stages" class="{% if uri in ['stages','offre_create','offre_update'] %}active{% endif %}">
+                        <span class="nav-item-icon">
+                            <svg viewBox="0 0 16 16"><path d="M2 4h12M2 8h12M2 12h8"/></svg>
+                        </span>
+                        Offres
+                    </a>
+                    <a href="/?uri=etudiant_list" class="{% if uri == 'etudiant_list' %}active{% endif %}">
+                        <span class="nav-item-icon">
+                            <svg viewBox="0 0 16 16"><path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0 1c-3.5 0-6 1.8-6 3.5V14h12v-1.5C14 9.8 11.5 8 8 8z"/></svg>
+                        </span>
+                        Étudiants
+                    </a>
+                    <a href="/?uri=entreprise_list" class="{% if uri in ['entreprise_list','entreprise_create','entreprise_update'] %}active{% endif %}">
+                        <span class="nav-item-icon">
+                            <svg viewBox="0 0 16 16"><rect x="2" y="6" width="12" height="8" rx="1"/><path d="M5 6V4a3 3 0 0 1 6 0v2"/><path d="M6 10h4"/></svg>
+                        </span>
+                        Entreprises
+                    </a>
+                    <a href="/?uri=evaluation_list" class="{% if uri in ['evaluation_list','avis_create'] %}active{% endif %}">
+                        <span class="nav-item-icon">
+                            <svg viewBox="0 0 16 16"><path d="M8 1l2 4.5H15l-4 3 1.5 5L8 11l-4.5 2.5L5 8.5 1 5.5h5z"/></svg>
+                        </span>
+                        Évaluations
+                    </a>
+                    <a href="/?uri=stats_offres" class="{% if uri == 'stats_offres' %}active{% endif %}">
+                        <span class="nav-item-icon">
+                            <svg viewBox="0 0 16 16"><path d="M2 12h2V8H2zm4 0h2V4H6zm4 0h2V2h-2z"/></svg>
+                        </span>
+                        Stats offres
+                    </a>
+                    {% if session_user.role == 'admin' %}
+                    <a href="/?uri=pilote_list" class="{% if uri == 'pilote_list' %}active{% endif %}">
+                        <span class="nav-item-icon">
+                            <svg viewBox="0 0 16 16"><circle cx="8" cy="5" r="2.5"/><path d="M3 13c0-2.8 2.2-4.5 5-4.5s5 1.7 5 4.5"/><path d="M5 8.5l1.5 2.5L8 9.5l1.5 1.5L11 8.5"/></svg>
+                        </span>
+                        Pilotes
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
             {% endif %}
-          </div>
-        </div>
-        {% endif %}
 
-        <a href="/?uri=stats" class="{% if uri == 'stats' %}active{% endif %}">Statistiques</a>
-        <a href="/?uri=nous" class="{% if uri == 'nous' %}active{% endif %}">À propos</a>
-      </nav>
-      <div class="hdr-btns">
-        {% if session_user %}
-        <a href="/?uri=profil" class="btn btn-outline
-          {% if uri == 'profil' %}active{% endif %}">
-          {{ session_user.prenom }} {{ session_user.nom }}
-        </a>
-        <a href="/?uri=logout" class="btn btn-fill">Se déconnecter</a>
-        {% else %}
-        <a href="/?uri=login" class="btn btn-outline">Se connecter</a>
-        {% endif %}
-      </div>
-      
+            <a href="/?uri=stats" class="{% if uri == 'stats' %}active{% endif %}">Statistiques</a>
+            <a href="/?uri=nous" class="{% if uri == 'nous' %}active{% endif %}">À propos</a>
+        </nav>
+        <div class="hdr-btns">
+            {% if session_user %}
+                <a href="/?uri=profil" class="btn btn-outline {% if uri == 'profil' %}active{% endif %}">
+                    {{ session_user.prenom }} {{ session_user.nom }}
+                </a>
+                <a href="/?uri=logout" class="btn btn-fill">Se déconnecter</a>
+            {% else %}
+                <a href="/?uri=login" class="btn btn-outline">Se connecter</a>
+                
+            {% endif %}
+        </div>      
       <!-- Menu Burger Mobile -->
       <div class="mobile-menu-toggle" id="mobile-toggle">
         <span></span>
@@ -145,5 +145,6 @@
   <script src="/assets/js/bouton-haut.js" defer></script>
   <script src="/assets/js/bouton-retour.js" defer></script>
   <script src="/assets/js/menu-burger.js" defer></script>
+  <script src="/assets/js/confirm-modal.js"></script>
 </body>
 </html>

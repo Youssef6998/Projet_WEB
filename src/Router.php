@@ -113,8 +113,6 @@ class Router {
             // Pilotes & Étudiants
             $uri === 'pilote_list'
                 => $this->pilote->showList(),
-            $uri === 'pilote_create' && $method === 'POST'
-                => $this->pilote->store(),
             $uri === 'pilote_create'
                 => $this->pilote->showCreate(),
             $uri === 'pilote_update' && $method === 'POST'
