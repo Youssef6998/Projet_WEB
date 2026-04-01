@@ -11,13 +11,13 @@
 {% endblock %}
 </head>
 <body>
-<div class="page">
+  <div class="page">
     <header>
-        <a href="/?uri=cherche-stage" class="logo">
-            <div class="logo-icon">SF</div>
-            <span class="logo-name">Stage Finder</span>
-        </a>
-        <nav>
+      <a href="/?uri=cherche-stage" class="logo">
+        <div class="logo-icon">SF</div>
+        <span class="logo-name">Stage Finder</span>
+      </a>
+<nav>
             <a href="/?uri=cherche-stage" class="{% if uri == 'cherche-stage' or uri == 'home' %}active{% endif %}">Accueil</a>
             <a href="/?uri=stages" class="{% if uri == 'stages' %}active{% endif %}">Stages</a>
             <a href="/?uri=entreprises" class="{% if uri == 'entreprises' %}active{% endif %}">Entreprises</a>
@@ -86,20 +86,65 @@
                 <a href="/?uri=login" class="btn btn-outline">Se connecter</a>
                 
             {% endif %}
-        </div>
+        </div>      
+      <!-- Menu Burger Mobile -->
+      <div class="mobile-menu-toggle" id="mobile-toggle">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
     </header>
+
+    <!-- Menu Mobile (un seul, en dehors du header) -->
+    <nav class="nav-mobile" id="nav-mobile">
+      <a href="/?uri=cherche-stage" class="{% if uri == 'cherche-stage' or uri == 'home' %}active{% endif %}">Accueil</a>
+      <a href="/?uri=stages" class="{% if uri == 'stages' %}active{% endif %}">Stages</a>
+      <a href="/?uri=entreprises" class="{% if uri == 'entreprises' %}active{% endif %}">Entreprises</a>
+      <a href="/?uri=stats" class="{% if uri == 'stats' %}active{% endif %}">Statistiques</a>
+{% if session_user and session_user.role in ['admin', 'pilote'] %}
+  <div class="nav-mobile-dropdown">
+    <button class="nav-mobile-dropdown-btn" type="button">Gestion</button>
+    <div class="nav-mobile-dropdown-menu">
+      <a href="/?uri=stages" class="{% if uri in ['stages','offre_create','offre_update'] %}active{% endif %}">Offres</a>
+      <a href="/?uri=etudiant_list" class="{% if uri == 'etudiant_list' %}active{% endif %}">Étudiants</a>
+      <a href="/?uri=entreprise_list" class="{% if uri in ['entreprise_list','entreprise_create','entreprise_update'] %}active{% endif %}">Entreprises</a>
+      <a href="/?uri=evaluation_list" class="{% if uri in ['evaluation_list','avis_create'] %}active{% endif %}">Évaluations</a>
+      <a href="/?uri=stats_offres" class="{% if uri == 'stats_offres' %}active{% endif %}">Stats offres</a>
+      {% if session_user.role == 'admin' %}
+        <a href="/?uri=pilote_list" class="{% if uri in ['pilote_list','pilote_create'] %}active{% endif %}">Pilotes</a>
+      {% endif %}
+    </div>
+  </div>
+{% endif %}
+      <a href="/?uri=nous" class="{% if uri == 'nous' %}active{% endif %}">À propos</a>
+
+      {% if session_user %}
+      <div class="mobile-user-section">
+        <a href="/?uri=profil" class="{% if uri == 'profil' %}active{% endif %}">
+          Profil - {{ session_user.prenom }} {{ session_user.nom }}
+        </a>
+        <a href="/?uri=logout" class="btn-fill-mobile">Se déconnecter</a>
+      </div>
+      {% else %}
+      <a href="/?uri=login" class="btn-fill-mobile">Se connecter</a>
+      {% endif %}
+    </nav>
+
     {% block content %}{% endblock %}
+
     <footer>
-        <p>© 2026 Stage Finder. Tous droits réservés.</p>
-        <div class="foot-links">
-            <a href="/?uri=mentions">Mentions légales</a>
-        </div>
+      <p>© 2026 Stage Finder. Tous droits réservés.</p>
+      <div class="foot-links">
+        <a href="/?uri=mentions">Mentions légales</a>
+      </div>
     </footer>
-</div>
-<script src="/assets/js/main.js"></script>
-<script src="/assets/js/confirm-modal.js"></script>
-<script src="/assets/js/CV.js" defer></script>
-<script src="/assets/js/bouton-haut.js" defer></script>
-<script src="/assets/js/bouton-retour.js" defer></script>
+  </div>
+
+  <script src="/assets/js/main.js"></script>
+  <script src="/assets/js/CV.js" defer></script>
+  <script src="/assets/js/bouton-haut.js" defer></script>
+  <script src="/assets/js/bouton-retour.js" defer></script>
+  <script src="/assets/js/menu-burger.js" defer></script>
+  <script src="/assets/js/confirm-modal.js"></script>
 </body>
 </html>

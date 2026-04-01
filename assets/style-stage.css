@@ -8,7 +8,6 @@
     }
     a { text-decoration: none; color: inherit; }
     .page { max-width: 1060px; margin: 0 auto; padding: 1.8rem 1.25rem 2.5rem; }
-
     /* ── Header ── */
     header {
       display: flex; align-items: center; justify-content: space-between;
@@ -564,3 +563,209 @@
     .search-card { animation: up .4s ease both; }
     .page-intro { animation: up .4s ease .06s both; }
     .stages-list { animation: up .4s ease .12s both; }
+/* ── FIX RESPONSIVE frow ── */
+.frow {
+  display: flex;
+  gap: .85rem;
+  flex-wrap: wrap;  /* ← AJOUTE ÇA */
+}
+
+@media(max-width: 640px) {
+  .frow {
+    flex-direction: column;  /* ← Stack vertical mobile */
+    gap: .6rem;
+  }
+  .frow .fgrp {
+    width: 100%;  /* ← Pleine largeur */
+  }
+}
+
+/* ── Amélioration existante field-grid-4 ── */
+.field-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: .25rem;
+}
+
+@media(max-width: 900px) {
+  .field-grid-4 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media(max-width: 767px) {
+  .field-grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media(max-width: 480px) {
+  .field-grid-4 {
+    grid-template-columns: 1fr;  /* ← Une colonne mobile */
+  }
+}
+/* ── MENU BURGER MOBILE ── */
+.mobile-menu-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+    width: 30px;
+    height: 24px;
+    cursor: pointer;
+    padding: 4px;
+}
+
+.mobile-menu-toggle span {
+    width: 100%;
+    height: 3px;
+    background: var(--marron);
+    border-radius: 3px;
+    transition: all 0.3s ease;
+    transform-origin: center;
+}
+
+.mobile-menu-toggle.active span:nth-child(1) {
+    transform: rotate(45deg) translate(6px, 6px);
+}
+
+.mobile-menu-toggle.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.mobile-menu-toggle.active span:nth-child(3) {
+    transform: rotate(-45deg) translate(7px, -6px);
+}
+
+/* ── MENU BURGER MOBILE ── */
+.nav-mobile {
+  position: fixed;
+  top: 0;
+  left: -40%;            /* 1/3 de l'écran, caché à gauche */
+  width: 40%;
+  max-width: 320px;
+  height: 100vh;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(20px);
+  box-shadow: 2px 0 24px rgba(124, 61, 18, 0.15);
+  z-index: 999;
+  padding: 80px 24px 24px;
+  transition: left 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.nav-mobile.active {
+  left: 0;
+}
+
+.nav-mobile a {
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--marron-bordure);
+  color: var(--dark);
+  transition: color 0.2s;
+}
+
+.nav-mobile a:hover,
+.nav-mobile a.active {
+  color: var(--marron-vif);
+}
+
+/* Overlay léger sur le reste de l'écran (quand le menu est ouvert) */
+/*
+.nav-mobile.active::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 40%;                   
+  width: 60%;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.2);   
+  z-index: 899;
+}
+*/
+/* éventuellement pousse un peu le contenu à droite quand le menu ouvre */
+/* garde ça uniquement si tu préfères */
+
+.nav-mobile.active ~ .page {
+  transform: translateX(33.333%);
+  transition: transform 0.4s ease;
+}
+
+
+.btn-fill-mobile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, var(--marron) 0%, var(--marron-vif) 100%);
+  color: white !important;
+  border-radius: 12px;
+  font-weight: 600;
+  margin-top: 12px;
+  box-shadow: 0 4px 16px rgba(124, 61, 18, 0.3);
+}
+
+/* ── RESTRUCTURATION MOBILE ── */
+@media (max-width: 768px) {
+  .nav-desktop,
+  .hdr-btns-desktop {
+    display: none !important;
+  }
+
+  .mobile-menu-toggle {
+    display: flex;
+  }
+
+  header {
+    position: relative;
+  }
+}
+/* ── MENU DÉROULANT MOBILE GESTION ── */
+.nav-mobile-dropdown {
+  display: flex;
+  flex-direction: column;
+}
+
+.nav-mobile-dropdown-btn {
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 14px 0;
+  color: var(--dark);
+  cursor: pointer;
+  user-select: none;
+  border-bottom: 1px solid var(--marron-bordure);
+  transition: color 0.2s;
+}
+
+.nav-mobile-dropdown-btn:hover {
+  color: var(--marron-vif);
+}
+
+.nav-mobile-dropdown-menu {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.3s ease;
+}
+
+.nav-mobile-dropdown.open .nav-mobile-dropdown-menu {
+  max-height: 300px; /* assez grand pour tous les liens */
+}
+
+.nav-mobile-dropdown-menu a {
+  display: block;
+  padding: 12px 0 12px 16px; /* un peu de padding à gauche */
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--marron-bordure);
+  transition: background 0.2s, color 0.2s;
+}
+
+.nav-mobile-dropdown-menu a:hover,
+.nav-mobile-dropdown-menu a.active {
+  background: var(--marron-clair);
+  color: var(--marron-vif);
+}
