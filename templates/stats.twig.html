@@ -1,0 +1,97 @@
+{% extends "base.twig.html" %}
+{% block css %}
+<link rel="stylesheet" href="/assets/css/variables.css">
+{{ parent() }}
+<link rel="stylesheet" href="/assets/stats.css">
+{% endblock %}
+{% block title %}Statistiques – Stage Finder{% endblock %}
+
+{% block content %}
+<div class="stats-page">
+
+    <div class="stats-intro">
+        <h1>Statistiques des offres</h1>
+        <p>Indicateurs clés sur les offres, candidatures et favoris.</p>
+    </div>
+
+    <div class="stats-carousel" id="statsCarousel">
+        <div class="carousel-track" id="statsTrack">
+
+            {# ── Carte 1 : Nombre total d'offres ── #}
+            <div class="stat-card stat-card--marron">
+                <span class="stat-card-label">Offres disponibles</span>
+                <span class="stat-card-value">{{ nb_offres }}</span>
+                <p class="stat-card-title">offres en base</p>
+                <p class="stat-card-sub">Nombre total d'offres de stage référencées sur la plateforme.</p>
+            </div>
+
+            {# ── Carte 2 : Moyenne candidatures / offre ── #}
+            <div class="stat-card stat-card--blue">
+                <span class="stat-card-label">Candidatures</span>
+                <span class="stat-card-value">{{ moy_candidatures }}</span>
+                <p class="stat-card-title">candidatures en moyenne par offre</p>
+                <p class="stat-card-sub">Calculé sur l'ensemble des offres ayant reçu au moins une candidature.</p>
+            </div>
+
+            {# ── Carte 3 : Répartition par durée ── #}
+            <div class="stat-card stat-card--green">
+                <span class="stat-card-label">Répartition par durée</span>
+                <p class="stat-card-title">Durées de stage</p>
+                <p class="stat-card-sub">Distribution des offres selon la durée proposée.</p>
+                {% if repartition %}
+                <div class="duration-list">
+                    {% for row in repartition %}
+                    <div class="duration-row">
+                        <span class="duration-label" title="{{ row.duree }}">{{ row.duree }}</span>
+                        <div class="duration-bar-track">
+                            <div class="duration-bar-fill" style="width:{{ row.pct }}%"></div>
+                        </div>
+                        <span class="duration-count">{{ row.nb }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="wishlist-empty">Aucune donnée disponible.</p>
+                {% endif %}
+            </div>
+
+            {# ── Carte 4 : Top wishlist ── #}
+            <div class="stat-card stat-card--amber">
+                <span class="stat-card-label">Favoris</span>
+                <p class="stat-card-title">Offres les plus ajoutées en favoris</p>
+                <p class="stat-card-sub">Classement des offres les plus plébiscitées par les étudiants.</p>
+                {% if top_wishlist %}
+                <div class="wishlist-list">
+                    {% for item in top_wishlist %}
+                    <div class="wishlist-row">
+                        <span class="wishlist-rank wishlist-rank--{{ loop.index }}">{{ loop.index < 10 ? '0' ~ loop.index : loop.index }}</span>
+                        <div class="wishlist-info">
+                            <div class="wishlist-titre">{{ item.titre }}</div>
+                            <div class="wishlist-entreprise">{{ item.entreprise }}</div>
+                        </div>
+                        <span class="wishlist-count">{{ item.nb_favoris }} favori{{ item.nb_favoris > 1 ? 's' : '' }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="wishlist-empty">Aucun favori enregistré pour le moment.</p>
+                {% endif %}
+            </div>
+
+        </div>{# /carousel-track #}
+
+        <div class="carousel-controls">
+            <button class="carousel-btn" id="statsPrev" aria-label="Précédent">&#8249;</button>
+            <div class="carousel-dots" id="statsDots">
+                <button class="carousel-dot active" aria-label="Carte 1"></button>
+                <button class="carousel-dot" aria-label="Carte 2"></button>
+                <button class="carousel-dot" aria-label="Carte 3"></button>
+                <button class="carousel-dot" aria-label="Carte 4"></button>
+            </div>
+            <button class="carousel-btn" id="statsNext" aria-label="Suivant">&#8250;</button>
+        </div>
+
+    </div>{# /stats-carousel #}
+
+</div>
+{% endblock %}

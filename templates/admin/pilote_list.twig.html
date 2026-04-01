@@ -1,29 +1,54 @@
 {% extends "base.twig.html" %}
 {% block css %}
+<link rel="stylesheet" href="/assets/css/variables.css">
 {{ parent() }}
 <link rel="stylesheet" href="/assets/pilote_list.css">
 {% endblock %}
 {% block title %}Gestion des pilotes – Stage Finder{% endblock %}
 {% block content %}
+<div class="page">
 
-    <div class="search-card pilote-list-card">
+    <div class="search-card search-card--mb">
         <div class="search-head">
             <span class="pill pill-r">Administration</span>
             <span class="pill pill-count">{{ pilotes|length }} pilote{{ pilotes|length != 1 ? 's' : '' }}</span>
         </div>
-        <div class="pilote-list-body">
+        <div class="list-header">
             <div>
-                <h2 class="pilote-list-title">Gestion des Pilotes</h2>
-                <p class="pilote-list-subtitle">Créez, consultez et supprimez les comptes pilotes.</p>
+                <h2 class="list-title">Gestion des Pilotes</h2>
+                <p class="list-subtitle">Créez, consultez et supprimez les comptes pilotes.</p>
             </div>
             <a href="/?uri=pilote_create" class="btn btn-fill">+ Créer un pilote</a>
         </div>
+        <form action="/?uri=pilote_list" method="get" class="search-form">
+            <input type="hidden" name="uri" value="pilote_list">
+            <div class="field-grid-4">
+                <div class="field">
+                    <label>Prénom</label>
+                    <div class="field-input">
+                        <input name="prenom" value="{{ prenom ?? '' }}" class="cases" placeholder="Ex : Sophie, Pierre...">
+                    </div>
+                </div>
+                <div class="field">
+                    <label>Nom</label>
+                    <div class="field-input">
+                        <input name="nom" value="{{ nom ?? '' }}" class="cases" placeholder="Ex : Martin, Bernard...">
+                    </div>
+                </div>
+            </div>
+            <div class="search-actions">
+                <button type="submit" class="btn btn-fill">Rechercher</button>
+                <a href="/?uri=pilote_list" class="btn btn-outline">Réinitialiser</a>
+            </div>
+        </form>
     </div>
 
-    {% if success == 'supprime' %}
-    <div class="alert alert-error">Le compte pilote a bien été supprimé.</div>
+    {% if success == 'cree' %}
+    <div class="alert alert-success">Le compte a bien été créé.</div>
     {% endif %}
-
+    {% if success == 'supprime' %}
+    <div class="alert-delete">Le compte pilote a bien été supprimé.</div>
+    {% endif %}
     {% if success == 'modifie' %}
     <div class="alert alert-success">Le compte pilote a bien été modifié.</div>
     {% endif %}
@@ -33,20 +58,20 @@
         <article class="stage-card">
             <div class="stage-info">
                 <div class="stage-top">
-                    <span class="stage-company">{{ p.prenom }} {{ p.nom }}</span>
+                    <span class="mgmt-name">{{ p.prenom }} {{ p.nom }}</span>
                     <span class="stage-type">{{ p.nb_etudiants }} étudiant{{ p.nb_etudiants != 1 ? 's' : '' }}</span>
                 </div>
-                <p class="stage-desc pilote-desc">
+                <p class="stage-desc">
                     {{ p.email }}
                     {% if p.telephone %} · {{ p.telephone }}{% endif %}
                 </p>
                 {% if p.promotion or p.centre %}
-                <div class="pilote-tags">
+                <div class="tag-list">
                     {% if p.promotion %}
-                    <span class="pilote-tag-promo">{{ p.promotion }}</span>
+                    <span class="tag-promo">{{ p.promotion }}</span>
                     {% endif %}
                     {% if p.centre %}
-                    <span class="pilote-tag-centre">{{ p.centre }}</span>
+                    <span class="tag-info">{{ p.centre }}</span>
                     {% endif %}
                 </div>
                 {% endif %}
@@ -56,13 +81,14 @@
                 <form method="POST" action="/?uri=pilote_delete"
                       onsubmit="return confirm('Supprimer le pilote {{ p.prenom }} {{ p.nom }} ? Cette action est irréversible.')">
                     <input type="hidden" name="id" value="{{ p.id_utilisateur }}">
-                    <button type="submit" class="btn btn-ghost btn-delete">Supprimer</button>
+                    <button type="submit" class="btn btn-ghost btn-danger">Supprimer</button>
                 </form>
             </div>
         </article>
         {% else %}
-        <p class="pilote-empty">Aucun pilote enregistré.</p>
+        <p class="liste-vide">Aucun pilote enregistré.</p>
         {% endfor %}
     </div>
 
+</div>
 {% endblock %}

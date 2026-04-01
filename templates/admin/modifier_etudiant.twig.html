@@ -1,0 +1,71 @@
+{% extends "base.twig.html" %}
+{% block css %}
+<link rel="stylesheet" href="/assets/css/variables.css">
+{{ parent() }}
+<link rel="stylesheet" href="/assets/modifier_pilote.css">
+{% endblock %}
+{% block title %}Modifier l'étudiant – Stage Finder{% endblock %}
+{% block content %}
+
+    <div class="mgmt-wrap">
+
+        <div class="mgmt-header">
+            <span class="mgmt-eyebrow">Étudiant</span>
+            <h1>Modifier un compte Étudiant</h1>
+            <p>Mettez à jour les informations de <strong>{{ etudiant.prenom }} {{ etudiant.nom }}</strong>.</p>
+        </div>
+
+        <div class="mgmt-card">
+            <a href="/?uri=etudiant_list" class="mgmt-back">← Retour à la liste</a>
+
+            {% if erreur %}
+            <div class="alert alert-error">{{ erreur }}</div>
+            {% endif %}
+
+            <form method="POST" action="/?uri=etudiant_update">
+                <input type="hidden" name="id" value="{{ etudiant.id_utilisateur }}">
+
+                <div class="frow">
+                    <div class="fgrp">
+                        <label>Nom *</label>
+                        <input type="text" name="nom" value="{{ etudiant.nom }}" placeholder="Nom" required>
+                    </div>
+                    <div class="fgrp">
+                        <label>Prénom *</label>
+                        <input type="text" name="prenom" value="{{ etudiant.prenom }}" placeholder="Prénom" required>
+                    </div>
+                </div>
+
+                <div class="fgrp">
+                    <label>Email *</label>
+                    <input type="email" name="email" value="{{ etudiant.email }}" placeholder="etudiant@example.fr" required>
+                </div>
+
+                <div class="fgrp">
+                    <label>Téléphone</label>
+                    <input type="tel" name="telephone" value="{{ etudiant.telephone }}" placeholder="+33 6 12 34 56 78">
+                </div>
+
+                <div class="fgrp">
+                    <label>Formation</label>
+                    <input type="text" name="formation" value="{{ etudiant.formation }}" placeholder="Ex : BUT Informatique">
+                </div>
+
+                <div class="fgrp">
+                    <label>Niveau d'étude</label>
+                    <select name="niveau_etude">
+                        <option value="">— Sélectionner —</option>
+                        {% set niveaux = ['Bac+1','Bac+2','Bac+3','Bac+4','Bac+5'] %}
+                        {% for n in niveaux %}
+                        <option value="{{ n }}" {% if etudiant.niveau_etude == n %}selected{% endif %}>{{ n }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <button type="submit" class="mgmt-submit">Enregistrer les modifications</button>
+            </form>
+        </div>
+
+    </div>
+
+{% endblock %}

@@ -3,6 +3,7 @@
 {% block title %}Mon Profil – Stage Finder{% endblock %}
 
 {% block css %}
+<link rel="stylesheet" href="/assets/css/variables.css">
 <link rel="stylesheet" href="/assets/style-stage.css">
 <link rel="stylesheet" href="/assets/profil.css">
 {% endblock %}
@@ -19,11 +20,74 @@
         </div>
     </section>
 
-    {% if session_user and session_user.role in ['etudiant'] %}
-    <!-- Liste des candidatures --> 
+    {% if success %}
+    <div class="alert alert-success">Modification enregistrée.</div>
+    {% endif %}
+    {% if erreur %}
+    <div class="alert alert-error">{{ erreur }}</div>
+    {% endif %}
+
+    {# ── Mes informations ── #}
+    <section class="candidatures-section">
+        <h2>Mes informations</h2>
+        <div class="profil-fields">
+            {% for champ, label in {nom: 'Nom', prenom: 'Prénom', email: 'Email', telephone: 'Téléphone'} %}
+            <form method="POST" action="/?uri=profil_update" class="profil-field-form">
+                <input type="hidden" name="champ" value="{{ champ }}">
+                <label class="profil-field-label">{{ label }}</label>
+                <div class="profil-field-row">
+                    <input type="{{ champ == 'email' ? 'email' : 'text' }}" name="valeur"
+                           value="{{ attribute(user, champ) }}" class="profil-field-input" required>
+                    <button type="submit" class="btn btn-outline btn-sm">Modifier</button>
+                </div>
+            </form>
+            {% endfor %}
+
+            {% if user.role == 'pilote' %}
+            <form method="POST" action="/?uri=profil_update" class="profil-field-form">
+                <input type="hidden" name="champ" value="promotion">
+                <label class="profil-field-label">Promotion</label>
+                <div class="profil-field-row">
+                    <select name="valeur" class="profil-field-input">
+                        {% set promos = ['CPIA1','CPIA2','FISA A3','FISE A3','FISA A4','FISE A4','FISE A5','FISA A5'] %}
+                        {% for p in promos %}
+                        <option value="{{ p }}" {% if user.promotion == p %}selected{% endif %}>{{ p }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="btn btn-outline btn-sm">Modifier</button>
+                </div>
+            </form>
+            {% endif %}
+        </div>
+    </section>
+
+    {# ── Changer le mot de passe ── #}
+    <section class="candidatures-section">
+        <h2>Changer le mot de passe</h2>
+        <form method="POST" action="/?uri=profil_update" class="profil-mdp-form">
+            <input type="hidden" name="champ" value="mot_de_passe">
+            <div class="frow">
+                <div class="fgrp">
+                    <label>Mot de passe actuel</label>
+                    <input type="password" name="ancien_mdp" required>
+                </div>
+                <div class="fgrp">
+                    <label>Nouveau mot de passe</label>
+                    <input type="password" name="nouveau_mdp" required minlength="8">
+                </div>
+                <div class="fgrp">
+                    <label>Confirmer</label>
+                    <input type="password" name="confirm_mdp" required minlength="8">
+                </div>
+            </div>
+            <button type="submit" class="btn btn-fill">Mettre à jour le mot de passe</button>
+        </form>
+    </section>
+
+    {# ── Candidatures & favoris (étudiant) ── #}
+    {% if session_user and session_user.role == 'etudiant' %}
     <section class="candidatures-section">
         <h2>Mes candidatures</h2>
-
         {% if candidatures is empty %}
             <div class="empty-state">
                 <p>Vous n'avez pas encore postulé à un stage.</p>
@@ -36,9 +100,7 @@
                     <div class="cand-info">
                         <span class="cand-titre">{{ c.titre }}</span>
                         <span class="cand-entreprise">{{ c.entreprise }}</span>
-                        {% if c.duree %}
-                            <span class="cand-duree">{{ c.duree }}</span>
-                        {% endif %}
+                        {% if c.duree %}<span class="cand-duree">{{ c.duree }}</span>{% endif %}
                     </div>
                     <div class="cand-meta">
                         <span class="cand-date">{{ c.date_candidature|date('d/m/Y') }}</span>
@@ -55,11 +117,8 @@
         {% endif %}
     </section>
 
-
-    <!-- Wishlist à faire--> 
     <section class="candidatures-section">
         <h2>Mes favoris</h2>
-
         {% if wishlist is empty %}
             <div class="empty-state">
                 <p>Vous n'avez pas encore ajouté d'offre en favoris.</p>
@@ -70,17 +129,15 @@
                 {% for w in wishlist %}
                 <div class="candidature-card favori-card">
                     <div class="cand-info">
-                        <a href="/?uri=offre&id={{ w.id_offre }}" class="cand-titre" style="text-decoration:none;color:inherit;">{{ w.titre }}</a>
+                        <a href="/?uri=offre&id={{ w.id_offre }}" class="cand-titre cand-titre-link">{{ w.titre }}</a>
                         <span class="cand-entreprise">{{ w.company }}</span>
-                        {% if w.duree %}
-                            <span class="cand-duree">{{ w.duree }}</span>
-                        {% endif %}
+                        {% if w.duree %}<span class="cand-duree">{{ w.duree }}</span>{% endif %}
                     </div>
                     <div class="cand-meta">
                         <span class="cand-date">Ajouté le {{ w.date_ajout|date('d/m/Y') }}</span>
-                        <div style="display:flex;gap:.5rem;align-items:center">
-                            <a href="/?uri=offre&id={{ w.id_offre }}" class="btn-explore" style="margin-top:0;padding:.3rem .9rem;font-size:.72rem">Voir</a>
-                            <form method="post" action="/?uri=wishlist-toggle" style="margin:0">
+                        <div class="actions-row">
+                            <a href="/?uri=offre&id={{ w.id_offre }}" class="btn-explore btn-explore-sm">Voir</a>
+                            <form method="post" action="/?uri=wishlist-toggle" class="form-clean">
                                 <input type="hidden" name="id_offre" value="{{ w.id_offre }}">
                                 <input type="hidden" name="redirect" value="/?uri=profil">
                                 <button type="submit" class="btn-retirer" title="Retirer des favoris">Retirer</button>
@@ -94,41 +151,44 @@
     </section>
     {% endif %}
 
-   
-<!-- Liste des étudiants -->     
-{% if session_user and session_user.role == 'pilote' %}
+    {# ── Étudiants supervisés (pilote) ── #}
+    {% if session_user and session_user.role == 'pilote' %}
     <section class="candidatures-section">
         <h2>Étudiants que je supervise</h2>
-
         {% if etudiants_supervises is empty %}
             <div class="empty-state">
-                <p>Vous ne supervisez pas encore d’étudiant.</p>
-                <a href="/?uri=etudiants_list" class="btn-explore">Ajouter des étudiants</a>
+                <p>Vous ne supervisez pas encore d'étudiant.</p>
+                <a href="/?uri=etudiant_list" class="btn-explore">Affecter des étudiants</a>
             </div>
         {% else %}
             <div class="candidatures-list">
                 {% for etudiant in etudiants_supervises %}
-                    <div class="candidature-card">
-                        <div class="cand-info">
-                            <span class="cand-titre">{{ etudiant.prenom }} {{ etudiant.nom }}</span>
-                            <span class="cand-entreprise">{{ etudiant.email }}</span>
-                        </div>
-                        <div class="cand-meta">
-                            <a href="/?uri=etudiant_offres&id={{ etudiant.id_utilisateur }}" class="btn-explore" style="margin-top:0;padding:.3rem .9rem;font-size:.72rem">
-                                Voir ses candidatures
-                            </a>
-                        </div>
+                <div class="candidature-card">
+                    <div class="cand-info">
+                        <span class="cand-titre">{{ etudiant.prenom }} {{ etudiant.nom }}</span>
+                        <span class="cand-entreprise">{{ etudiant.email }}</span>
                     </div>
+                    <div class="cand-meta">
+                        <a href="/?uri=etudiant_offres&id={{ etudiant.id_utilisateur }}" class="btn-explore btn-explore-sm">
+                            Voir ses candidatures
+                        </a>
+                    </div>
+                </div>
                 {% endfor %}
-                <a href="/?uri=etudiants_list" class="btn-explore" style="margin-top:.5rem">
-                    Ajouter un étudiant
-                </a>
             </div>
         {% endif %}
     </section>
-{% endif %}
+    {% endif %}
 
-
+    {# ── Zone dangereuse ── #}
+    <section class="candidatures-section danger-zone-section">
+        <h2>Zone dangereuse</h2>
+        <p class="danger-desc">La suppression de votre compte est irréversible. Toutes vos données seront désactivées.</p>
+        <form method="POST" action="/?uri=profil_delete"
+              onsubmit="return confirm('Supprimer définitivement votre compte ? Cette action est irréversible.')">
+            <button type="submit" class="btn-danger">Supprimer mon compte</button>
+        </form>
+    </section>
 
 </main>
 {% endblock %}

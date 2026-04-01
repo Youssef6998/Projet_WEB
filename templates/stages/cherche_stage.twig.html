@@ -1,5 +1,6 @@
 {% extends "base.twig.html" %}
 {% block css %}
+<link rel="stylesheet" href="/assets/css/variables.css">
 {{ parent() }}
 <link rel="stylesheet" href="/assets/style-acceuil.css">
 {% endblock %}
@@ -17,7 +18,7 @@
         <a href="#how" class="btn btn-ghost">Comment ça marche</a>
       </div>
     </div>
-    <div style="display:flex;flex-direction:column;gap:.8rem">
+    <div class="hero-cards">
       <div class="search-card">
         <div class="search-head">
           <span class="pill pill-r">Recherche de stage</span>
@@ -128,7 +129,7 @@
       <p class="eyebrow">Prêt·e ?</p>
       <h2 class="cta-title">Ton futur stage est à quelques clics</h2>
       <p class="cta-text">Crée ton espace gratuitement et garde une trace claire de toutes tes candidatures.</p>
-      <div style="display:flex;flex-wrap:wrap;gap:.6rem;align-items:center">
+      <div class="cta-actions">
         <a href="/?uri=register" class="btn btn-dark">Créer mon compte</a>
         <span class="cta-note">Aucun engagement · Annulation à tout moment</span>
       </div>

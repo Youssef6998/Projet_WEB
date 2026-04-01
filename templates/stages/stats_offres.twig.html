@@ -1,0 +1,64 @@
+{% extends "base.twig.html" %}
+{% block title %}Statistiques des offres – Stage Finder{% endblock %}
+{% block content %}
+<div class="page">
+
+    <div class="search-card search-card--mb">
+        <div class="search-head">
+            <span class="pill pill-r">{% if session_user.role == 'admin' %}Administration{% else %}Pilote{% endif %}</span>
+        </div>
+        <div class="list-info">
+            <h2 class="list-title">Statistiques des offres</h2>
+            <p class="list-subtitle">Vue d'ensemble des offres, candidatures et favoris.</p>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        <article class="stage-card stat-kpi">
+            <span class="stat-kpi-label">Total offres</span>
+            <span class="stat-kpi-value">{{ stats.nb_offres }}</span>
+        </article>
+        <article class="stage-card stat-kpi">
+            <span class="stat-kpi-label">Candidatures</span>
+            <span class="stat-kpi-value">{{ stats.nb_candidatures }}</span>
+        </article>
+        <article class="stage-card stat-kpi">
+            <span class="stat-kpi-label">Favoris</span>
+            <span class="stat-kpi-value">{{ stats.nb_wishlist }}</span>
+        </article>
+        <article class="stage-card stat-kpi">
+            <span class="stat-kpi-label">Rémun. moyenne</span>
+            <span class="stat-kpi-value">{{ stats.remuneration_moyenne|number_format(0, ',', ' ') }} €</span>
+        </article>
+    </div>
+
+    <div class="stages-list">
+        {% for o in statsOffres %}
+        <article class="stage-card">
+            <div class="stage-info">
+                <div class="stage-top">
+                    <span class="stage-company">{{ o.titre }}</span>
+                    <span class="stage-type">{{ o.entreprise }}</span>
+                </div>
+            </div>
+            <div class="stat-row">
+                <div class="stat-col">
+                    <span class="stat-col-value">{{ o.nb_candidatures }}</span>
+                    <span class="stat-col-label">Candidatures</span>
+                </div>
+                <div class="stat-col">
+                    <span class="stat-col-value">{{ o.nb_wishlist }}</span>
+                    <span class="stat-col-label">Favoris</span>
+                </div>
+                <div class="stat-row-action">
+                    <a href="/?uri=offre&id={{ o.id_offre }}" class="btn btn-dark">Voir l'offre</a>
+                </div>
+            </div>
+        </article>
+        {% else %}
+        <p class="liste-vide">Aucune offre.</p>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Créer un compte</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/assets/css/variables.css">
+  <link rel="stylesheet" href="/assets/inscription.css">
+</head>
+<body>
+
+<div class="page-inscription">
+
+  <div class="intro-page">
+    <div class="intro-small-titre">
+      {% if session_user.role == 'admin' %}Administration{% else %}Pilote{% endif %}
+    </div>
+    <h1 class="titre-principal">Créer un compte</h1>
+    <p class="sous-titre">
+      {% if type == 'pilote' %}Renseignez les informations du nouveau pilote.
+      {% elseif type == 'admin' %}Renseignez les informations du nouvel administrateur.
+      {% else %}Renseignez les informations du nouvel étudiant.{% endif %}
+    </p>
+  </div>
+
+  <section class="formulaire-carte">
+
+    <div class="back-btn-container">
+      {% if type == 'pilote' %}
+        <a href="/?uri=pilote_list" class="btn-back">← Retour</a>
+      {% else %}
+        <a href="/?uri=etudiant_list" class="btn-back">← Retour</a>
+      {% endif %}
+    </div>
+
+    {# ── Sélecteur de type ── #}
+    <div class="champ">
+      <label for="type-select">Type de compte</label>
+      <select id="type-select" class="champ-input" onchange="changerType(this.value)">
+        <option value="etudiant" {% if type == 'etudiant' %}selected{% endif %}>Étudiant</option>
+        {% if session_user.role == 'admin' %}
+        <option value="pilote" {% if type == 'pilote' %}selected{% endif %}>Pilote</option>
+        <option value="admin"  {% if type == 'admin'  %}selected{% endif %}>Administrateur</option>
+        {% endif %}
+      </select>
+    </div>
+
+    {% if erreur %}
+      <div class="message-erreur">{{ erreur }}</div>
+    {% endif %}
+
+    <form method="POST" action="/?uri=register" id="form-creation">
+      <input type="hidden" name="type" id="input-type" value="{{ type }}">
+
+      <div class="champ">
+        <label for="nom">Nom *</label>
+        <input type="text" id="nom" name="nom" class="champ-input" value="{{ old.nom ?? '' }}" required>
+      </div>
+
+      <div class="champ">
+        <label for="prenom">Prénom *</label>
+        <input type="text" id="prenom" name="prenom" class="champ-input" value="{{ old.prenom ?? '' }}" required>
+      </div>
+
+      <div class="champ">
+        <label for="telephone">Téléphone *</label>
+        <input type="tel" id="telephone" name="telephone" class="champ-input"
+               value="{{ old.telephone ?? '' }}" required pattern="[0-9]{10}" placeholder="Ex: 0612345678">
+      </div>
+
+      <div class="champ">
+        <label for="email">Email *</label>
+        <input type="email" id="email" name="email" class="champ-input"
+               value="{{ old.email ?? '' }}" required placeholder="exemple@email.com">
+      </div>
+
+      <div class="champ">
+        <label for="motdepasse">Mot de passe *</label>
+        <input type="password" id="motdepasse" name="motdepasse" class="champ-input" required minlength="8">
+      </div>
+
+      <div class="champ">
+        <label for="confirmation">Confirmer le mot de passe *</label>
+        <input type="password" id="confirmation" name="confirmation" class="champ-input" required minlength="8">
+      </div>
+
+      {# ── Champ promotion (pilote uniquement) ── #}
+      <div class="champ" id="champ-promotion" {% if type != 'pilote' %}hidden{% endif %}>
+        <label for="promotion">Promotion</label>
+        <select name="promotion" id="promotion" class="champ-input">
+          {% set promos = ['CPIA1','CPIA2','FISA A3','FISE A3','FISA A4','FISE A4','FISE A5','FISA A5'] %}
+          {% for p in promos %}
+          <option value="{{ p }}" {% if (old.promotion ?? '') == p %}selected{% endif %}>{{ p }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="actions-formulaire">
+        <button type="submit" class="bouton-principal">Créer le compte</button>
+      </div>
+
+    </form>
+
+  </section>
+
+</div>
+
+<script>
+function changerType(val) {
+    document.getElementById('input-type').value = val;
+    document.getElementById('champ-promotion').hidden = (val !== 'pilote');
+    const sous = document.querySelector('.sous-titre');
+    if (val === 'pilote')       sous.textContent = 'Renseignez les informations du nouveau pilote.';
+    else if (val === 'admin')   sous.textContent = 'Renseignez les informations du nouvel administrateur.';
+    else                        sous.textContent = 'Renseignez les informations du nouvel étudiant.';
+}
+</script>
+
+</body>
+</html>

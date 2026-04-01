@@ -1,11 +1,4 @@
-:root {
-    --vert: #a2d766;
-    --vert-fonce: #4e9a4e;
-    --dark: #1a1a2e;
-    --text-muted: #6b7280;
-    --border: #e5e7eb;
-    --red: #e53e3e;
-}
+/* Dépend de /assets/css/variables.css chargé via base.twig.html */
 *, *::before, *::after {
     box-sizing: border-box;
     margin: 0;
@@ -26,7 +19,7 @@ a {
 }
 .intro-small-titre {
     font-size: 13px;
-    color: var(--vert);
+    color: var(--marron);
     font-weight: 600;
     margin-bottom: 6px;
 }
@@ -39,11 +32,12 @@ a {
     font-size: 14px;
 }
 .register-card {
-    background: white;
+    background: rgba(255, 255, 255, 0.96);
     width: 100%;
     padding: 50px 45px 35px;
-    border-radius: 14px;
-    box-shadow: 0 18px 40px rgba(0,0,0,0.08);
+    border-radius: 1.25rem;
+    border: 1.5px solid var(--marron-bordure);
+    box-shadow: 0 16px 48px rgba(124, 61, 18, 0.09);
     position: relative;
     animation: fadeIn .5s ease;
 }
@@ -55,13 +49,14 @@ a {
 .btn-back {
     padding: 6px 10px;
     border-radius: 8px;
-    border: 1px solid var(--border);
+    border: 1.5px solid var(--marron-bordure);
     font-size: 13px;
+    color: var(--text-muted);
     transition: .2s;
 }
 .btn-back:hover {
-    border-color: var(--vert);
-    color: var(--vert);
+    border-color: var(--marron);
+    color: var(--marron);
 }
 form {
     display: flex;
@@ -73,26 +68,29 @@ form {
     margin-bottom: 18px;
 }
 .input-group label {
-    font-size: 13px;
-    font-weight: 500;
+    font-size: .68rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: .02em;
     margin-bottom: 6px;
 }
 .input-group input,
 .input-group select {
-    padding: 12px 13px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    font-size: 14px;
+    padding: .65rem .85rem;
+    border-radius: .75rem;
+    border: 1.5px solid var(--marron-bordure);
+    font-size: .82rem;
     background: #fafafa;
+    color: var(--dark);
     transition: .2s;
     font-family: inherit;
 }
 .input-group input:focus,
 .input-group select:focus {
-    border-color: var(--vert);
+    border-color: var(--marron);
     background: white;
     outline: none;
-    box-shadow: 0 0 0 2px rgba(162,215,102,0.15);
+    box-shadow: 0 0 0 3px rgba(124, 61, 18, 0.1);
 }
 .row {
     display: flex;
@@ -108,9 +106,9 @@ form {
     margin-bottom: 16px;
 }
 .alert-error {
-    background: #fff5f5;
-    color: var(--red);
-    border: 1px solid #fecaca;
+    background: var(--statut-err-fond);
+    color: var(--statut-err);
+    border: 1.5px solid var(--statut-err-bordure);
 }
 .terms {
     font-size: 13px;
@@ -122,18 +120,20 @@ form {
 }
 .btn-primary {
     width: 100%;
-    padding: 13px;
+    padding: .85rem;
     border: none;
-    border-radius: 8px;
-    background: var(--vert);
+    border-radius: .85rem;
+    background: linear-gradient(135deg, var(--marron) 0%, var(--marron-vif) 100%);
     color: white;
-    font-size: 15px;
+    font-size: .88rem;
     font-weight: 600;
+    font-family: inherit;
     cursor: pointer;
-    transition: .25s;
+    box-shadow: 0 4px 16px rgba(124, 61, 18, 0.28);
+    transition: box-shadow .15s, transform .15s;
 }
 .btn-primary:hover {
-    background: var(--vert-fonce);
+    box-shadow: 0 8px 24px rgba(124, 61, 18, 0.42);
     transform: translateY(-1px);
 }
 .login-link {
@@ -143,7 +143,7 @@ form {
     color: var(--text-muted);
 }
 .login-link a {
-    color: var(--vert);
+    color: var(--marron);
     font-weight: 600;
 }
 .login-link a:hover {

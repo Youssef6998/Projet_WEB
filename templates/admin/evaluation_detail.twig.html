@@ -1,0 +1,131 @@
+{% extends "base.twig.html" %}
+{% block css %}
+<link rel="stylesheet" href="/assets/css/variables.css">
+{{ parent() }}
+<link rel="stylesheet" href="/assets/evaluation.css">
+{% endblock %}
+{% block title %}{{ detail.nom }} – Détail évaluations{% endblock %}
+{% block content %}
+<div class="page">
+
+    {# ── En-tête ── #}
+    <div class="search-card search-card--mb">
+        <div class="search-head">
+            <span class="pill pill-r">{% if session_user.role == 'admin' %}Administration{% else %}Pilote{% endif %}</span>
+            <span class="pill pill-count">{{ detail.evaluations|length }} évaluation{{ detail.evaluations|length != 1 ? 's' : '' }}</span>
+        </div>
+        <div class="list-header">
+            <div>
+                <h2 class="list-title">{{ detail.nom }}</h2>
+                <p class="list-subtitle">
+                    {% if detail.ville %}{{ detail.ville }}{% if detail.adresse %} · {{ detail.adresse }}{% endif %}{% endif %}
+                </p>
+            </div>
+            <div class="actions-row">
+                <a href="/?uri=avis_create" class="btn btn-fill">+ Évaluation</a>
+                <a href="/?uri=evaluation_list" class="btn btn-outline">← Retour</a>
+            </div>
+        </div>
+    </div>
+
+    {# ── Résumé entreprise ── #}
+    <div class="ent-resume-card">
+        <div class="ent-resume-header">
+            <div class="ent-resume-avatar">{{ detail.nom|slice(0,1)|upper }}</div>
+            <div class="ent-resume-meta">
+                <h2 class="ent-resume-nom">{{ detail.nom }}</h2>
+                {% if detail.ville or detail.adresse %}
+                <p class="ent-resume-loc">
+                    {% if detail.ville %}{{ detail.ville }}{% endif %}{% if detail.adresse %} · {{ detail.adresse }}{% endif %}
+                </p>
+                {% endif %}
+            </div>
+            <div class="ent-resume-kpi">
+                <span class="ent-kpi-val">{{ detail.nb_offres }}</span>
+                <span class="ent-kpi-lbl">offre{{ detail.nb_offres != 1 ? 's' : '' }}</span>
+            </div>
+        </div>
+
+        {% if detail.description %}
+        <p class="ent-resume-desc">{{ detail.description }}</p>
+        {% endif %}
+
+        {% if detail.email_contact or detail.telephone_contact %}
+        <div class="tag-list ent-resume-contacts">
+            {% if detail.email_contact %}
+            <a href="mailto:{{ detail.email_contact }}" class="tag-info ent-contact-link">✉ {{ detail.email_contact }}</a>
+            {% endif %}
+            {% if detail.telephone_contact %}
+            <a href="tel:{{ detail.telephone_contact }}" class="tag-neutre ent-contact-link">☏ {{ detail.telephone_contact }}</a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+
+    {# ── Évaluations ── #}
+    <div class="detail-block">
+        <h3 class="detail-block-title">Évaluations</h3>
+        <div class="stages-list">
+            {% for ev in detail.evaluations %}
+            <article class="stage-card">
+                <div class="stage-info">
+                    <div class="tag-list">
+                        <span class="tag-promo eval-list-stars">
+                            {% for i in 1..5 %}
+                            <span class="{{ i <= ev.note ? 'star-filled' : 'star-empty' }}">★</span>
+                            {% endfor %}
+                            {{ ev.note }}/5
+                        </span>
+                        <span class="tag-neutre">{{ ev.date_evaluation|date('d/m/Y') }}</span>
+                    </div>
+                    {% if ev.attendus %}
+                    <p class="eval-attendus">{{ ev.attendus }}</p>
+                    {% endif %}
+                </div>
+                <div class="card-actions">
+                    <form method="POST" action="/?uri=evaluation_delete" class="form-clean"
+                          onsubmit="return confirm('Supprimer cette évaluation ?')">
+                        <input type="hidden" name="id" value="{{ ev.id_evaluation }}">
+                        <input type="hidden" name="redirect" value="/?uri=evaluation_detail&id={{ detail.id_entreprise }}">
+                        <button type="submit" class="btn btn-ghost btn-sm btn-danger-sm">Supprimer</button>
+                    </form>
+                </div>
+            </article>
+            {% else %}
+            <p class="liste-vide">Aucune évaluation pour cette entreprise.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    {# ── Offres / missions passées ── #}
+    <div class="detail-block">
+        <h3 class="detail-block-title">Stages et missions proposés</h3>
+        <div class="stages-list">
+            {% for o in detail.offres %}
+            <article class="stage-card">
+                <div class="stage-info">
+                    <div class="stage-top">
+                        <span class="stage-company">{{ o.titre }}</span>
+                        {% if o.domaine %}<span class="stage-type">{{ o.domaine }}</span>{% endif %}
+                    </div>
+                    {% if o.description %}
+                    <p class="stage-desc">{{ o.description|slice(0,150) }}{% if o.description|length > 150 %}…{% endif %}</p>
+                    {% endif %}
+                    <div class="tag-list">
+                        {% if o.duree %}<span class="tag-neutre">{{ o.duree }}</span>{% endif %}
+                        {% if o.base_remuneration %}<span class="tag-info">{{ o.base_remuneration }} €/mois</span>{% endif %}
+                        {% if o.date_offre %}<span class="tag-neutre">{{ o.date_offre|date('d/m/Y') }}</span>{% endif %}
+                    </div>
+                </div>
+                <div class="card-actions">
+                    <a href="/?uri=offre&id={{ o.id_offre }}" class="btn btn-outline btn-sm">Voir l'offre</a>
+                </div>
+            </article>
+            {% else %}
+            <p class="liste-vide">Aucun stage publié par cette entreprise.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
+{% endblock %}

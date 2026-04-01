@@ -1,16 +1,3 @@
-:root {
-    --white: #ffffff;
-    --rose: #7c3d12;
-    --rose-vivid: #6b2d0f;
-    --dark: #1a0a04;
-    --rose-light: #fdf4ed;
-    --rose-mid: #e8c4a4;
-    --rose-border: rgba(124, 61, 18, 0.16);
-    --rose-body: rgba(124, 61, 18, 0.12);
-    --text-muted: #8b6555;
-    --rose-deep: #3d1508;
-    --r: 1.1rem;
-}
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; }
 
@@ -41,7 +28,7 @@ a { text-decoration: none; color: inherit; }
     font-weight: 600;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--rose);
+    color: var(--marron);
     margin-bottom: 0.5rem;
 }
 
@@ -55,7 +42,7 @@ a { text-decoration: none; color: inherit; }
     padding: 60px 40px 20px 40px;
     border-radius: 20px;
     box-shadow: 0 20px 60px rgba(124, 61, 18, 0.1), 0 4px 16px rgba(124, 61, 18, 0.06);
-    border: 1.5px solid var(--rose-border);
+    border: 1.5px solid var(--marron-bordure);
     animation: fadeIn 0.5s ease-in-out;
     margin-bottom: 1.5rem;
     position: relative;
@@ -69,7 +56,7 @@ a { text-decoration: none; color: inherit; }
     gap: 0.4rem;
     padding: 0.4rem 0.8rem;
     background: white;
-    border: 1.5px solid var(--rose-border);
+    border: 1.5px solid var(--marron-bordure);
     color: var(--dark);
     font-size: 0.8rem;
     font-weight: 500;
@@ -79,7 +66,7 @@ a { text-decoration: none; color: inherit; }
     transition: all 0.2s ease;
 }
 
-.btn-back:hover { border-color: var(--rose); color: var(--rose); transform: translateY(-1px); }
+.btn-back:hover { border-color: var(--marron); color: var(--marron); transform: translateY(-1px); }
 
 .champ { margin-bottom: 1.1rem; display: flex; flex-direction: column; }
 .champ label { margin-bottom: 8px; font-weight: 500; font-size: 14px; color: var(--dark); }
@@ -87,14 +74,14 @@ a { text-decoration: none; color: inherit; }
 .champ-input {
     padding: 12px;
     border-radius: 10px;
-    border: 1.5px solid var(--rose-border);
+    border: 1.5px solid var(--marron-bordure);
     transition: 0.3s;
     font-size: 14px;
     font-family: 'DM Sans', sans-serif;
 }
 
 .champ-input:focus {
-    border-color: var(--rose);
+    border-color: var(--marron);
     outline: none;
     box-shadow: 0 0 0 3px rgba(124, 61, 18, 0.1);
 }
@@ -106,7 +93,7 @@ a { text-decoration: none; color: inherit; }
     padding: 12px;
     border: none;
     border-radius: 10px;
-    background: linear-gradient(135deg, var(--rose) 0%, var(--rose-vivid) 100%);
+    background: linear-gradient(135deg, var(--marron) 0%, var(--marron-vif) 100%);
     color: white;
     font-size: 15px;
     font-family: 'DM Sans', sans-serif;
@@ -123,7 +110,7 @@ a { text-decoration: none; color: inherit; }
 }
 
 .texte-centre { margin-top: 1.2rem; text-align: center; font-size: 14px; color: var(--text-muted); }
-.lien-connexion { color: var(--rose); font-weight: 500; text-decoration: none; }
+.lien-connexion { color: var(--marron); font-weight: 500; text-decoration: none; }
 .lien-connexion:hover { text-decoration: underline; }
 
 footer {
@@ -139,7 +126,7 @@ footer {
 
 .liens-pied-de-page { display: flex; gap: 1rem; }
 .liens-pied-de-page a { color: var(--text-muted); font-size: 13px; }
-.liens-pied-de-page a:hover { color: var(--rose); text-decoration: underline; }
+.liens-pied-de-page a:hover { color: var(--marron); text-decoration: underline; }
 
 @media (max-width: 480px) {
     .page-inscription { padding: 1.5rem 1rem; }

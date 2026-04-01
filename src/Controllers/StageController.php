@@ -27,7 +27,7 @@ class StageController extends BaseController {
         $data['competence'] = $competence;
         $data['tri']        = $tri;
 
-        $template = ($data['uri'] === 'stages') ? 'stages.twig.html' : 'cherche_stage.twig.html';
+        $template = ($data['uri'] === 'stages') ? 'stages/stages.twig.html' : 'stages/cherche_stage.twig.html';
         return $this->render($template, $data);
     }
 
@@ -46,7 +46,7 @@ class StageController extends BaseController {
             $dejaCandidate = $this->model->dejaCandidate($idEt, $id);
         }
 
-        return $this->render('offre.twig.html', [
+        return $this->render('stages/offre.twig.html', [
             'uri'            => 'offre',
             'offre'          => $offre,
             'en_favori'      => $enFavori,
@@ -91,5 +91,92 @@ class StageController extends BaseController {
         }
         $redirect = $_POST['redirect'] ?? "/?uri=offre&id=$idOffre";
         $this->redirect($redirect);
+    }
+
+    // GET /?uri=offre_create
+    public function showCreate(): string {
+        $this->requireRole(fn() => $this->isAdminOrPilote());
+        return $this->render('stages/creer_offre.twig.html', [
+            'uri'         => 'offre_create',
+            'entreprises' => $this->model->getToutesEntreprises(),
+        ]);
+    }
+
+    // POST /?uri=offre_create
+    public function store(): void {
+        $this->requireRole(fn() => $this->isAdminOrPilote());
+
+        $idEntreprise     = (int)($_POST['id_entreprise']     ?? 0);
+        $titre            = trim($_POST['titre']              ?? '');
+        $domaine          = trim($_POST['domaine']            ?? '') ?: null;
+        $description      = trim($_POST['description']        ?? '') ?: null;
+        $baseRemuneration = !empty($_POST['base_remuneration']) ? (float) $_POST['base_remuneration'] : null;
+        $dateOffre        = trim($_POST['date_offre']         ?? '');
+        $duree            = trim($_POST['duree']              ?? '') ?: null;
+
+        if (!$idEntreprise || !$titre || !$dateOffre) {
+            echo $this->render('stages/creer_offre.twig.html', [
+                'uri'         => 'offre_create',
+                'entreprises' => $this->model->getToutesEntreprises(),
+                'erreur'      => 'Les champs Entreprise, Titre et Date de début sont obligatoires.',
+                'old'         => $_POST,
+            ]);
+            return;
+        }
+
+        $this->model->creerOffre($idEntreprise, $titre, $domaine, $description, $baseRemuneration, $dateOffre, $duree);
+        $this->redirect('/?uri=stages&success=creee');
+    }
+
+    // GET /?uri=offre_update&id=X
+    public function showUpdate(int $id): string {
+        $this->requireRole(fn() => $this->isAdminOrPilote());
+        $offre = $this->model->getOffreById($id);
+        if (!$offre) {
+            return $this->render('404.twig.html', ['uri' => 'offre_update']);
+        }
+        return $this->render('stages/modifier_offre.twig.html', [
+            'uri'         => 'offre_update',
+            'offre'       => $offre,
+            'entreprises' => $this->model->getToutesEntreprises(),
+        ]);
+    }
+
+    // POST /?uri=offre_update
+    public function update(): void {
+        $this->requireRole(fn() => $this->isAdminOrPilote());
+        $idOffre          = (int)($_POST['id']             ?? 0);
+        $idEntreprise     = (int)($_POST['id_entreprise']  ?? 0);
+        $titre            = trim($_POST['titre']           ?? '');
+        $description      = trim($_POST['description']     ?? '');
+        $duree            = trim($_POST['duree']           ?? '');
+        $dateOffre        = trim($_POST['date_offre']      ?? '');
+        $baseRemuneration = !empty($_POST['base_remuneration']) ? (float) $_POST['base_remuneration'] : null;
+
+        if ($idOffre) {
+            $this->model->modifierOffre($idOffre, $idEntreprise, $titre, $description, $duree, $dateOffre, $baseRemuneration);
+        }
+        $this->redirect('/?uri=stages&success=modifiee');
+    }
+
+    // GET /?uri=stats_offres
+    public function showStats(): string {
+        $this->requireRole(fn() => $this->isAdminOrPilote());
+        return $this->render('stages/stats_offres.twig.html', [
+            'uri'         => 'stats_offres',
+            'stats'       => $this->model->getStatsOffres(),
+            'statsOffres' => $this->model->getStatsParOffre(),
+        ]);
+    }
+
+    // POST /?uri=offre_delete
+    public function destroy(): void {
+        $this->requireRole(fn() => $this->isAdminOrPilote());
+        $idOffre = (int)($_POST['id'] ?? 0);
+        if ($idOffre) {
+            $this->model->supprimerCandidaturesOffre($idOffre);
+            $this->model->supprimerOffre($idOffre);
+        }
+        $this->redirect('/?uri=stages&success=supprimee');
     }
 }

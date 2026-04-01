@@ -5,7 +5,7 @@
     margin: 40px auto;
     padding: 50px 45px 35px;
     border-radius: 1.25rem;
-    border: 1.5px solid var(--rose-border);
+    border: 1.5px solid var(--marron-bordure);
     box-shadow: 0 16px 48px rgba(124, 61, 18, 0.09);
     position: relative;
     animation: fadeIn .5s ease;
@@ -18,14 +18,14 @@
 .btn-back {
     padding: 6px 10px;
     border-radius: 8px;
-    border: 1.5px solid var(--rose-border);
+    border: 1.5px solid var(--marron-bordure);
     font-size: 13px;
     color: var(--text-muted);
     transition: .2s;
 }
 .btn-back:hover {
-    border-color: var(--rose);
-    color: var(--rose);
+    border-color: var(--marron);
+    color: var(--marron);
 }
 .intro-page {
     text-align: center;
@@ -33,7 +33,7 @@
 }
 .intro-small-titre {
     font-size: 13px;
-    color: var(--rose);
+    color: var(--marron);
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: .1em;
@@ -55,9 +55,9 @@
     margin-bottom: 20px;
 }
 .alert-success {
-    background: var(--rose-light);
-    color: var(--rose-vivid);
-    border: 1.5px solid var(--rose-mid);
+    background: var(--marron-clair);
+    color: var(--marron-vif);
+    border: 1.5px solid var(--marron-mid);
 }
 .alert-error {
     background: #fff5f5;
@@ -85,7 +85,7 @@ form {
 .input-group textarea {
     padding: .65rem .85rem;
     border-radius: .75rem;
-    border: 1.5px solid var(--rose-border);
+    border: 1.5px solid var(--marron-bordure);
     font-size: .82rem;
     background: #fafafa;
     font-family: inherit;
@@ -95,7 +95,7 @@ form {
 .input-group input:focus,
 .input-group select:focus,
 .input-group textarea:focus {
-    border-color: var(--rose);
+    border-color: var(--marron);
     background: #fff;
     outline: none;
     box-shadow: 0 0 0 3px rgba(124, 61, 18, 0.1);
@@ -111,7 +111,7 @@ form {
 }
 .star {
     font-size: 32px;
-    color: var(--rose-mid);
+    color: var(--marron-mid);
     cursor: pointer;
     transition: color .2s;
 }
@@ -119,14 +119,14 @@ form {
 .star-label:hover ~ .star-label .star,
 .star-label:has(input:checked) .star,
 .star-label:has(input:checked) ~ .star-label .star {
-    color: var(--rose);
+    color: var(--marron);
 }
 .btn-primary {
     width: 100%;
     padding: .85rem;
     border: none;
     border-radius: .85rem;
-    background: linear-gradient(135deg, var(--rose) 0%, var(--rose-vivid) 100%);
+    background: linear-gradient(135deg, var(--marron) 0%, var(--marron-vif) 100%);
     color: #fff;
     font-size: .88rem;
     font-weight: 600;

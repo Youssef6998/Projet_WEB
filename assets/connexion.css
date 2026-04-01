@@ -1,16 +1,4 @@
-:root {
-      --white: #ffffff;
-      --rose: #7c3d12;
-      --rose-vivid: #6b2d0f;
-      --dark: #1a0a04;
-      --rose-light: #fdf4ed;
-      --rose-mid: #e8c4a4;
-      --rose-border: rgba(124, 61, 18, 0.16);
-      --rose-body: rgba(124, 61, 18, 0.12);
-      --text-muted: #8b6555;
-      --rose-deep: #3d1508;
-      --r: 1.1rem;
-}
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; }
 body {
     font-family: 'DM Sans', sans-serif;
@@ -30,7 +18,7 @@ a { text-decoration: none; color: inherit; }
 .login-card h1 {
     text-align: center;
     margin-bottom: 20px;
-    color: var(--rose);
+    color: var(--marron);
 }
 .login-card {
     background: rgba(255, 255, 255, 0.95);
@@ -39,7 +27,7 @@ a { text-decoration: none; color: inherit; }
     padding: 60px 40px 20px 40px;
     border-radius: 20px;
     box-shadow: 0 20px 60px rgba(124, 61, 18, 0.1), 0 4px 16px rgba(124, 61, 18, 0.06);
-    border: 1.5px solid var(--rose-border);
+    border: 1.5px solid var(--marron-bordure);
     animation: fadeIn 0.5s ease-in-out;
     position: relative;
 }
@@ -51,13 +39,13 @@ a { text-decoration: none; color: inherit; }
 .input-group input {
     padding: 12px;
     border-radius: 10px;
-    border: 1.5px solid var(--rose-border);
+    border: 1.5px solid var(--marron-bordure);
     transition: 0.3s;
     font-size: 14px;
 }
 
 .input-group input:focus {
-    border-color: var(--rose);
+    border-color: var(--marron);
     outline: none;
     box-shadow: 0 0 0 3px rgba(124, 61, 18, 0.1);
 }
@@ -70,7 +58,7 @@ a { text-decoration: none; color: inherit; }
     margin-bottom: 25px;
 }
 
-.options a { text-decoration: none; color: var(--rose); }
+.options a { text-decoration: none; color: var(--marron); }
 .options a:hover { text-decoration: underline; }
 
 .btn-primary {
@@ -78,7 +66,7 @@ a { text-decoration: none; color: inherit; }
     padding: 12px;
     border: none;
     border-radius: 10px;
-    background: linear-gradient(135deg, var(--rose) 0%, var(--rose-vivid) 100%);
+    background: linear-gradient(135deg, var(--marron) 0%, var(--marron-vif) 100%);
     color: white;
     font-size: 15px;
     font-family: 'DM Sans', sans-serif;
@@ -94,7 +82,7 @@ a { text-decoration: none; color: inherit; }
 }
 
 .register { margin-top: 20px; text-align: center; font-size: 14px; }
-.register a { color: var(--rose); text-decoration: none; font-weight: 500; }
+.register a { color: var(--marron); text-decoration: none; font-weight: 500; }
 .register a:hover { text-decoration: underline; }
 
 .back-btn-container { position: absolute; top: 15px; left: 20px; }
@@ -105,7 +93,7 @@ a { text-decoration: none; color: inherit; }
     gap: 0.4rem;
     padding: 0.4rem 0.8rem;
     background: white;
-    border: 1.5px solid var(--rose-border);
+    border: 1.5px solid var(--marron-bordure);
     color: var(--dark);
     font-size: 0.8rem;
     font-weight: 500;
@@ -115,7 +103,7 @@ a { text-decoration: none; color: inherit; }
     transition: all 0.2s ease;
 }
 
-.btn-back:hover { border-color: var(--rose); color: var(--rose); transform: translateY(-1px); }
+.btn-back:hover { border-color: var(--marron); color: var(--marron); transform: translateY(-1px); }
 .btn-back svg { width: 16px; height: 16px; transition: transform 0.2s ease; }
 .btn-back:hover svg { transform: translateX(-2px); }
 
@@ -124,6 +112,10 @@ a { text-decoration: none; color: inherit; }
     .back-btn-container { top: 15px; left: 15px; }
     .btn-back { padding: 0.4rem 0.7rem; font-size: 0.75rem; }
 }
+
+/* Alerte d'erreur dans la carte de connexion */
+.alert { padding: 10px 14px; border-radius: 8px; margin-bottom: 16px; font-size: 14px; }
+.alert-error { background: var(--statut-err-fond); color: var(--statut-err); border: 1px solid var(--statut-err-bordure); }
 
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(15px); }

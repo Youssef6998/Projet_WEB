@@ -1,0 +1,84 @@
+{% extends "base.twig.html" %}
+{% block css %}
+<link rel="stylesheet" href="/assets/css/variables.css">
+{{ parent() }}
+<link rel="stylesheet" href="/assets/evaluation.css">
+{% endblock %}
+{% block title %}Gestion des évaluations – Stage Finder{% endblock %}
+{% block content %}
+<div class="page">
+
+    <div class="search-card search-card--mb">
+        <div class="search-head">
+            <span class="pill pill-r">{% if session_user.role == 'admin' %}Administration{% else %}Pilote{% endif %}</span>
+            <span class="pill pill-count">{{ resumes|length }} entreprise{{ resumes|length != 1 ? 's' : '' }}</span>
+        </div>
+        <div class="list-header">
+            <div>
+                <h2 class="list-title">Évaluations des entreprises</h2>
+                <p class="list-subtitle">Récapitulatif des entreprises notées par l'équipe pédagogique.</p>
+            </div>
+            <a href="/?uri=avis_create" class="btn btn-fill">+ Nouvelle évaluation</a>
+        </div>
+    </div>
+
+    {% if success == 'supprime' %}
+    <div class="alert-delete">L'évaluation a bien été supprimée.</div>
+    {% endif %}
+
+    <div class="stages-list">
+        {% for r in resumes %}
+        <article class="stage-card eval-resume-card">
+
+            {# ── Ligne titre ── #}
+            <div class="stage-info">
+                <div class="stage-top">
+                    <span class="stage-company">{{ r.entreprise_nom }}</span>
+                    <span class="eval-list-stars tag-promo">
+                        {% for i in 1..5 %}
+                        <span class="{{ i <= r.note_moyenne|round ? 'star-filled' : 'star-empty' }}">★</span>
+                        {% endfor %}
+                        <strong>{{ r.note_moyenne }}</strong>/5
+                    </span>
+                </div>
+
+                {# ── Localisation + description ── #}
+                {% if r.ville %}
+                <p class="stage-desc">{{ r.ville }}</p>
+                {% endif %}
+                {% if r.description %}
+                <p class="eval-resume-desc">{{ r.description|slice(0, 120) }}{% if r.description|length > 120 %}…{% endif %}</p>
+                {% endif %}
+
+                {# ── Dernier attendus ── #}
+                {% if r.dernier_attendus %}
+                <p class="eval-resume-attendus">"{{ r.dernier_attendus|slice(0, 100) }}{% if r.dernier_attendus|length > 100 %}…{% endif %}"</p>
+                {% endif %}
+
+                {# ── Tags stats ── #}
+                <div class="tag-list">
+                    <span class="tag-info">{{ r.nb_evaluations }} évaluation{{ r.nb_evaluations != 1 ? 's' : '' }}</span>
+                    <span class="tag-info">{{ r.nb_offres }} offre{{ r.nb_offres != 1 ? 's' : '' }} publiée{{ r.nb_offres != 1 ? 's' : '' }}</span>
+                    {% if r.meilleure_note == r.moins_bonne_note %}
+                    <span class="tag-neutre">Notes constantes ({{ r.meilleure_note }}/5)</span>
+                    {% else %}
+                    <span class="tag-neutre">Entre {{ r.moins_bonne_note }}/5 et {{ r.meilleure_note }}/5</span>
+                    {% endif %}
+                    <span class="tag-neutre">Dernière éval. {{ r.derniere_eval|date('d/m/Y') }}</span>
+                </div>
+            </div>
+
+            <div class="card-actions">
+                <a href="/?uri=evaluation_detail&id={{ r.id_entreprise }}" class="btn btn-dark btn-sm">
+                    Voir le détail
+                </a>
+            </div>
+
+        </article>
+        {% else %}
+        <p class="liste-vide">Aucune évaluation enregistrée.</p>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}

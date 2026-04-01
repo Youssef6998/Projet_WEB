@@ -1,23 +1,19 @@
-/* ─── Bloc évaluations sur la page entreprise ─── */
+/* ─── Évaluations sur la page entreprise ─── */
 .eval-section-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 1rem;
 }
-.eval-section-header .section-title {
-    margin: 0;
-}
-.eval-list {
-    display: flex;
-    flex-direction: column;
-    gap: .75rem;
-}
+.eval-section-header .section-title { margin: 0; }
+
+.eval-list { display: flex; flex-direction: column; gap: .75rem; }
+
 .eval-item {
-    border: 1.5px solid var(--rose-border);
+    border: 1.5px solid var(--marron-bordure);
     border-radius: .75rem;
     padding: .85rem 1rem;
-    background: var(--rose-light);
+    background: var(--marron-clair);
 }
 .eval-item-header {
     display: flex;
@@ -25,102 +21,130 @@
     align-items: center;
     margin-bottom: .35rem;
 }
-.eval-author {
-    font-size: .82rem;
-    font-weight: 600;
-    color: var(--dark);
-}
-.eval-date {
-    font-size: .75rem;
-    color: var(--text-muted);
-}
-.eval-stars {
-    margin-bottom: .3rem;
-}
-.eval-stars .star-filled {
-    font-size: 1.1rem;
-    color: var(--rose);
-}
-.eval-stars .star-empty {
-    font-size: 1.1rem;
-    color: var(--rose-mid);
-}
-.eval-note-label {
-    font-size: .72rem;
-    color: var(--text-muted);
-    margin-left: .3rem;
-}
-.eval-comment {
-    font-size: .82rem;
-    color: var(--text-muted);
-    font-style: italic;
-    margin: 0;
-}
-.eval-empty {
-    color: var(--text-muted);
-    font-size: .82rem;
+.eval-author { font-size: .82rem; font-weight: 600; color: var(--dark); }
+.eval-date   { font-size: .75rem; color: var(--dark); opacity: .6; }
+
+.eval-stars { margin-bottom: .3rem; }
+.eval-stars .star-filled { font-size: 1.1rem; color: var(--marron); }
+.eval-stars .star-empty  { font-size: 1.1rem; color: var(--marron-mid); }
+.eval-note-label { font-size: .72rem; color: var(--text-muted); margin-left: .3rem; }
+
+.eval-comment { font-size: .82rem; color: var(--dark); opacity: .78; font-style: italic; margin: 0; }
+.eval-empty   { font-size: .82rem; color: var(--dark); opacity: .6; }
+
+/* ─── Résumé entreprise (liste) ─── */
+.eval-resume-desc    { margin-top: .35rem; font-size: .8rem; color: var(--text-muted); line-height: 1.45; }
+.eval-resume-attendus { margin-top: .3rem; font-size: .78rem; color: var(--text-muted); font-style: italic; }
+
+/* ─── Formulaire création ─── */
+.avis-card { padding: 1.5rem; }
+.avis-card .field { margin-bottom: 1.1rem; }
+.avis-card textarea { width: 100%; resize: vertical; min-height: 120px; }
+
+/* ─── Page détail — carte résumé entreprise ─── */
+.ent-resume-card {
+    background: var(--marron-clair);
+    border: 1.5px solid var(--marron-bordure);
+    border-radius: var(--r);
+    padding: 1.4rem 1.5rem;
+    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
 
-/* ─── Page liste des évaluations ─── */
-.eval-list-head {
+/* Ligne du haut : avatar + nom/localisation + kpi */
+.ent-resume-header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap;
-    gap: .75rem;
-    margin-top: .4rem;
+    gap: 1rem;
 }
-.eval-list-title {
+.ent-resume-avatar {
+    width: 3rem;
+    height: 3rem;
+    border-radius: .85rem;
+    background: linear-gradient(135deg, var(--marron), var(--marron-vif));
+    color: #fff;
+    font-size: 1.25rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    letter-spacing: -.02em;
+}
+.ent-resume-meta {
+    flex: 1;
+    min-width: 0;
+}
+.ent-resume-nom {
     font-size: 1.05rem;
     font-weight: 700;
     color: var(--dark);
+    margin: 0 0 .15rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.ent-resume-loc {
+    font-size: .76rem;
+    color: var(--text-muted);
     margin: 0;
 }
-.eval-list-subtitle {
-    font-size: .75rem;
+.ent-resume-kpi {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    flex-shrink: 0;
+}
+.ent-kpi-val {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--marron);
+    line-height: 1;
+}
+.ent-kpi-lbl {
+    font-size: .65rem;
     color: var(--text-muted);
-    margin: .2rem 0 0;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    margin-top: .1rem;
 }
-.eval-alert-delete {
-    background: #fff5f5;
-    border: 1.5px solid #fecaca;
-    color: #c0392b;
-    border-radius: .75rem;
-    padding: .7rem 1rem;
-    font-size: .8rem;
-    margin-bottom: 1rem;
+
+/* Description */
+.ent-resume-desc {
+    font-size: .84rem;
+    color: var(--dark);
+    line-height: 1.7;
+    margin: 0;
+    padding-top: .9rem;
+    border-top: 1px solid var(--marron-bordure);
 }
+
+/* Contacts */
+.ent-resume-contacts {
+    padding-top: .75rem;
+    border-top: 1px solid var(--marron-bordure);
+    margin: 0;
+}
+.ent-contact-link {
+    text-decoration: none;
+    transition: opacity .15s;
+}
+.ent-contact-link:hover { opacity: .75; }
+
+/* ─── Ancien détail-section (conservé pour compatibilité) ─── */
+.detail-section { margin-bottom: 1.5rem; padding: 1.25rem 1.5rem; }
+.detail-section-title { font-size: .9rem; font-weight: 700; color: var(--dark); margin: 0 0 .75rem; }
+.detail-block { margin-bottom: 2rem; }
+.detail-block-title { font-size: 1rem; font-weight: 700; color: var(--dark); margin: 0 0 .75rem; padding-bottom: .4rem; border-bottom: 1.5px solid var(--marron-bordure); }
+.eval-attendus { margin-top: .6rem; font-size: .82rem; color: var(--text-muted); font-style: italic; line-height: 1.5; }
+
+/* ─── Liste des évaluations (page gestion) ─── */
 .eval-list-stars {
     display: inline-flex;
     align-items: center;
-    gap: .1rem;
-    font-size: .85rem;
+    gap: .15rem;
 }
-.eval-list-stars .star-filled { color: var(--rose); }
-.eval-list-stars .star-empty  { color: var(--rose-mid); }
-.eval-note-text {
-    font-size: .72rem;
-    color: var(--text-muted);
-    margin-left: .25rem;
-}
-.eval-meta {
-    margin-top: .3rem;
-    font-size: .82rem;
-    color: var(--text-muted);
-}
-.eval-excerpt {
-    margin-top: .3rem;
-    font-size: .82rem;
-    font-style: italic;
-    color: var(--text-muted);
-}
-.btn-danger {
-    color: #c0392b;
-    border-color: #fecaca;
-}
-.eval-empty-center {
-    color: var(--text-muted);
-    font-size: .82rem;
-    text-align: center;
-    padding: 2rem 0;
-}
+.eval-list-stars .star-filled { color: var(--marron-vif); }
+.eval-list-stars .star-empty  { color: var(--marron-mid); }

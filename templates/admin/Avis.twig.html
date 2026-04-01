@@ -1,0 +1,68 @@
+{% extends "base.twig.html" %}
+{% block css %}
+<link rel="stylesheet" href="/assets/css/variables.css">
+{{ parent() }}
+<link rel="stylesheet" href="/assets/avis.css">
+{% endblock %}
+{% block title %}Évaluer une entreprise – Stage Finder{% endblock %}
+{% block content %}
+<div class="mgmt-wrap">
+
+    <div class="mgmt-header">
+        <span class="mgmt-eyebrow">Évaluation</span>
+        <h1>Évaluer une entreprise</h1>
+        <p>Enregistrez votre évaluation et les attendus du stage réalisé.</p>
+    </div>
+
+    <div class="mgmt-card">
+        <a href="/?uri=evaluation_list" class="mgmt-back">← Voir les évaluations</a>
+
+        {% if success %}
+        <div class="alert alert-success">Évaluation enregistrée avec succès.</div>
+        {% endif %}
+
+        {% if erreur %}
+        <div class="alert alert-error">{{ erreur }}</div>
+        {% endif %}
+
+        <form method="POST" action="/?uri=avis_create">
+
+            <div class="fgrp">
+                <label>Entreprise *</label>
+                <select name="id_entreprise" required>
+                    <option value="">— Sélectionner une entreprise —</option>
+                    {% for e in entreprises %}
+                    <option value="{{ e.id_entreprise }}"
+                        {% if (old.id_entreprise ?? '') == e.id_entreprise %}selected{% endif %}>
+                        {{ e.nom }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="fgrp">
+                <label>Note *</label>
+                <div class="stars">
+                    {% for i in [5,4,3,2,1] %}
+                    <label class="star-label">
+                        <input type="radio" name="note" value="{{ i }}"
+                               {% if (old.note ?? '') == i %}checked{% endif %} required>
+                        <span class="star">★</span>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="fgrp">
+                <label for="attendus">Détail des attendus du stage réalisé *</label>
+                <textarea id="attendus" name="attendus" rows="6" class="resize-v"
+                          placeholder="Décrivez les missions confiées, les compétences attendues, le contexte du stage…">{{ old.attendus ?? '' }}</textarea>
+            </div>
+
+            <button type="submit" class="mgmt-submit">Enregistrer l'évaluation</button>
+
+        </form>
+    </div>
+
+</div>
+{% endblock %}

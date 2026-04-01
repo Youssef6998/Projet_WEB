@@ -1,5 +1,6 @@
 {% extends "base.twig.html" %}
 {% block css %}
+<link rel="stylesheet" href="/assets/css/variables.css">
 <link rel="stylesheet" href="/assets/style-stage.css">
 <link rel="stylesheet" href="/assets/offre.css">
 {% endblock %}
@@ -10,7 +11,7 @@
 
     {# Breadcrumb #}
     <nav class="breadcrumb">
-        <a href="/?uri=stages">← Retour aux offres</a>
+        <a href="#" class="btn-back" data-fallback="/?uri=stages">← Retour aux offres</a>
     </nav>
 
     {# Confirmation candidature #}
@@ -59,7 +60,7 @@
                     {% endif %}
                 </div>
                 {% if offre.tags %}
-                <div class="stage-tags" style="margin-top:.75rem">
+                <div class="stage-tags offre-tags">
                     {% for tag in offre.tags %}
                     <span class="stage-tag">{{ tag }}</span>
                     {% endfor %}
@@ -112,7 +113,7 @@
             {# Non connecté #}
             <div class="card aside-card">
                 <p class="aside-hint">Connectez-vous pour candidater ou ajouter aux favoris.</p>
-                <a href="/?uri=login" class="btn btn-fill" style="width:100%;justify-content:center">Se connecter</a>
+                <a href="/?uri=login" class="btn btn-fill btn-block">Se connecter</a>
             </div>
 
             {% elseif session_user.role != 'etudiant' %}
@@ -124,7 +125,7 @@
             {% elseif deja_candidate %}
             {# Déjà candidaté #}
             <div class="card aside-card">
-                <div class="badge badge-en_attente" style="margin-bottom:.75rem">Candidature envoyée</div>
+                <div class="badge badge-en_attente">Candidature envoyée</div>
                 <p class="aside-hint">Vous avez déjà postulé à cette offre. Suivez l'état depuis votre <a href="/?uri=profil">profil</a>.</p>
             </div>
 
@@ -150,7 +151,7 @@
                             class="input-textarea"></textarea>
                     </div>
 
-                    <button type="submit" class="btn btn-fill" style="width:100%;justify-content:center">
+                    <button type="submit" class="btn btn-fill btn-block">
                         Envoyer ma candidature
                     </button>
                 </form>

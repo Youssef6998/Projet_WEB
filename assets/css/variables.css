@@ -1,0 +1,39 @@
+/* ═══════════════════════════════════════════════
+   Palette de couleurs — Thème Marron
+   Source unique de vérité pour toutes les couleurs.
+   Importer ce fichier en premier via base.twig.html.
+   ═══════════════════════════════════════════════ */
+:root {
+    /* ── Couleurs principales ── */
+    --marron:          #7c3d12;               /* marron principal */
+    --marron-vif:      #6b2d0f;               /* marron foncé / hover */
+    --marron-profond:  #3d1508;               /* très foncé / dégradé */
+    --marron-clair:    #fdf4ed;               /* crème / fond clair */
+    --marron-mid:      #e8c4a4;               /* beige moyen / badges */
+    --marron-bordure:  rgba(124, 61, 18, 0.16); /* bordures */
+    --marron-fond:     rgba(124, 61, 18, 0.12); /* fonds subtils */
+
+    /* ── Texte & neutres ── */
+    --text-muted:  #8b6555;   /* texte secondaire */
+    --dark:        #1a0a04;   /* texte principal */
+    --white:       #ffffff;
+
+    /* ── Statuts ── */
+    --statut-ok:          #166534;  /* texte accepté */
+    --statut-ok-fond:     #bbf7d0;  /* fond accepté */
+    --statut-ok-bordure:  #bbf7d0;
+    --statut-err:         #c0392b;  /* texte refusé/erreur */
+    --statut-err-fond:    #fecaca;  /* fond erreur */
+    --statut-err-bordure: #fecaca;
+    --statut-attente:     #713f12;  /* texte en attente */
+    --statut-attente-fond:     #fef9c3;
+    --statut-attente-bordure:  #fde68a;
+
+    /* ── Danger (suppression) ── */
+    --danger:       #dc2626;
+    --danger-clair: #fca5a5;
+    --danger-fond:  #fff5f5;
+
+    /* ── Rayon de bordure commun ── */
+    --r: 1.1rem;
+}

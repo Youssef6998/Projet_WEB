@@ -1,0 +1,151 @@
+{% extends "base.twig.html" %}
+{% block css %}
+<link rel="stylesheet" href="/assets/css/variables.css">
+<link rel="stylesheet" href="/assets/style-stage.css">
+<link rel="stylesheet" href="/assets/offre.css">
+<link rel="stylesheet" href="/assets/evaluation.css">
+{% endblock %}
+{% block title %}{{ entreprise.nom }} – Stage Finder{% endblock %}
+
+{% block content %}
+<div class="offre-page">
+
+
+    <!-- Bouton retour-->
+    {# Breadcrumb #}
+    <nav class="breadcrumb">
+        <a href="#" class="btn-back" data-fallback="/?uri=entreprises">← Retour aux entreprises</a>
+    </nav>
+
+    <div class="offre-layout">
+        {# Colonne principale #}
+        <div class="offre-main">
+
+            <!-- En tete de l'entreprise -->
+            {# En-tête entreprise #}
+            <div class="offre-header card">
+                <div class="offre-header-top">
+                    <div>
+                        <span class="stage-company">{{ entreprise.nom }}</span>
+                        <span class="stage-type">Entreprise</span>
+                    </div>
+                </div>
+                <h1 class="offre-titre">{{ entreprise.nom }}</h1>
+                <div class="offre-meta-row">
+                    {% if entreprise.ville %}
+                    <span class="meta-chip"> {{ entreprise.ville }}</span>
+                    {% endif %}
+                    <span class="meta-chip">{{ entreprise.nb_offres }} offre{{ entreprise.nb_offres != 1 ? 's' : '' }}</span>
+                </div>
+            </div>
+
+
+
+            <!-- Description de l'entreprise-->
+            {# Description #}
+            {% if entreprise.description %}
+            <div class="card">
+                <h2 class="section-title">À propos de {{ entreprise.nom }}</h2>
+                <p class="offre-description">{{ entreprise.description|nl2br }}</p>
+            </div>
+            {% endif %}
+
+
+
+            <!-- Liste des stages-->
+            {# Offres de stage #}
+            {% if entreprise.offres %}
+            <div class="card">
+                <h2 class="section-title">Offres de stage</h2>
+                <div class="stages-list stages-list--inner">
+                    {% for offre in entreprise.offres %}
+                    <article class="stage-card">
+                        <div class="stage-info">
+                            <div class="stage-top">
+                                <span class="stage-company">{{ offre.titre }}</span>
+                            </div>
+                            <div class="offre-meta-row offre-meta-row--mt">
+                                {% if offre.duree %}<span class="meta-chip">{{ offre.duree }}</span>{% endif %}
+                                {% if offre.base_remuneration %}<span class="meta-chip">{{ offre.base_remuneration|number_format(0, ',', ' ') }} €/mois</span>{% endif %}
+                                {% if offre.nb_places %}<span class="meta-chip">{{ offre.nb_places }} place{{ offre.nb_places > 1 ? 's' : '' }}</span>{% endif %}
+                                {% if offre.date_offre %}<span class="meta-chip">Début {{ offre.date_offre|date('d/m/Y') }}</span>{% endif %}
+                            </div>
+                        </div>
+                        <div class="stage-right">
+                            <a href="/?uri=offre&id={{ offre.id_offre }}" class="btn btn-dark">Voir l'offre</a>
+                        </div>
+                    </article>
+                    {% endfor %}
+                </div>
+            </div>
+            {% else %}
+            <div class="card">
+                <p class="card-vide">Aucune offre de stage disponible pour le moment.</p>
+            </div>
+            {% endif %}
+
+        <!-- Évaluations -->
+        <div class="card">
+            <div class="eval-section-header">
+                <h2 class="section-title">Évaluations</h2>
+                {% if session_user and session_user.role in ['admin', 'pilote'] %}
+                <a href="/?uri=avis_create" class="btn btn-outline">+ Évaluer</a>
+                {% endif %}
+            </div>
+            {% if evaluations %}
+            <div class="eval-list">
+                {% for ev in evaluations %}
+                <div class="eval-item">
+                    <div class="eval-item-header">
+                        <span class="eval-author">{{ ev.etudiant_prenom }} {{ ev.etudiant_nom }}</span>
+                        <span class="eval-date">{{ ev.date_evaluation|date('d/m/Y') }}</span>
+                    </div>
+                    <div class="eval-stars">
+                        {% for i in 1..5 %}
+                        <span class="{{ i <= ev.note ? 'star-filled' : 'star-empty' }}">★</span>
+                        {% endfor %}
+                        <span class="eval-note-label">{{ ev.note }}/5</span>
+                    </div>
+                    {% if ev.commentaire %}
+                    <p class="eval-comment">"{{ ev.commentaire }}"</p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="eval-empty">Aucune évaluation pour cette entreprise.</p>
+            {% endif %}
+        </div>
+
+        </div>
+
+
+        <!-- Bulle d'informations -->
+        {# Colonne latérale #}
+        <aside class="offre-aside">
+
+            {# Infos de contact #}
+            <div class="card aside-card aside-info">
+                <h3>Informations</h3>
+                <ul class="info-list">
+                    <li><span class="info-label">Nom</span><span>{{ entreprise.nom }}</span></li>
+                    {% if entreprise.ville %}
+                    <li><span class="info-label">Ville</span><span>{{ entreprise.ville }}</span></li>
+                    {% endif %}
+                    {% if entreprise.adresse %}
+                    <li><span class="info-label">Adresse</span><span>{{ entreprise.adresse }}</span></li>
+                    {% endif %}
+                    {% if entreprise.email_contact %}
+                    <li><span class="info-label">Email</span><span><a href="mailto:{{ entreprise.email_contact }}">{{ entreprise.email_contact }}</a></span></li>
+                    {% endif %}
+                    {% if entreprise.telephone_contact %}
+                    <li><span class="info-label">Téléphone</span><span>{{ entreprise.telephone_contact }}</span></li>
+                    {% endif %}
+                    <li><span class="info-label">Offres</span><span>{{ entreprise.nb_offres }}</span></li>
+                </ul>
+            </div>
+
+        </aside>
+    </div>
+</div>
+{% endblock %}

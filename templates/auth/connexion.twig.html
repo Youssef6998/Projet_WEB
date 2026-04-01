@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Connexion</title>
+    <link rel="stylesheet" href="/assets/css/variables.css">
     <link rel="stylesheet" href="/assets/connexion.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
@@ -18,9 +19,7 @@
             <h1>Connexion</h1>
 
             {% if erreur %}
-                <div style="background:#ffe0e0;color:#c00;border:1px solid #f5a5a5;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:14px;">
-                    {{ erreur }}
-                </div>
+                <div class="alert alert-error">{{ erreur }}</div>
             {% endif %}
 
             <form method="POST" action="/?uri=login">

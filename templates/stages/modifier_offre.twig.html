@@ -1,0 +1,72 @@
+{% extends "base.twig.html" %}
+{% block title %}Modifier l'offre – Stage Finder{% endblock %}
+{% block content %}
+<div class="mgmt-wrap">
+
+    <div class="mgmt-header">
+        <span class="mgmt-eyebrow">Offre de stage</span>
+        <h1>Modifier une offre</h1>
+        <p>Mettez à jour les informations de <strong>{{ offre.titre }}</strong>.</p>
+    </div>
+
+    <div class="mgmt-card">
+        <a href="/?uri=stages" class="mgmt-back">← Retour aux offres</a>
+
+        {% if erreur %}
+        <div class="alert alert-error">{{ erreur }}</div>
+        {% endif %}
+
+        <form method="POST" action="/?uri=offre_update">
+            <input type="hidden" name="id" value="{{ offre.id_offre }}">
+
+            <div class="fgrp">
+                <label>Entreprise *</label>
+                <select name="id_entreprise" required>
+                    <option value="">— Sélectionner une entreprise —</option>
+                    {% for e in entreprises %}
+                    <option value="{{ e.id_entreprise }}" {% if offre.id_entreprise == e.id_entreprise %}selected{% endif %}>{{ e.nom }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="fgrp">
+                <label>Titre *</label>
+                <input type="text" name="titre" value="{{ offre.titre }}" required>
+            </div>
+
+            <div class="frow">
+                <div class="fgrp">
+                    <label>Durée</label>
+                    <input type="text" name="duree" value="{{ offre.duree }}">
+                </div>
+                <div class="fgrp">
+                    <label>Date de début *</label>
+                    <input type="date" name="date_offre" value="{{ offre.date_offre }}" required>
+                </div>
+            </div>
+
+            <div class="fgrp">
+                <label>Rémunération (€/mois)</label>
+                <input type="number" name="base_remuneration" value="{{ offre.base_remuneration }}" min="0" step="50">
+            </div>
+
+            <div class="fgrp">
+                <label>Description</label>
+                <textarea name="description" rows="5" class="resize-v">{{ offre.description }}</textarea>
+            </div>
+
+            <button type="submit" class="mgmt-submit">Enregistrer les modifications</button>
+        </form>
+
+        <div class="danger-zone">
+            <p>Zone dangereuse</p>
+            <form method="POST" action="/?uri=offre_delete"
+                  onsubmit="return confirm('Supprimer l\'offre « {{ offre.titre }} » ? Cette action supprimera aussi toutes les candidatures associées.')">
+                <input type="hidden" name="id" value="{{ offre.id_offre }}">
+                <button type="submit" class="btn-danger">Supprimer cette offre</button>
+            </form>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

@@ -6,12 +6,12 @@
 
 .breadcrumb { margin-bottom: 1.25rem; font-size: .78rem; }
 .breadcrumb a { color: var(--text-muted); text-decoration: none; transition: color .15s; }
-.breadcrumb a:hover { color: var(--rose); }
+.breadcrumb a:hover { color: var(--marron); }
 
 .alert-success {
-    background: var(--rose-light);
-    color: var(--rose-vivid);
-    border: 1px solid var(--rose-mid);
+    background: var(--marron-clair);
+    color: var(--marron-vif);
+    border: 1px solid var(--marron-mid);
     border-radius: .75rem;
     padding: .8rem 1.2rem;
     font-size: .85rem;
@@ -27,7 +27,7 @@
 .card {
     background: rgba(255, 255, 255, 0.95);
     border-radius: 1.1rem;
-    border: 1.5px solid var(--rose-border);
+    border: 1.5px solid var(--marron-bordure);
     padding: 1.4rem 1.5rem;
     box-shadow: 0 4px 20px rgba(124, 61, 18, 0.06);
 }
@@ -42,7 +42,7 @@
 }
 .offre-header-top > div { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
 
-.offre-titre { font-size: 1.45rem; font-weight: 700; color: var(--dark); line-height: 1.3; margin-bottom: .75rem; }
+.offre-titre { font-size: 1.5rem; font-weight: 700; color: var(--dark); line-height: 1.3; margin-bottom: .75rem; }
 
 .offre-meta-row { display: flex; flex-wrap: wrap; gap: .45rem; }
 .meta-chip {
@@ -51,7 +51,7 @@
     padding: .3rem .7rem;
     border-radius: 999px;
     background: linear-gradient(135deg, #faeee4, #e8c4a4);
-    color: var(--rose-vivid);
+    color: var(--marron-vif);
     border: 1px solid rgba(124, 61, 18, 0.2);
 }
 
@@ -59,18 +59,18 @@
     font: 600 .72rem/1 'DM Sans', sans-serif;
     padding: .45rem .9rem;
     border-radius: 999px;
-    border: 1.5px solid var(--rose-border);
+    border: 1.5px solid var(--marron-bordure);
     background: transparent;
     color: var(--text-muted);
     cursor: pointer;
     transition: all .15s;
     white-space: nowrap;
 }
-.btn-favori:hover { border-color: var(--rose); color: var(--rose); }
-.btn-favori.actif { background: var(--rose-light); border-color: var(--rose); color: var(--rose); }
+.btn-favori:hover { border-color: var(--marron); color: var(--marron); }
+.btn-favori.actif { background: var(--marron-clair); border-color: var(--marron); color: var(--marron); }
 
 .section-title { font-size: 1rem; font-weight: 700; color: var(--dark); margin-bottom: .85rem; }
-.offre-description { font-size: .82rem; color: var(--text-muted); line-height: 1.7; }
+.offre-description { font-size: .88rem; color: var(--dark); line-height: 1.75; opacity: .85; }
 
 .entreprise-contact {
     display: flex;
@@ -82,8 +82,8 @@
 
 .offre-aside { display: flex; flex-direction: column; gap: 1rem; }
 .aside-card { display: flex; flex-direction: column; gap: .65rem; }
-.aside-hint { font-size: .78rem; color: var(--text-muted); line-height: 1.55; }
-.aside-hint a { color: var(--rose); }
+.aside-hint { font-size: .78rem; color: var(--dark); opacity: .75; line-height: 1.55; }
+.aside-hint a { color: var(--marron); }
 
 .form-group { display: flex; flex-direction: column; gap: .3rem; margin-bottom: .85rem; }
 .form-group label {
@@ -93,24 +93,24 @@
     text-transform: uppercase;
     letter-spacing: .06em;
 }
-.required { color: var(--rose); }
+.required { color: var(--marron); }
 
 .input-file {
     font-size: .78rem;
     color: var(--dark);
-    border: 1.5px dashed var(--rose-border);
+    border: 1.5px dashed var(--marron-bordure);
     border-radius: .7rem;
     padding: .6rem .8rem;
-    background: var(--rose-light);
+    background: var(--marron-clair);
     cursor: pointer;
     width: 100%;
 }
-.input-file:hover { border-color: var(--rose); }
+.input-file:hover { border-color: var(--marron); }
 
 .input-textarea {
     font: .78rem/1.6 'DM Sans', sans-serif;
     color: var(--dark);
-    border: 1.5px solid var(--rose-border);
+    border: 1.5px solid var(--marron-bordure);
     border-radius: .7rem;
     padding: .65rem .85rem;
     resize: vertical;
@@ -118,7 +118,7 @@
     width: 100%;
     transition: border-color .15s;
 }
-.input-textarea:focus { outline: none; border-color: var(--rose); box-shadow: 0 0 0 3px rgba(124, 61, 18, 0.1); }
+.input-textarea:focus { outline: none; border-color: var(--marron); box-shadow: 0 0 0 3px rgba(124, 61, 18, 0.1); }
 
 .form-group small { font-size: .65rem; color: #c4a898; }
 
@@ -127,13 +127,24 @@
 .info-list li {
     display: flex;
     justify-content: space-between;
-    font-size: .75rem;
-    color: var(--text-muted);
-    border-bottom: 1px solid var(--rose-border);
+    font-size: .78rem;
+    color: var(--dark);
+    border-bottom: 1px solid var(--marron-bordure);
     padding-bottom: .4rem;
 }
 .info-list li:last-child { border-bottom: none; padding-bottom: 0; }
 .info-label { font-weight: 600; color: var(--dark); }
+
+/* Marge top pour les tags dans l'en-tête d'offre */
+.offre-tags { margin-top: .75rem; }
+/* Marge top pour la liste meta dans entreprise.twig */
+.offre-meta-row--mt { margin-top: .4rem; }
+/* Textarea redimensionnable verticalement */
+textarea.resize-v { resize: vertical; }
+/* Liste d'offres dans page entreprise */
+.stages-list--inner { margin-top: 1rem; }
+/* Texte vide dans une card */
+.card-vide { color: var(--dark); opacity: .6; font-size: .85rem; }
 
 @keyframes up { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
 .offre-header { animation: up .35s ease both; }

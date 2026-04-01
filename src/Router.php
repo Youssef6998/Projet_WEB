@@ -1,31 +1,45 @@
 <?php
 
 require_once __DIR__ . '/Models/StageModel.php';
+require_once __DIR__ . '/Models/EntrepriseModel.php';
+require_once __DIR__ . '/Models/UserModel.php';
+require_once __DIR__ . '/Models/EvaluationModel.php';
+require_once __DIR__ . '/Models/StatsModel.php';
 require_once __DIR__ . '/Controllers/AuthController.php';
 require_once __DIR__ . '/Controllers/StageController.php';
 require_once __DIR__ . '/Controllers/EntrepriseController.php';
 require_once __DIR__ . '/Controllers/ProfilController.php';
-require_once __DIR__ . '/Controllers/AdminController.php';
+require_once __DIR__ . '/Controllers/PiloteController.php';
+require_once __DIR__ . '/Controllers/EvaluationController.php';
+require_once __DIR__ . '/Controllers/StatsController.php';
 
 class Router {
 
     private \Twig\Environment $twig;
-    private StageModel $model;
 
     private AuthController       $auth;
     private StageController      $stage;
     private EntrepriseController $entreprise;
     private ProfilController     $profil;
-    private AdminController      $admin;
+    private PiloteController     $pilote;
+    private EvaluationController $evaluation;
+    private StatsController      $stats;
 
     public function __construct(\Twig\Environment $twig) {
-        $this->twig       = $twig;
-        $this->model      = new StageModel();
-        $this->auth       = new AuthController($twig, $this->model);
-        $this->stage      = new StageController($twig, $this->model);
-        $this->entreprise = new EntrepriseController($twig, $this->model);
-        $this->profil     = new ProfilController($twig, $this->model);
-        $this->admin      = new AdminController($twig, $this->model);
+        $this->twig = $twig;
+
+        $stageModel      = new StageModel();
+        $entrepriseModel = new EntrepriseModel();
+        $userModel       = new UserModel();
+        $evalModel       = new EvaluationModel();
+
+        $this->auth       = new AuthController($twig, $userModel);
+        $this->stage      = new StageController($twig, $stageModel);
+        $this->entreprise = new EntrepriseController($twig, $entrepriseModel, $evalModel);
+        $this->profil     = new ProfilController($twig, $stageModel, $userModel);
+        $this->pilote     = new PiloteController($twig, $userModel, $stageModel);
+        $this->evaluation = new EvaluationController($twig, $evalModel, $userModel, $entrepriseModel);
+        $this->stats      = new StatsController($twig, new StatsModel());
     }
 
     public function dispatch(): void {
@@ -57,6 +71,18 @@ class Router {
                 => $this->stage->candidater(),
             $uri === 'wishlist-toggle' && $method === 'POST'
                 => $this->stage->wishlistToggle(),
+            $uri === 'offre_create' && $method === 'POST'
+                => $this->stage->store(),
+            $uri === 'offre_create'
+                => $this->stage->showCreate(),
+            $uri === 'offre_update' && $method === 'POST'
+                => $this->stage->update(),
+            $uri === 'offre_update'
+                => $this->stage->showUpdate($id),
+            $uri === 'offre_delete' && $method === 'POST'
+                => $this->stage->destroy(),
+            $uri === 'stats_offres'
+                => $this->stage->showStats(),
 
             // Entreprises
             $uri === 'entreprises'
@@ -79,32 +105,54 @@ class Router {
             // Profil
             $uri === 'profil'
                 => $this->profil->index(),
+            $uri === 'profil_update' && $method === 'POST'
+                => $this->profil->update(),
+            $uri === 'profil_delete' && $method === 'POST'
+                => $this->profil->delete(),
 
-            // Admin / Pilote
+            // Pilotes & Étudiants
             $uri === 'pilote_list'
-                => $this->admin->showPiloteList(),
+                => $this->pilote->showList(),
             $uri === 'pilote_create' && $method === 'POST'
-                => $this->admin->storePilote(),
+                => $this->pilote->store(),
             $uri === 'pilote_create'
-                => $this->admin->showPiloteCreate(),
+                => $this->pilote->showCreate(),
             $uri === 'pilote_update' && $method === 'POST'
-                => $this->admin->updatePilote(),
+                => $this->pilote->update(),
             $uri === 'pilote_update'
-                => $this->admin->showPiloteEdit($id),
+                => $this->pilote->showEdit($id),
             $uri === 'pilote_delete' && $method === 'POST'
-                => $this->admin->destroyPilote(),
+                => $this->pilote->destroy(),
             $uri === 'etudiant_list'
-                => $this->admin->showEtudiantList(),
+                => $this->pilote->showEtudiantList(),
+            $uri === 'etudiant_update' && $method === 'POST'
+                => $this->pilote->updateEtudiant(),
+            $uri === 'etudiant_update'
+                => $this->pilote->showEtudiantUpdate($id),
+            $uri === 'etudiant_retirer' && $method === 'POST'
+                => $this->pilote->retirerEtudiant(),
+            $uri === 'etudiant_affecter' && $method === 'POST'
+                => $this->pilote->affecterEtudiant(),
+            $uri === 'etudiant_offres'
+                => $this->pilote->showEtudiantOffres($id),
             $uri === 'etudiant_delete' && $method === 'POST'
-                => $this->admin->destroyEtudiant(),
+                => $this->pilote->destroyEtudiant(),
+
+            // Évaluations
             $uri === 'avis_create' && $method === 'POST'
-                => $this->admin->storeAvis(),
+                => $this->evaluation->storeAvis(),
             $uri === 'avis_create'
-                => $this->admin->showAvisCreate(),
+                => $this->evaluation->showAvisCreate(),
             $uri === 'evaluation_list'
-                => $this->admin->showEvaluationList(),
+                => $this->evaluation->showList(),
+            $uri === 'evaluation_detail'
+                => $this->evaluation->showDetail($id),
             $uri === 'evaluation_delete' && $method === 'POST'
-                => $this->admin->destroyEvaluation(),
+                => $this->evaluation->destroy(),
+
+            // Statistiques
+            $uri === 'stats'
+                => $this->stats->show(),
 
             // Pages statiques
             $uri === 'mentions'

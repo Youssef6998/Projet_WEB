@@ -1,0 +1,73 @@
+{% extends "base.twig.html" %}
+{% block title %}Créer une offre – Stage Finder{% endblock %}
+{% block content %}
+<div class="mgmt-wrap">
+
+    <div class="mgmt-header">
+        <span class="mgmt-eyebrow">Offre de stage</span>
+        <h1>Créer une offre</h1>
+        <p>Renseignez les informations de la nouvelle offre de stage.</p>
+    </div>
+
+    <div class="mgmt-card">
+        <a href="/?uri=stages" class="mgmt-back">← Retour aux offres</a>
+
+        {% if erreur %}
+        <div class="alert alert-error">{{ erreur }}</div>
+        {% endif %}
+
+        <form method="POST" action="/?uri=offre_create">
+            <div class="fgrp">
+                <label>Entreprise *</label>
+                <select name="id_entreprise" required>
+                    <option value="">— Sélectionner une entreprise —</option>
+                    {% for e in entreprises %}
+                    <option value="{{ e.id_entreprise }}" {% if old.id_entreprise == e.id_entreprise %}selected{% endif %}>{{ e.nom }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="fgrp">
+                <label>Titre *</label>
+                <input type="text" name="titre" value="{{ old.titre ?? '' }}" placeholder="Ex : Développeur web front-end" required>
+            </div>
+
+            <div class="frow">
+                <div class="fgrp">
+                    <label>Domaine</label>
+                    <select name="domaine">
+                        <option value="">— Tous les domaines —</option>
+                        {% set domaines = ['informatique','marketing','commerce','industrie','services'] %}
+                        {% for d in domaines %}
+                        <option value="{{ d }}" {% if old.domaine == d %}selected{% endif %}>{{ d|capitalize }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="fgrp">
+                    <label>Durée</label>
+                    <input type="text" name="duree" value="{{ old.duree ?? '' }}" placeholder="Ex : 3 mois">
+                </div>
+            </div>
+
+            <div class="frow">
+                <div class="fgrp">
+                    <label>Date de début *</label>
+                    <input type="date" name="date_offre" value="{{ old.date_offre ?? '' }}" required>
+                </div>
+                <div class="fgrp">
+                    <label>Rémunération (€/mois)</label>
+                    <input type="number" name="base_remuneration" value="{{ old.base_remuneration ?? '' }}" placeholder="Ex : 600" min="0" step="50">
+                </div>
+            </div>
+
+            <div class="fgrp">
+                <label>Description</label>
+                <textarea name="description" rows="5" placeholder="Décrivez les missions, le contexte, les compétences souhaitées…" class="resize-v">{{ old.description ?? '' }}</textarea>
+            </div>
+
+            <button type="submit" class="mgmt-submit">Créer l'offre</button>
+        </form>
+    </div>
+
+</div>
+{% endblock %}

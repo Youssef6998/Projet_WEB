@@ -1,5 +1,6 @@
 {% extends "base.twig.html" %}
 {% block css %}
+<link rel="stylesheet" href="/assets/css/variables.css">
 <link rel="stylesheet" href="/assets/style-stage.css">
 {% endblock %}
 {% block title %}Stage Finder – Toutes les entreprises{% endblock %}
@@ -24,7 +25,7 @@
     </form>
 </div>
 
-<div class="stages-list" style="margin-top:1.5rem">
+<div class="stages-list stages-list--mt">
     {% for e in entreprises %}
     <article class="stage-card">
         <div class="stage-info">
@@ -45,7 +46,7 @@
         </div>
     </article>
     {% else %}
-    <p style="color:var(--text-muted);font-size:.82rem;text-align:center;padding:2rem 0">Aucune entreprise trouvée.</p>
+    <p class="liste-vide">Aucune entreprise trouvée.</p>
     {% endfor %}
 </div>
 

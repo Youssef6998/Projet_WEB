@@ -1,19 +1,19 @@
 {% extends "base.twig.html" %}
 {% block css %}
+<link rel="stylesheet" href="/assets/css/variables.css">
 <link rel="stylesheet" href="/assets/style-stage.css">
 {% endblock %}
 {% block title %}Stage Finder – Tous les stages{% endblock %}
 
 {% block content %}
-
-
-
-
 <div class="search-card">
     <div class="search-head">
         <span class="pill pill-r">Recherche de stage</span>
         <span class="pill pill-count">{{ totalStages }} résultats</span>
     </div>
+    {% if success == 'creee' %}<div class="alert alert-success">L'offre a bien été créée.</div>{% endif %}
+    {% if success == 'modifiee' %}<div class="alert alert-success">L'offre a bien été modifiée.</div>{% endif %}
+    {% if success == 'supprimee' %}<div class="alert alert-success">L'offre a bien été supprimée.</div>{% endif %}
     <form action="/?uri=stages" method="get">
         <input type="hidden" name="uri" value="stages">
         <div class="field-grid-4">
@@ -66,17 +66,17 @@
         </div>
         <div class="search-actions">
             <button type="submit" class="btn btn-fill">Rechercher</button>
+            {% if session_user and session_user.role in ['admin', 'pilote'] %}
+            <a href="/?uri=offre_create" class="btn btn-fill">+ Créer une offre</a>
+            {% endif %}
         </div>
     </form>
 </div>
 
 
 
-
-
-
 <!-- Liste des stages -->
-<div class="stages-list" style="margin-top:1.5rem">
+<div class="stages-list stages-list--mt">
     {% for stage in stages %}
     <article class="stage-card">
         <div class="stage-info">
@@ -116,11 +116,19 @@
                 </form>
                 {% endif %}
                 <a href="/?uri=offre&id={{ stage.id }}" class="btn btn-dark">Voir l'offre</a>
+                {% if session_user and session_user.role in ['admin', 'pilote'] %}
+                <a href="/?uri=offre_update&id={{ stage.id }}" class="btn btn-outline">Modifier</a>
+                <form method="post" action="/?uri=offre_delete"
+                      onsubmit="return confirm('Supprimer l\'offre « {{ stage.title }} » ? Cette action est irréversible.')">
+                    <input type="hidden" name="id" value="{{ stage.id }}">
+                    <button type="submit" class="btn btn-ghost btn-danger">Supprimer</button>
+                </form>
+                {% endif %}
             </div>
         </div>
     </article>
     {% else %}
-    <p style="color:var(--text-muted);font-size:.82rem;text-align:center;padding:2rem 0">Aucun stage trouvé.</p>
+    <p class="liste-vide">Aucun stage trouvé.</p>
     {% endfor %}
 </div>
 
