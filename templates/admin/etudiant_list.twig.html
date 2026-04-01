@@ -108,10 +108,12 @@
                 {% endif %}
 
                 <a href="/?uri=etudiant_update&id={{ e.id_utilisateur }}" class="btn btn-dark btn-sm">Modifier</a>
-                {% if session_user.role == 'pilote'%}
-                {% if e.pilote_nom %}
-                <a href="/?uri=etudiant_offres&id={{ e.id_utilisateur }}" class="btn btn-outline btn-sm">Candidatures</a>
-                {% endif %}
+                {% if session_user.role == 'pilote' %}
+                    {% if e.pilote_nom %}
+                        {% if e.pilote_nom == session_user.prenom ~ ' ' ~ session_user.nom %}
+                            <a href="/?uri=etudiant_offres&id={{ e.id_utilisateur }}" class="btn btn-outline btn-sm">Candidatures</a>
+                        {% endif %}
+                    {% endif %}
                 {% endif %}
                 <form method="POST" action="/?uri=etudiant_delete" class="form-clean"
                       data-confirm-title="Supprimer le compte étudiant"
