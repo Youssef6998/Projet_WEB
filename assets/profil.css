@@ -150,38 +150,72 @@
     .cand-meta { align-items: flex-start; }
 }
 
-/* ── Champs éditables du profil ── */
-.profil-fields { display: flex; flex-direction: column; gap: .75rem; }
-
-.profil-field-form { display: flex; flex-direction: column; gap: .3rem; }
-
-.profil-field-label {
-    font-size: .72rem;
-    font-weight: 600;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: .04em;
+/* Champs éditables profil */
+.profil-fields {
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
 }
 
+.profil-field-form {
+  display: flex;
+  flex-direction: column;
+  gap: .3rem;
+}
+
+.profil-field-label {
+  font-size: .72rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+/* ligne input + bouton */
 .profil-field-row {
-    display: flex;
-    gap: .5rem;
-    align-items: center;
+  display: flex;
+  gap: .5rem;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
 .profil-field-input {
-    flex: 1;
-    padding: .45rem .75rem;
-    border: 1.5px solid var(--marron-bordure);
-    border-radius: 8px;
-    font: 500 .85rem 'DM Sans', sans-serif;
-    background: #fff;
-    color: var(--dark);
-    transition: border-color .15s;
+  flex: 1;
+  padding: .45rem .75rem;
+  border: 1.5px solid var(--marron-bordure);
+  border-radius: 8px;
+  font: 500 .85rem 'DM Sans', sans-serif;
+  background: #fff;
+  color: var(--dark);
+  transition: border-color .15s;
 }
-.profil-field-input:focus { outline: none; border-color: var(--marron); }
 
-.btn-sm { padding: .4rem .85rem; font-size: .75rem; }
+.profil-field-input:focus {
+  outline: none;
+  border-color: var(--marron);
+}
+
+.btn-sm {
+  padding: .4rem .85rem;
+  font-size: .75rem;
+}
+
+/* ── Responsive mobile sur champs profil ── */
+@media (max-width: 520px) {
+  .profil-field-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .profil-field-input {
+    width: 100%;
+  }
+
+  .profil-field-form .btn-sm {
+    align-self: flex-start;
+    margin-top: .3rem;
+  }
+}
 
 /* ── Formulaire mot de passe ── */
 .profil-mdp-form { display: flex; flex-direction: column; gap: 1rem; }
