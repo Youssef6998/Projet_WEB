@@ -1,2 +1,14 @@
 <!DOCTYPE html>
-<html><head><title>404</title></head><body><h1>Page non trouvée</h1></body></html>
+<!-- 404.twig.html — Page d'erreur 404 "Page non trouvée"
+     Template minimal autonome (ne hérite PAS de base.twig.html) car la navigation principale
+     n'est pas nécessaire sur une page d'erreur, et ce template doit fonctionner même si
+     le moteur Twig rencontre un problème de rendu sur le layout principal. -->
+<html>
+    <head>
+        <title>404</title>
+    </head>
+    <body>
+        <!-- Message d'erreur simple affiché à l'utilisateur -->
+        <h1>Page non trouvée</h1>
+    </body>
+</html>

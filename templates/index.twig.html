@@ -1,9 +1,23 @@
 <!DOCTYPE html>
+<!-- index.twig.html — Template de base legacy (non utilisé dans l'application principale)
+     Ce fichier est un résidu de la phase initiale du projet.
+     L'application réelle utilise base.twig.html + les templates enfants via {% extends %}.
+     Ce fichier pourrait servir pour des tests ou un point d'entrée alternatif.
+
+     Variables Twig attendues (si jamais utilisé) :
+       - title : titre de la page à afficher dans <title> et le <h1>
+       - tasks : tableau de tâches/éléments à lister -->
 <html>
-<head><title>{{ title }}</title><meta charset="utf-8"></head>
+<head>
+    <title>{{ title }}</title>
+    <meta charset="utf-8">
+</head>
 <body>
+    <!-- Titre de page dynamique via la variable Twig "title" -->
     <h1> {{ title }}</h1>
+    <!-- Navigation de test : liens vers les routes "home" et "test" du router -->
     <nav><a href="?uri=home">Accueil</a> | <a href="?uri=test">Test</a></nav>
+    <!-- Liste dynamique de tâches (variable "tasks" = tableau PHP itéré par Twig) -->
     <ul>{% for task in tasks %}<li>{{ task }}</li>{% endfor %}</ul>
 </body>
 </html>

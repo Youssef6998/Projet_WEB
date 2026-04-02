@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/BaseController.php';
+
 /**
  * Contrôleur du tableau de bord statistique.
  *

@@ -1,36 +1,83 @@
+/* ═══════════════════════════════════════════════════════════════════
+   style-stage.css — Feuille de style principale partagée
+   Utilisé par : toutes les pages qui passent par base.twig.html
+   (stages, admin, profil, recherche, gestion étudiants/pilotes, etc.)
+   Contient : reset, header, navigation desktop/mobile, boutons,
+   barre de recherche, cartes de stages, pagination, footer,
+   formulaires admin, utilitaires, animations.
+   Dépend de : /assets/css/variables.css (doit être chargé AVANT ce fichier)
+   ═══════════════════════════════════════════════════════════════════ */
 
+
+/* ===== RESET GLOBAL ===== */
+
+/* Réinitialisation du modèle de boîte et suppression des marges par défaut
+   pour tous les éléments et pseudo-éléments. */
 *, *::before, *::after { box-sizing: border-box; margin: 0; }
+
+/* Corps de page : fonte DM Sans, fond dégradé beige fixe (reste fixe au défilement).
+   min-height: 100vh = la page occupe au moins toute la hauteur de l'écran. */
     body {
       font-family: 'DM Sans', sans-serif;
       background: linear-gradient(160deg, #fdf4ed 0%, #faeee4 100%);
-      background-attachment: fixed;
+      background-attachment: fixed; /* le dégradé reste fixe pendant le scroll */
       color: var(--dark); min-height: 100vh;
     }
+
+/* Supprime le soulignement des liens et hérite leur couleur du parent */
     a { text-decoration: none; color: inherit; }
+
+/* Conteneur de page centré avec largeur max de 1060px et paddings */
     .page { max-width: 1060px; margin: 0 auto; padding: 1.8rem 1.25rem 2.5rem; }
-    /* ── Header ── */
+    /* ===== HEADER (EN-TÊTE) ===== */
+
+    /* Barre de navigation horizontale : logo | navigation | boutons.
+       justify-content: space-between = pousse chaque groupe aux extrémités.
+       border-bottom = séparateur fin sous l'en-tête. */
     header {
       display: flex; align-items: center; justify-content: space-between;
       padding: .6rem 0; border-bottom: 1px solid var(--marron-fond);
     }
+
+    /* Logo : icône circulaire + nom du site, alignés horizontalement */
     .logo { display: flex; align-items: center; gap: .5rem; }
+
+    /* Icône ronde du logo avec dégradé marron foncé.
+       display: grid + place-items: center = centre le texte (initiales) dans le cercle.
+       box-shadow colorée = ombre portée aux teintes marron. */
     .logo-icon {
-      width: 2rem; height: 2rem; border-radius: 50%;
+      width: 2rem; height: 2rem; border-radius: 50%; /* cercle parfait */
       background: linear-gradient(135deg, var(--marron) 0%, var(--marron-profond) 100%);
       color: var(--white);
       font-weight: 700; font-size: .75rem;
       display: grid; place-items: center;
       box-shadow: 0 4px 12px rgba(124, 61, 18, 0.35);
     }
+
+    /* Nom du site (texte à côté du logo) */
     .logo-name { font-weight: 700; font-size: .95rem; }
+
+    /* Navigation principale : masquée sur mobile (display: none).
+       Affichée en flex sur écrans >= 768px (tablette/bureau).
+       gap: 1.5rem espace les liens entre eux. */
     nav { display: none; gap: 1.5rem; font-size: .78rem; font-weight: 500; color: var(--dark); align-items: center; }
-    nav a:hover { color: var(--marron); }
-    nav a.active { color: var(--marron-vif); font-weight: 700; }
-    @media(min-width:768px) { nav { display: flex; } }
+    nav a:hover { color: var(--marron); } /* lien au survol : marron */
+    nav a.active { color: var(--marron-vif); font-weight: 700; } /* lien de la page courante */
+    @media(min-width:768px) { nav { display: flex; } } /* affiche la nav à partir de 768px */
+
+    /* Groupe des boutons (Connexion, S'inscrire) dans l'en-tête */
     .hdr-btns { display: flex; gap: .5rem; }
 
-    /* ── Nav dropdown ── */
+    /* ===== MENU DÉROULANT DE NAVIGATION (DESKTOP) ===== */
+
+    /* Conteneur du bouton et du menu déroulant.
+       position: relative = ancrage pour le menu déroulant en position: absolute. */
     .nav-dropdown { position: relative; }
+
+    /* Bouton qui déclenche l'ouverture du menu (ex: "Gestion ▾").
+       border-radius: 999px = forme pilule.
+       transition = animation douce de toutes les propriétés au hover/open.
+       white-space: nowrap = empêche le texte de se couper. */
     .nav-dropdown-btn {
       background: var(--marron-clair);
       border: 1.5px solid var(--marron-bordure);
@@ -43,6 +90,8 @@
       transition: background .15s, border-color .15s, box-shadow .15s, color .15s;
       white-space: nowrap;
     }
+
+    /* Au survol ou quand le menu est ouvert : fond marron plein, texte blanc */
     .nav-dropdown-btn:hover,
     .nav-dropdown-btn.open {
       background: var(--marron);
@@ -54,33 +103,51 @@
       border-color: var(--marron-mid);
       color: var(--marron-vif);
     }
+    /* Icône chevron (▾) animée : se retourne à 180° quand le menu est ouvert.
+       stroke: currentColor = hérite la couleur du bouton parent. */
     .nav-chevron {
       width: .52rem; height: .52rem; stroke: currentColor;
       fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
       transition: transform .22s ease; flex-shrink: 0;
     }
-    .nav-dropdown-btn.open .nav-chevron { transform: rotate(180deg); }
+    .nav-dropdown-btn.open .nav-chevron { transform: rotate(180deg); } /* chevron retourné quand ouvert */
+
+    /* Menu déroulant : caché par défaut (opacity: 0 + pointer-events: none).
+       position: absolute centré sous le bouton (left: 50% + translateX(-50%)).
+       top: calc(100% + .7rem) = apparaît 0.7rem sous le bouton.
+       translateY(-8px) = décalé légèrement vers le haut au départ (avant animation).
+       z-index: 200 = au-dessus du contenu de la page. */
     .nav-dropdown-menu {
       position: absolute; top: calc(100% + .7rem); left: 50%;
-      transform: translateX(-50%) translateY(-8px);
-      opacity: 0; pointer-events: none;
+      transform: translateX(-50%) translateY(-8px); /* centré + légèrement décalé vers le haut */
+      opacity: 0; pointer-events: none; /* caché sans display:none */
       transition: opacity .18s ease, transform .18s ease;
       background: #fff;
       border: 1.5px solid var(--marron-bordure); border-radius: 1.1rem;
       box-shadow: 0 24px 56px rgba(124,61,18,0.16), 0 4px 16px rgba(124,61,18,0.08);
       padding: .5rem; min-width: 175px; z-index: 200;
     }
+
+    /* Petite flèche triangulaire pointant vers le bouton (pseudo-élément).
+       Un carré blanc pivoté de 45° pour créer l'effet de bulle de dialogue.
+       border-left + border-top = deux côtés de la bordure pour l'effet "pointe". */
     .nav-dropdown-menu::before {
       content: ''; position: absolute; top: -5px; left: 50%;
-      transform: translateX(-50%) rotate(45deg);
+      transform: translateX(-50%) rotate(45deg); /* carré → triangle */
       width: 9px; height: 9px; background: #fff;
       border-left: 1.5px solid var(--marron-bordure);
       border-top: 1.5px solid var(--marron-bordure);
     }
+
+    /* Quand la classe .open est ajoutée par JS : menu visible et interactif.
+       translateY(0) = remonte à sa position finale (animation d'entrée). */
     .nav-dropdown-menu.open {
       opacity: 1; pointer-events: auto;
       transform: translateX(-50%) translateY(0);
     }
+
+    /* Chaque lien du menu déroulant : icône + texte alignés horizontalement.
+       border-radius: .75rem = coins arrondis sur les liens. */
     .nav-dropdown-menu a {
       display: flex; align-items: center; gap: .65rem;
       padding: .62rem 1rem; border-radius: .75rem;
@@ -89,13 +156,18 @@
     }
     .nav-dropdown-menu a:hover { background: var(--marron-clair); color: var(--marron-vif); }
     .nav-dropdown-menu a.active { color: var(--marron-vif); font-weight: 700; background: var(--marron-clair); }
+
+    /* Icône carrée avec coins arrondis à gauche du texte du lien.
+       flex-shrink: 0 = ne rétrécit pas si l'espace manque. */
     .nav-item-icon {
       width: 1.4rem; height: 1.4rem; border-radius: .4rem;
-      background: linear-gradient(135deg, #faeee4, #e8c4a4);
+      background: linear-gradient(135deg, #faeee4, #e8c4a4); /* fond crème par défaut */
       display: flex; align-items: center; justify-content: center;
       flex-shrink: 0; transition: background .12s;
     }
     .nav-item-icon svg { width: .72rem; height: .72rem; stroke: var(--marron-vif); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+    /* Au survol ou sur le lien actif : l'icône passe en fond marron, SVG blanc */
     .nav-dropdown-menu a:hover .nav-item-icon,
     .nav-dropdown-menu a.active .nav-item-icon {
       background: linear-gradient(135deg, var(--marron) 0%, var(--marron-vif) 100%);
@@ -103,15 +175,26 @@
     .nav-dropdown-menu a:hover .nav-item-icon svg,
     .nav-dropdown-menu a.active .nav-item-icon svg { stroke: #fff; }
 
-    /* ── Admin management forms ── */
+    /* ===== FORMULAIRES DE GESTION ADMIN ===== */
+
+    /* Conteneur centré des formulaires d'administration (max 680px).
+       Utilisé pour les pages de création/modification de pilote, étudiant, offre, etc. */
     .mgmt-wrap { max-width: 680px; margin: 0 auto; }
+
+    /* En-tête centré du formulaire admin : étiquette + titre + description */
     .mgmt-header { text-align: center; margin-bottom: 2rem; }
+
+    /* Petite étiquette en majuscules espacées au-dessus du titre (ex: "NOUVEAU PILOTE").
+       display: block = force le retour à la ligne après l'étiquette. */
     .mgmt-eyebrow {
       font-size: .6rem; font-weight: 700; text-transform: uppercase;
       letter-spacing: .14em; color: var(--marron); display: block; margin-bottom: .4rem;
     }
     .mgmt-header h1 { font-size: 1.45rem; font-weight: 700; margin-bottom: .45rem; }
     .mgmt-header p { font-size: .8rem; color: var(--text-muted); }
+
+    /* Carte blanche semi-transparente qui contient le formulaire admin.
+       animation: mgmtFadeUp = apparition douce au chargement (définie juste après). */
     .mgmt-card {
       background: rgba(255,255,255,0.96);
       border: 1.5px solid var(--marron-bordure); border-radius: 1.25rem;
@@ -119,10 +202,15 @@
       box-shadow: 0 16px 48px rgba(124,61,18,0.09);
       animation: mgmtFadeUp .3s ease;
     }
+
+    /* Animation de la carte admin : glissement depuis le bas + montée en opacité */
     @keyframes mgmtFadeUp {
       from { opacity: 0; transform: translateY(10px); }
       to   { opacity: 1; transform: translateY(0); }
     }
+
+    /* Lien "< Retour" dans les formulaires admin.
+       inline-flex + align-items: center = aligne l'icône et le texte sur la même ligne. */
     .mgmt-back {
       display: inline-flex; align-items: center; gap: .3rem;
       font-size: .72rem; font-weight: 500; color: var(--text-muted);
@@ -132,22 +220,45 @@
       margin-bottom: 1.6rem;
     }
     .mgmt-back:hover { border-color: var(--marron); color: var(--marron); }
+
+    /* Groupe label + champ de saisie (empilés verticalement).
+       Utilisé dans les formulaires admin pour chaque champ. */
     .fgrp { display: flex; flex-direction: column; margin-bottom: 1.1rem; }
+
+    /* Label du champ en petites majuscules atténuées */
     .fgrp label { font-size: .68rem; font-weight: 600; color: var(--text-muted); margin-bottom: .32rem; letter-spacing: .02em; }
+
+    /* Champs de saisie (input, select, textarea) avec fond très légèrement grisé.
+       transition = anime la bordure, l'ombre et le fond au focus. */
     .fgrp input, .fgrp select, .fgrp textarea {
       padding: .65rem .85rem; border-radius: .75rem;
       border: 1.5px solid var(--marron-bordure); background: #fafafa;
       font: .82rem/1.4 'DM Sans', sans-serif; color: var(--dark);
       transition: border-color .15s, box-shadow .15s, background .15s;
     }
+
+    /* Au focus : bordure marron, fond blanc, anneau d'ombre.
+       outline: none supprime le contour bleu natif du navigateur. */
     .fgrp input:focus, .fgrp select:focus, .fgrp textarea:focus {
       border-color: var(--marron); background: #fff; outline: none;
       box-shadow: 0 0 0 3px rgba(124,61,18,0.1);
     }
+
+    /* Ligne flex pour placer deux champs côte à côte (ex: prénom + nom).
+       gap: .85rem espace les champs entre eux. */
     .frow { display: flex; gap: .85rem; }
+
+    /* Chaque groupe dans une ligne prend la même proportion d'espace */
     .frow .fgrp { flex: 1; }
+
+    /* Ligne avec case à cocher et texte alignés horizontalement.
+       accent-color colore la case dans les navigateurs modernes. */
     .fcb { display: flex; align-items: center; gap: .5rem; font-size: .78rem; color: var(--text-muted); margin: .6rem 0 1.3rem; }
     .fcb input[type=checkbox] { accent-color: var(--marron); width: 1rem; height: 1rem; cursor: pointer; }
+
+    /* Bouton de soumission du formulaire admin, pleine largeur avec dégradé marron.
+       box-shadow = ombre portée colorée pour la profondeur.
+       transition = anime l'ombre et la translation au hover. */
     .mgmt-submit {
       width: 100%; padding: .85rem;
       border: none; border-radius: .85rem;
@@ -157,120 +268,197 @@
       transition: box-shadow .15s, transform .15s;
     }
     .mgmt-submit:hover { box-shadow: 0 8px 24px rgba(124,61,18,0.42); transform: translateY(-1px); }
-    .mgmt-divider { border: none; border-top: 1px solid var(--marron-bordure); margin: 1.4rem 0; }
-    .alert { padding: .75rem 1rem; border-radius: .75rem; font-size: .8rem; margin-bottom: 1rem; }
-    .alert-error { background: #fff5f5; color: #c0392b; border: 1.5px solid #fecaca; }
-    .alert-success { background: #f0fdf4; color: #166534; border: 1.5px solid #bbf7d0; }
 
-    /* ── Buttons ── */
+    /* Séparateur horizontal entre sections du formulaire admin */
+    .mgmt-divider { border: none; border-top: 1px solid var(--marron-bordure); margin: 1.4rem 0; }
+
+    /* Style commun des alertes (succès, erreur) dans les formulaires */
+    .alert { padding: .75rem 1rem; border-radius: .75rem; font-size: .8rem; margin-bottom: 1rem; }
+    .alert-error { background: #fff5f5; color: #c0392b; border: 1.5px solid #fecaca; }   /* rouge pâle */
+    .alert-success { background: #f0fdf4; color: #166534; border: 1.5px solid #bbf7d0; } /* vert pâle */
+
+    /* ===== BOUTONS ===== */
+
+    /* Style de base commun à tous les boutons.
+       inline-flex = aligne icône + texte sur la même ligne.
+       border-radius: 999px = forme pilule parfaite.
+       white-space: nowrap = empêche le texte de se couper.
+       transition = anime l'ombre et la translation au hover. */
     .btn {
       display: inline-flex; align-items: center; gap: .3rem;
       font: 600 .75rem/1 'DM Sans', sans-serif; border-radius: 999px;
       padding: .55rem 1.1rem; cursor: pointer; white-space: nowrap;
       transition: transform .15s, box-shadow .15s;
     }
+
+    /* Bouton plein marron : fond dégradé, texte blanc.
+       Utilisé pour les actions primaires (S'inscrire, Rechercher, Valider). */
     .btn-fill {
       background: linear-gradient(135deg, var(--marron) 0%, var(--marron-vif) 100%);
       color: var(--white); border: none;
       box-shadow: 0 4px 14px rgba(124, 61, 18, 0.3);
     }
     .btn-fill:hover { box-shadow: 0 6px 20px rgba(124, 61, 18, 0.45); transform: translateY(-2px); }
+
+    /* Bouton contour : transparent avec bordure fine.
+       Utilisé pour les actions secondaires (Se connecter). */
     .btn-outline { border: 1.5px solid var(--marron-fond); background: transparent; color: var(--dark); }
     .btn-outline:hover { border-color: var(--marron); color: var(--marron); }
+
+    /* Bouton sombre : fond presque noir.
+       Utilisé pour les actions de mise en avant sur fond clair. */
     .btn-dark {
       background: var(--dark); color: var(--white); border: none;
       box-shadow: 0 4px 12px rgba(26, 10, 4, 0.2);
     }
     .btn-dark:hover { background: #2d1205; box-shadow: 0 6px 18px rgba(26, 10, 4, 0.3); transform: translateY(-2px); }
+
+    /* Bouton fantôme : transparent avec texte atténué.
+       Utilisé pour les actions de moindre importance. */
     .btn-ghost { border: 1.5px solid var(--marron-fond); background: transparent; color: var(--text-muted); }
     .btn-ghost:hover { border-color: var(--marron); color: var(--marron); }
+
+    /* Sur mobile (< 640px) : le bouton "Se connecter" est masqué pour gagner de l'espace */
     @media(max-width:640px) { .hdr-btns .btn-outline { display: none; } }
 
-    /* ── Search bar ── */
+    /* ===== BARRE DE RECHERCHE ===== */
+
+    /* Carte de recherche avec effet vitré (frosted glass).
+       backdrop-filter: blur(12px) = flou de l'arrière-plan.
+       double box-shadow = ombre externe diffuse + ombre plus proche plus nette. */
     .search-card {
       margin-top: .5rem;
       border-radius: 1.25rem; border: 1.5px solid var(--marron-bordure);
       background: rgba(255, 255, 255, 0.92);
-      backdrop-filter: blur(12px);
+      backdrop-filter: blur(12px); /* effet verre dépoli */
       padding: 1rem 1.1rem 1.1rem;
       display: flex; flex-direction: column; gap: .6rem;
       box-shadow: 0 20px 60px rgba(124, 61, 18, 0.09), 0 4px 16px rgba(124, 61, 18, 0.05);
     }
+
+    /* En-tête de la barre de recherche : titre à gauche, badge compteur à droite */
     .search-head { display: flex; justify-content: space-between; align-items: center; }
+
+    /* Badge "pilule" en petites majuscules (ex: "STAGE", "42 résultats") */
     .pill {
       font-size: .58rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em;
-      padding: .22rem .55rem; border-radius: 999px;
+      padding: .22rem .55rem; border-radius: 999px; /* forme pilule */
     }
+    /* Badge crème-beige : type d'offre */
     .pill-r {
       background: linear-gradient(135deg, #faeee4, #e8c4a4);
       color: var(--marron-vif);
       border: 1px solid rgba(124, 61, 18, 0.2);
     }
+    /* Badge jaune-doré : compteur de résultats */
     .pill-count {
       background: linear-gradient(135deg, #fef9c3, #fde68a);
-      color: #713f12;
+      color: #713f12; /* brun-ambre */
       border: 1px solid rgba(113, 63, 18, 0.2);
     }
 
+    /* Label d'un champ de recherche au-dessus de l'input */
     .field label { display: block; font-size: .62rem; font-weight: 600; color: var(--text-muted); margin-bottom: .2rem; }
+
+    /* Champ de saisie de la barre de recherche.
+       transition = animation de la bordure au focus. */
     .field-input {
       padding: .5rem .7rem; border-radius: .7rem;
       border: 1.5px solid var(--marron-bordure); background: var(--white);
       font-size: .72rem; color: var(--dark);
       transition: border-color .15s;
     }
+    /* Au focus : bordure marron + anneau d'ombre */
     .field-input:focus-within {
       border-color: var(--marron);
       box-shadow: 0 0 0 3px rgba(124, 61, 18, 0.1);
     }
+
+    /* Ligne avec deux éléments côte à côte (ex: champ + lien "modifier") */
     .field-row { display: flex; justify-content: space-between; align-items: center; }
+
+    /* Grille 2 colonnes pour les champs de recherche (Domaine | Ville) */
     .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .3rem; }
+
+    /* Grille 5 colonnes pour la recherche avancée (Domaine, Ville, Compétence, Durée, Durée).
+       Chaque champ limité à 190px max pour la cohérence visuelle. */
     .field-grid-4 .field:nth-child(1) .field-input { max-width: 190px; } /* Domaine */
     .field-grid-4 .field:nth-child(2) .field-input { max-width: 190px; } /* Ville */
     .field-grid-4 .field:nth-child(3) .field-input { max-width: 190px; } /* Compétence */
-    .field-grid-4 .field:nth-child(4) .field-input { max-width: 190px; }  /* Durée */
-    .field-grid-4 .field:nth-child(5) .field-input { max-width: 190px; }  /* Durée */
+    .field-grid-4 .field:nth-child(4) .field-input { max-width: 190px; } /* Durée min */
+    .field-grid-4 .field:nth-child(5) .field-input { max-width: 190px; } /* Durée max */
     .field-grid-4 {
     display: grid;
-    grid-template-columns: repeat(5, 1fr); 
+    grid-template-columns: repeat(5, 1fr); /* 5 colonnes sur grand écran */
     gap: .25rem;
     }
+    /* Sur tablette (< 900px) : 3 colonnes */
     @media(max-width: 900px) {
       .field-grid-4 {
-        grid-template-columns: 1fr 1fr 1fr;  
+        grid-template-columns: 1fr 1fr 1fr;
       }
     }
-
-      @media(max-width: 767px) {
+    /* Sur mobile (< 767px) : 2 colonnes */
+    @media(max-width: 767px) {
         .field-grid-4 {
-          grid-template-columns: 1fr 1fr;   
+          grid-template-columns: 1fr 1fr;
         }
       }
-    .search-card .btn-fill { justify-content: center; margin-top: .2rem; }
-    .cases { border: none; background: transparent; font-family: 'DM Sans', sans-serif; font-size: .72rem; color: var(--dark); width: 100%; }
-    input:focus { border: none; outline: none; }
-    .search-actions { display: flex; gap: .5rem; align-items: center; justify-content: space-between; margin-top: .2rem; }
-    @media(min-width:768px) { .search-actions .btn-fill { width: auto; } }
-    @media(max-width:767px) { .search-actions { flex-direction: column; } .search-actions .btn-fill { width: 100%; } }
 
-    /* ── Page title area ── */
+    /* Bouton "Rechercher" centré dans la barre de recherche */
+    .search-card .btn-fill { justify-content: center; margin-top: .2rem; }
+
+    /* Champ natif (select) sans bordure dans la barre de recherche */
+    .cases { border: none; background: transparent; font-family: 'DM Sans', sans-serif; font-size: .72rem; color: var(--dark); width: 100%; }
+
+    /* Supprime le contour bleu natif des inputs au focus */
+    input:focus { border: none; outline: none; }
+
+    /* Zone d'actions de la barre de recherche (bouton + réinitialiser).
+       justify-content: space-between = boutons aux extrémités. */
+    .search-actions { display: flex; gap: .5rem; align-items: center; justify-content: space-between; margin-top: .2rem; }
+    @media(min-width:768px) { .search-actions .btn-fill { width: auto; } }  /* largeur auto sur bureau */
+    @media(max-width:767px) { .search-actions { flex-direction: column; } .search-actions .btn-fill { width: 100%; } } /* colonne + pleine largeur sur mobile */
+
+    /* ===== INTRODUCTION DE PAGE ===== */
+
+    /* Bloc titre/sous-titre au-dessus de la liste de stages.
+       Contient l'étiquette, le titre principal et le sous-titre descriptif. */
     .page-intro { margin-top: 2rem; margin-bottom: 1.5rem; }
+
+    /* Étiquette en petites majuscules espacées au-dessus du titre (ex: "OFFRES DE STAGE").
+       letter-spacing: .14em = espacement prononcé pour le style "label". */
     .page-intro .eyebrow {
       font-size: .6rem; font-weight: 700; text-transform: uppercase;
       letter-spacing: .14em; color: var(--marron);
     }
+
+    /* Titre principal de la page avec la fonte serif élégante Instrument Serif.
+       font-weight: 400 = léger pour un look éditorial. */
     .page-title {
       font-family: 'Instrument Serif', serif; font-weight: 400;
       font-size: 1.5rem; letter-spacing: -.02em; margin: .2rem 0;
     }
+
+    /* Sous-titre descriptif en couleur atténuée */
     .page-subtitle { font-size: .82rem; color: var(--text-muted); }
+
+    /* Barre de résultats : compteur à gauche, boutons de tri à droite.
+       flex-wrap: wrap = se coupe sur 2 lignes sur petits écrans. */
     .result-bar {
       display: flex; justify-content: space-between; align-items: center;
       margin-bottom: 1rem; flex-wrap: wrap; gap: .5rem;
     }
+
+    /* "X offres trouvées" en texte atténué, le nombre en gras */
     .result-count { font-size: .78rem; color: var(--text-muted); }
     .result-count strong { color: var(--dark); }
+
+    /* Groupe de boutons de tri (ex: "Plus récents", "Alphabétique") */
     .sort-btns { display: flex; gap: .35rem; }
+
+    /* Bouton de tri individuel : pilule discrète.
+       État actif : fond crème + texte marron (signale le tri courant). */
     .sort-btn {
       font: 500 .65rem/1 'DM Sans', sans-serif; padding: .35rem .7rem;
       border-radius: 999px; border: 1.5px solid var(--marron-bordure);
@@ -279,30 +467,39 @@
     }
     .sort-btn:hover, .sort-btn.active { background: var(--marron-clair); color: var(--marron-vif); border-color: var(--marron-mid); }
 
-    /* ── Stage listing cards ── */
-    .stages-list { display: flex; flex-direction: column; gap: .75rem; }
-    .stage-actions {
-    display: flex;
-    gap: .4rem;
-    align-items: center;}
-    .stage-location {
-    background: var(--color-muted);
-    font-size: .75rem;
-    padding: .2rem .4rem;
-    border-radius: 4px;
-}
-    .stage-card .btn-heart {
-    opacity: 0;
-    pointer-events: none;      /* non cliquable tant qu’il est caché */
-    transform: translateX(-4px);
-    transition: opacity .15s, transform .15s; }
+    /* ===== LISTE ET CARTES D’OFFRES DE STAGE ===== */
 
-  /* au survol de la carte, afficher le cœur */
+    /* Colonne flex : les cartes s’empilent verticalement avec un espace entre elles */
+    .stages-list { display: flex; flex-direction: column; gap: .75rem; }
+
+    /* Groupe de boutons d’action dans une carte (Voir, Modifier, Supprimer...) */
+    .stage-actions {
+      display: flex;
+      gap: .4rem;
+      align-items: center;
+    }
+
+    /* Bouton cœur (favori) sur chaque carte : caché par défaut.
+       opacity: 0 + pointer-events: none = invisible et non cliquable.
+       transform: translateX(-4px) = légèrement décalé à gauche au départ.
+       S’affiche en glissant depuis la gauche au survol de la carte. */
+    .stage-card .btn-heart {
+      opacity: 0;
+      pointer-events: none; /* non cliquable tant qu’il est caché */
+      transform: translateX(-4px); /* décalage initial pour l’animation */
+      transition: opacity .15s, transform .15s;
+    }
+
+    /* Au survol de la carte : le bouton cœur apparaît et glisse vers sa position finale */
     .stage-card:hover .btn-heart {
-    opacity: 1;
-    pointer-events: auto;
-    transform: translateX(0);
-  }
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(0);
+    }
+
+    /* Carte d’une offre de stage.
+       display: grid = une colonne sur mobile, deux colonnes (infos | meta) sur bureau.
+       transition = animation de survol (monte + ombre + bordure). */
     .stage-card {
       display: grid; gap: 1rem; padding: 1rem 1.2rem;
       border-radius: var(--r);
@@ -310,17 +507,30 @@
       border: 1.5px solid var(--marron-bordure);
       transition: transform .2s, box-shadow .2s, border-color .2s;
     }
+
+    /* Sur écrans >= 768px : 2 colonnes (infos à gauche, meta à droite).
+       1fr auto = la colonne infos prend tout l’espace, la meta s’ajuste à son contenu. */
     @media(min-width:768px) {
       .stage-card { grid-template-columns: 1fr auto; align-items: center; }
     }
+
+    /* Au survol : la carte se lève de 3px, ombre renforcée, bordure beige */
     .stage-card:hover { transform: translateY(-3px); box-shadow: 0 12px 36px rgba(124, 61, 18, 0.11); border-color: var(--marron-mid); }
 
+    /* Colonne gauche : informations de l’offre empilées verticalement */
     .stage-info { display: flex; flex-direction: column; gap: .35rem; }
+
+    /* Ligne du haut : nom entreprise + badge type, alignés horizontalement.
+       flex-wrap: wrap = se coupe sur 2 lignes si nécessaire. */
     .stage-top { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+
+    /* Nom de l’entreprise en petites majuscules espacées, couleur marron vif */
     .stage-company {
       font-size: .68rem; font-weight: 700; text-transform: uppercase;
       letter-spacing: .08em; color: var(--marron-vif);
     }
+
+    /* Badge de type d’offre (ex: "Stage", "Alternance") : petite pilule crème */
     .stage-type {
       font-size: .55rem; font-weight: 600; padding: .15rem .45rem;
       border-radius: 999px;
@@ -328,63 +538,98 @@
       color: var(--marron-vif);
       border: 1px solid rgba(124, 61, 18, 0.2);
     }
+
+    /* Titre de l’offre de stage */
     .stage-title { font-size: .92rem; font-weight: 600; }
+
+    /* Description courte de l’offre en texte atténué */
     .stage-desc { font-size: .72rem; color: var(--text-muted); line-height: 1.55; }
+
+    /* Rangée des tags de compétences (ex: Python, React, SQL...) */
     .stage-tags { display: flex; flex-wrap: wrap; gap: .3rem; margin-top: .15rem; }
+
+    /* Chaque tag de compétence : petite pilule crème avec bordure fine */
     .stage-tag {
       font-size: .58rem; font-weight: 500; padding: .18rem .5rem;
       border-radius: 999px; border: 1px solid var(--marron-bordure);
       color: var(--marron-vif);
       background: var(--marron-clair);
     }
+
+    /* Colonne droite de la carte (localisation, durée, date, bouton cœur).
+       !important nécessaire pour surcharger display:grid de .stage-card.
+       align-items: flex-end = tout aligné à droite.
+       min-width: 140px = largeur minimale pour la cohérence visuelle. */
     .stage-right {
       display: flex !important;
       flex-direction: column !important;
       gap: .5rem !important;
-      align-items: flex-end !important;
+      align-items: flex-end !important; /* aligné à droite */
       min-width: 140px !important;
       padding-left: 1rem !important;
     }
+
+    /* Sur mobile (< 767px) : la colonne droite passe en ligne horizontale.
+       justify-content: space-between = étale les éléments sur toute la largeur. */
     @media(max-width:767px) {
       .stage-right { flex-direction: row; align-items: center; justify-content: space-between; width: 100%; }
     }
+
+    /* Localisation de l’offre (ville) avec icône SVG à gauche */
     .stage-location { font-size: .7rem; color: var(--text-muted); display: flex; align-items: center; gap: .25rem; }
+
+    /* Durée du stage (ex: "6 mois") */
     .stage-duration { font-size: .65rem; color: var(--text-muted); }
+
+    /* Date de publication en gris très clair (hiérarchie visuelle basse) */
     .stage-date { font-size: .6rem; color: #c4a898; }
 
-    /* ── Pagination ── */
+    /* ===== PAGINATION ===== */
+
+    /* Barre de pagination centrée sous la liste des offres.
+       gap: .3rem espace les boutons entre eux. */
     .pagination {
       display: flex; justify-content: center; align-items: center;
       gap: .3rem; margin-top: 2rem;
     }
+
+    /* Bouton de page individuel : cercle blanc semi-transparent.
+       display: grid + place-items: center = centre le numéro dans le cercle. */
     .page-btn {
       width: 2rem; height: 2rem; border-radius: 50%; border: 1.5px solid var(--marron-bordure);
       background: rgba(255,255,255,0.9); color: var(--text-muted); font: 600 .7rem 'DM Sans', sans-serif;
       cursor: pointer; display: grid; place-items: center; transition: all .15s;
     }
     .page-btn:hover { background: var(--marron-clair); color: var(--marron-vif); border-color: var(--marron-mid); }
+
+    /* Page courante : fond dégradé marron, texte blanc, ombre colorée */
     .page-btn.active {
       background: linear-gradient(135deg, var(--marron) 0%, var(--marron-vif) 100%);
       color: var(--white); border-color: transparent;
       box-shadow: 0 4px 12px rgba(124, 61, 18, 0.3);
     }
+
+    /* Bouton flèche (< et >) : légèrement plus grand */
     .page-btn.arrow { font-size: .85rem; }
-    /* ── Select domaine ── */
+    /* ===== SELECT DOMAINE ===== */
+
+    /* Liste déroulante avec flèche SVG personnalisée.
+       appearance: none supprime le style natif du navigateur.
+       background-image = flèche SVG inline encodée en base64.
+       padding-right: 1.8rem = espace pour ne pas couvrir la flèche. */
     .select-domaine {
       appearance: none;
-      -webkit-appearance: none;
+      -webkit-appearance: none; /* préfixe Safari/WebKit */
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238b6555' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
-      background-position: right .6rem center;
-      padding-right: 1.8rem;
+      background-position: right .6rem center; /* flèche positionnée à droite */
+      padding-right: 1.8rem; /* espace pour la flèche */
       cursor: pointer;
       width: 100%;
     }
+    .select-domaine:focus { outline: none; }
 
-    .select-domaine:focus {
-      outline: none;
-    }
-
+    /* Style des options dans le select (héritage de la fonte DM Sans) */
     .select-domaine option {
       font-family: 'DM Sans', sans-serif;
       font-size: .72rem;
@@ -392,139 +637,226 @@
       background: var(--white);
       padding: .4rem;
     }
-    /* ── Footer ── */
+
+    /* ===== FOOTER ===== */
+
+    /* Pied de page avec séparateur en haut.
+       flex-direction: column par défaut (mobile), row sur écrans >= 640px.
+       margin-top: auto n'est pas utilisé ici — le footer suit naturellement le contenu. */
     footer {
       margin-top: 2.5rem;
       padding-top: .8rem;
-      border-top: 1px solid var(--marron-fond);
+      border-top: 1px solid var(--marron-fond); /* ligne de séparation subtile */
       display: flex; flex-direction: column; gap: .4rem;
       font-size: .7rem; color: var(--text-muted);
     }
+    /* Sur bureau : copyright à gauche, liens à droite */
     @media(min-width:640px) { footer { flex-direction: row; justify-content: space-between; align-items: center; } }
+
+    /* Liens du footer alignés horizontalement */
     .foot-links { display: flex; gap: .8rem; }
     footer a { color: var(--text-muted); }
     footer a:hover { color: var(--marron); }
 
-    /* ── Utilitaires partagés ── */
+    /* ===== UTILITAIRES PARTAGÉS ===== */
+
+    /* Bouton pleine largeur centré (utilisé dans les formulaires et modales) */
     .btn-block  { width: 100%; justify-content: center; }
+
+    /* Bouton de suppression/danger : texte rouge, bordure rouge pâle.
+       Au survol : fond rouge très pâle, texte rouge foncé. */
     .btn-danger { color: var(--danger); border-color: var(--danger-clair); }
     .btn-danger:hover { background: var(--danger-fond); color: #991b1b; border-color: var(--danger-clair); }
+
+    /* Alerte de suppression : fond rouge pâle avec bordure rouge.
+       Affichée après une action de suppression réussie ou en confirmation. */
     .alert-delete {
         background: var(--danger-fond); border: 1.5px solid var(--danger-clair);
         color: #991b1b; border-radius: .75rem;
         padding: .7rem 1rem; font-size: .8rem; margin-bottom: 1rem;
     }
+
+    /* Texte centré affiché quand une liste est vide (ex: "Aucun résultat") */
     .liste-vide       { color: var(--text-muted); font-size: .82rem; text-align: center; padding: 2rem 0; }
+
+    /* Conteneur flex pour une rangée de tags */
     .tag-list         { display: flex; gap: .4rem; flex-wrap: wrap; margin-top: .4rem; }
+
+    /* Tag promo : fond crème marron (ex: promotion, domaine principal) */
     .tag-promo        { font-size: .65rem; font-weight: 600; background: var(--marron-clair); color: var(--marron-vif); border-radius: 999px; padding: .2rem .6rem; border: 1px solid var(--marron-bordure); }
+
+    /* Tag info : fond bleu pâle (ex: informations supplémentaires) */
     .tag-info         { font-size: .65rem; font-weight: 600; background: #eff6ff; color: #1d4ed8; border-radius: 999px; padding: .2rem .6rem; border: 1px solid #bfdbfe; }
+
+    /* Tag neutre : fond gris très clair (ex: tags secondaires) */
     .tag-neutre       { font-size: .65rem; font-weight: 600; background: #fafafa; color: var(--text-muted); border-radius: 999px; padding: .2rem .6rem; border: 1px solid #e5e7eb; }
+
+    /* En-tête de liste : titre à gauche, bouton d'action à droite.
+       flex-wrap: wrap = se coupe sur 2 lignes sur petits écrans. */
     .list-header      { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: .75rem; margin-top: .4rem; }
+
+    /* Titre principal d'une section de liste */
     .list-title       { font-size: 1.05rem; font-weight: 700; color: var(--dark); margin: 0; }
+
+    /* Sous-titre d'une section de liste */
     .list-subtitle    { font-size: .75rem; color: var(--text-muted); margin: .2rem 0 0; }
+
+    /* Formulaire sans marge (utilisé dans les cartes) */
     .form-clean       { margin: 0; }
+
+    /* Grille 2 colonnes : champ (1fr) + bouton auto.
+       Utilisée pour les champs de recherche avec bouton de soumission inline. */
     .search-grid-auto { display: grid; grid-template-columns: 1fr auto; gap: .5rem; align-items: end; }
+
+    /* Localisation affichée en bas d'une carte */
     .card-location    { font-size: .6rem; color: var(--text-muted); }
+
+    /* Liste de stages avec marge en haut */
     .stages-list--mt  { margin-top: 1.5rem; }
+
+    /* Rangée d'actions (boutons Modifier/Supprimer) alignés horizontalement */
     .actions-row      { display: flex; gap: .5rem; align-items: center; }
+
+    /* Barre de recherche avec marge en bas */
     .search-card--mb  { margin-bottom: 1.5rem; }
+
+    /* Bloc d'info avec marge en haut */
     .list-info        { margin-top: .4rem; }
+
+    /* Formulaire de recherche avec marge en haut */
     .search-form      { margin-top: .6rem; }
-    /* Nom de personne dans les pages de gestion (plus lisible que stage-company) */
+
+    /* Nom de personne dans les pages de gestion (pilote, étudiant).
+       Plus grand et plus lisible que .stage-company. */
     .mgmt-name        { font-size: .9rem; font-weight: 700; color: var(--dark); }
 
-    /* ── Validation formulaire ── */
+    /* ===== VALIDATION DES FORMULAIRES ===== */
+
+    /* Champ en erreur : bordure rouge + anneau d'ombre rouge + fond rouge très pâle.
+       !important est nécessaire pour surcharger les styles de focus normaux. */
     .error-field {
         border-color: var(--danger) !important;
         box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1) !important;
         background-color: var(--danger-fond) !important;
     }
+
+    /* Message d'erreur affiché sous un champ invalide */
     .error-message {
         color: var(--danger);
         font-size: .8rem;
         margin-top: .25rem;
     }
 
-    /* ── Validation CV ── */
+    /* ===== VALIDATION DU CV ===== */
+
+    /* Bloc de retour après sélection d'un fichier CV.
+       border-left: 4px solid = bande colorée gauche selon le statut (succès/erreur). */
     .cv-info {
         font-size: .85rem;
         margin-top: .5rem;
         padding: .75rem 1rem;
         border-radius: 8px;
-        border-left: 4px solid;
+        border-left: 4px solid; /* couleur définie par .cv-success ou .cv-error */
         line-height: 1.4;
     }
+
+    /* CV valide : fond vert très pâle, texte vert foncé, barre verte */
     .cv-success {
         background: #ecfdf5;
         color: #166534;
         border-left-color: #10b981;
     }
+
+    /* CV invalide : fond rouge pâle, texte rouge foncé, barre rouge */
     .cv-error {
         background: var(--danger-fond);
         color: #991b1b;
         border-left-color: var(--danger);
     }
 
-    /* ── Bouton retour en haut ── */
+    /* ===== BOUTON "RETOUR EN HAUT" ===== */
+
+    /* Bouton flottant en bas à droite de l'écran.
+       position: fixed = reste à l'écran même pendant le défilement.
+       opacity: 0 + visibility: hidden = caché par défaut (JS ajoute .visible quand on défile).
+       backdrop-filter: blur = léger effet vitré.
+       z-index: 1000 = au-dessus du contenu mais sous les modales (z-index: 9999). */
     #scroll-top-btn {
         position: fixed;
         bottom: 30px;
         right: 30px;
         width: 50px;
         height: 50px;
-        border-radius: 50%;
+        border-radius: 50%; /* cercle parfait */
         border: none;
-        background: rgba(124, 61, 18, 0.9);
+        background: rgba(124, 61, 18, 0.9); /* marron semi-transparent */
         color: #fff;
         font-size: 18px;
         font-weight: 700;
         cursor: pointer;
         box-shadow: 0 4px 12px rgba(0,0,0,.15);
         opacity: 0;
-        visibility: hidden;
+        visibility: hidden; /* masqué par défaut — JS ajoute .visible après 300px de scroll */
         transition: opacity .3s ease, visibility .3s ease, transform .3s ease, background .2s ease;
         z-index: 1000;
         backdrop-filter: blur(10px);
     }
+
+    /* Classe ajoutée par bouton-haut.js quand l'utilisateur a défilé > 300px */
     #scroll-top-btn.visible {
         opacity: 1;
         visibility: visible;
         transform: scale(1);
     }
+
+    /* Au survol : légèrement agrandi (scale: 1.1) */
     #scroll-top-btn:hover {
         background: var(--rose);
         transform: scale(1.1);
     }
 
-    /* ── Stats offres ── */
+    /* ===== STATISTIQUES DES OFFRES (page stats_offres) ===== */
+
+    /* Grille responsive de KPI (chiffres clés).
+       auto-fit + minmax(180px, 1fr) = colonnes automatiques, min 180px chacune. */
     .stats-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
         gap: 1rem;
         margin-bottom: 2rem;
     }
+
+    /* Carte KPI individuelle : empilage vertical, aligné à gauche */
     .stat-kpi {
         flex-direction: column;
         align-items: flex-start;
         gap: .4rem;
     }
+
+    /* Étiquette du KPI en petites majuscules atténuées */
     .stat-kpi-label {
         font-size: .72rem;
         font-weight: 700;
         text-transform: uppercase;
         color: var(--text-muted);
     }
+
+    /* Valeur numérique du KPI en grand */
     .stat-kpi-value {
         font-size: 2rem;
         font-weight: 800;
         color: var(--dark);
     }
+
+    /* Rangée horizontale de colonnes statistiques (avec retour à la ligne possible) */
     .stat-row {
         display: flex;
         align-items: center;
         gap: 1.2rem;
         flex-wrap: wrap;
     }
+
+    /* Colonne statistique individuelle centrée */
     .stat-col {
         display: flex;
         flex-direction: column;
@@ -533,12 +865,16 @@
         padding: .5rem .75rem;
         text-align: center;
     }
+
+    /* Grande valeur dans une colonne stat */
     .stat-col-value {
         font-size: 1.5rem;
         font-weight: 800;
         color: var(--dark);
         line-height: 1.1;
     }
+
+    /* Étiquette sous la valeur en petites majuscules */
     .stat-col-label {
         font-size: .7rem;
         color: var(--text-muted);
@@ -546,75 +882,109 @@
         letter-spacing: .5px;
         margin-top: .25rem;
     }
+
+    /* Zone d'action alignée à droite dans une rangée stat (ex: bouton "Voir détail") */
     .stat-row-action {
         flex: 1;
         text-align: right;
         min-width: 100px;
     }
 
-    /* ── Gestion étudiants ── */
+    /* ===== GESTION DES ÉTUDIANTS ===== */
+
+    /* Tag vert "Mes étudiants" : indique les étudiants rattachés au pilote connecté */
     .tag-mine    { font-size: .65rem; font-weight: 600; background: #dcfce7; color: #166534; border-radius: 999px; padding: .2rem .6rem; border: 1px solid #bbf7d0; }
+
+    /* Groupe de boutons en bas d'une carte étudiant (Modifier, Supprimer, Voir offres...) */
     .card-actions { display: flex; gap: .4rem; align-items: flex-end; margin-top: 1rem; flex-wrap: wrap; }
+
+    /* Variante compacte d'un bouton (padding réduit, texte plus petit) */
     .btn-sm      { padding: .4rem .8rem; font-size: .8rem; }
+
+    /* Petit bouton danger (rouge) pour les actions destructives dans une liste */
     .btn-danger-sm { color: #ef4444; border-color: #fecaca; }
 
-    /* ── Animations ── */
+    /* ===== ANIMATIONS D'ENTRÉE ===== */
+
+    /* Animation de base : glissement depuis le bas + montée en opacité.
+       "both" = l'état initial (opacity:0) est appliqué AVANT que l'animation commence,
+       évitant un flash du contenu. */
     @keyframes up { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+
+    /* La barre de recherche apparaît en premier */
     .search-card { animation: up .4s ease both; }
+
+    /* L'introduction de page apparaît avec un léger délai (0.06s) */
     .page-intro { animation: up .4s ease .06s both; }
+
+    /* La liste des stages apparaît en dernier (0.12s), après le titre */
     .stages-list { animation: up .4s ease .12s both; }
-/* ── FIX RESPONSIVE frow ── */
+/* ===== CORRECTIFS RESPONSIVE ===== */
+
+/* Correctif pour .frow : ajout de flex-wrap pour éviter le débordement horizontal.
+   Sans flex-wrap, deux champs côte à côte débordaient sur petits écrans. */
 .frow {
   display: flex;
   gap: .85rem;
-  flex-wrap: wrap;  /* ← AJOUTE ÇA */
+  flex-wrap: wrap; /* permet aux groupes de champs de passer à la ligne */
 }
 
+/* Sur mobile (< 640px) : les champs d'une .frow passent en colonne
+   et prennent toute la largeur disponible. */
 @media(max-width: 640px) {
   .frow {
-    flex-direction: column;  /* ← Stack vertical mobile */
+    flex-direction: column; /* empilage vertical sur mobile */
     gap: .6rem;
   }
   .frow .fgrp {
-    width: 100%;  /* ← Pleine largeur */
+    width: 100%; /* chaque champ occupe toute la largeur */
   }
 }
 
-/* ── Amélioration existante field-grid-4 ── */
+/* Correctif de la grille de recherche avancée (.field-grid-4) :
+   redéclaration pour s'assurer que la règle s'applique par-dessus la version inline.
+   5 colonnes sur grand écran, adaptées selon la largeur. */
 .field-grid-4 {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(5, 1fr); /* 5 colonnes bureau */
   gap: .25rem;
 }
 
 @media(max-width: 900px) {
   .field-grid-4 {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, 1fr); /* 3 colonnes tablette */
   }
 }
 
 @media(max-width: 767px) {
   .field-grid-4 {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr); /* 2 colonnes mobile paysage */
   }
 }
 
 @media(max-width: 480px) {
   .field-grid-4 {
-    grid-template-columns: 1fr;  /* ← Une colonne mobile */
+    grid-template-columns: 1fr; /* 1 colonne sur très petits écrans */
   }
 }
-/* ── MENU BURGER MOBILE ── */
+/* ===== BOUTON BURGER (MENU MOBILE) ===== */
+
+/* Icône hamburger (3 barres) visible uniquement sur mobile.
+   display: none par défaut — affiché via la media query @media(max-width:768px).
+   flex-direction: column empile les 3 barres verticalement. */
 .mobile-menu-toggle {
-    display: none;
+    display: none; /* masqué sur bureau — affiché sur mobile par la media query */
     flex-direction: column;
-    gap: 4px;
+    gap: 4px; /* espace entre les 3 barres */
     width: 30px;
     height: 24px;
     cursor: pointer;
     padding: 4px;
 }
 
+/* Chaque barre de l'icône hamburger.
+   transform-origin: center = les rotations s'effectuent depuis le centre de la barre.
+   transition: all 0.3s ease = anime la transformation en croix. */
 .mobile-menu-toggle span {
     width: 100%;
     height: 3px;
@@ -624,77 +994,95 @@
     transform-origin: center;
 }
 
+/* Quand le menu est ouvert (.active), les 3 barres forment une croix (×) :
+   - Barre 1 : pivote à +45° et se déplace pour s'aligner avec la barre 3 */
 .mobile-menu-toggle.active span:nth-child(1) {
     transform: rotate(45deg) translate(6px, 6px);
 }
 
+/* - Barre 2 : disparaît (opacity 0) */
 .mobile-menu-toggle.active span:nth-child(2) {
     opacity: 0;
 }
 
+/* - Barre 3 : pivote à -45° pour compléter la croix */
 .mobile-menu-toggle.active span:nth-child(3) {
     transform: rotate(-45deg) translate(7px, -6px);
 }
 
-/* ── MENU BURGER MOBILE ── */
+/* ===== NAVIGATION MOBILE (PANNEAU LATÉRAL) ===== */
+
+/* Panneau de navigation coulissant depuis la gauche.
+   position: fixed = toujours visible même si la page défile.
+   left: -40% = caché hors écran à gauche par défaut.
+   width: 40% / max-width: 320px = panneau qui prend 40% de l'écran, max 320px.
+   height: 100vh = toute la hauteur de l'écran.
+   cubic-bezier(0.68, -0.55, 0.265, 1.55) = courbe de rebond à l'ouverture.
+   backdrop-filter: blur(20px) = léger flou de l'arrière-plan visible à travers le panneau. */
 .nav-mobile {
   position: fixed;
   top: 0;
-  left: -40%;            /* 1/3 de l'écran, caché à gauche */
+  left: -40%; /* caché à gauche — passe à 0 quand .active est ajouté */
   width: 40%;
   max-width: 320px;
   height: 100vh;
   background: rgba(255, 255, 255, 0.98);
   backdrop-filter: blur(20px);
-  box-shadow: 2px 0 24px rgba(124, 61, 18, 0.15);
-  z-index: 999;
-  padding: 80px 24px 24px;
-  transition: left 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  box-shadow: 2px 0 24px rgba(124, 61, 18, 0.15); /* ombre portée sur la droite du panneau */
+  z-index: 999; /* sous les modales (9999) mais au-dessus du contenu */
+  padding: 80px 24px 24px; /* padding-top: 80px = espace pour le header fixe au-dessus */
+  transition: left 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); /* ouverture avec rebond */
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
+  overflow-y: auto; /* défilement vertical si les liens ne tiennent pas */
 }
 
+/* Classe ajoutée par menu-burger.js : fait glisser le panneau dans l'écran */
 .nav-mobile.active {
-  left: 0;
+  left: 0; /* panneau visible — était à -40% */
 }
 
+/* Liens de navigation dans le panneau mobile */
 .nav-mobile a {
   font-size: 1rem;
   font-weight: 600;
   padding: 14px 0;
-  border-bottom: 1px solid var(--marron-bordure);
+  border-bottom: 1px solid var(--marron-bordure); /* séparateur entre les liens */
   color: var(--dark);
   transition: color 0.2s;
 }
 
+/* Lien actif ou survolé : marron vif */
 .nav-mobile a:hover,
 .nav-mobile a.active {
   color: var(--marron-vif);
 }
 
-/* Overlay léger sur le reste de l'écran (quand le menu est ouvert) */
+/* Overlay semi-transparent sur le reste de l'écran (désactivé, code conservé en commentaire).
+   Si réactivé : couvre les 60% droits de l'écran quand le menu est ouvert (z-index: 899). */
 /*
 .nav-mobile.active::before {
   content: '';
   position: fixed;
   top: 0;
-  left: 40%;                   
+  left: 40%;
   width: 60%;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.2);   
+  background: rgba(0, 0, 0, 0.2);
   z-index: 899;
 }
 */
-/* éventuellement pousse un peu le contenu à droite quand le menu ouvre */
-/* garde ça uniquement si tu préfères */
 
+/* Quand le menu mobile est ouvert, le contenu de la page glisse vers la droite
+   de 33% pour révéler le panneau de navigation en dessous.
+   ~ (sélecteur de frère) : .page doit être un frère suivant de .nav-mobile dans le DOM. */
 .nav-mobile.active ~ .page {
   transform: translateX(33.333%);
   transition: transform 0.4s ease;
 }
 
-
+/* Bouton CTA pleine largeur dans le menu mobile (ex: "S'inscrire").
+   color: white !important = force le texte blanc même si une règle plus spécifique le change. */
 .btn-fill-mobile {
   display: inline-flex;
   align-items: center;
@@ -709,34 +1097,43 @@
   box-shadow: 0 4px 16px rgba(124, 61, 18, 0.3);
 }
 
-/* ── RESTRUCTURATION MOBILE ── */
+/* ===== RESTRUCTURATION MOBILE (< 768px) ===== */
+
+/* Sur mobile : masque la navigation desktop et les boutons d'en-tête desktop.
+   Affiche le bouton burger à la place.
+   header en position: relative = ancrage si des éléments positionnés en absolu en dépendent. */
 @media (max-width: 768px) {
   .nav-desktop,
   .hdr-btns-desktop {
-    display: none !important;
+    display: none !important; /* masque la nav desktop */
   }
 
   .mobile-menu-toggle {
-    display: flex;
+    display: flex; /* affiche le bouton burger */
   }
 
   header {
     position: relative;
   }
 }
-/* ── MENU DÉROULANT MOBILE GESTION ── */
+/* ===== MENU DÉROULANT MOBILE (section "Gestion") ===== */
+
+/* Conteneur du sous-menu mobile "Gestion" (Pilotes, Étudiants, Offres...).
+   flex-direction: column = le bouton et le menu s'empilent verticalement. */
 .nav-mobile-dropdown {
   display: flex;
   flex-direction: column;
 }
 
+/* Bouton "Gestion ▾" dans le menu mobile.
+   user-select: none = empêche la sélection de texte lors du clic/tap. */
 .nav-mobile-dropdown-btn {
   font-size: 1rem;
   font-weight: 600;
   padding: 14px 0;
   color: var(--dark);
   cursor: pointer;
-  user-select: none;
+  user-select: none; /* évite la sélection de texte au tap sur mobile */
   border-bottom: 1px solid var(--marron-bordure);
   transition: color 0.2s;
 }
@@ -745,25 +1142,33 @@
   color: var(--marron-vif);
 }
 
+/* Sous-menu accordéon : caché par défaut (max-height: 0 + overflow: hidden).
+   Technique CSS pure pour l'animation accordion : transition max-height.
+   ⚠️ max-height doit être suffisamment grand pour contenir tous les liens. */
 .nav-mobile-dropdown-menu {
-  overflow: hidden;
-  max-height: 0;
+  overflow: hidden; /* masque le contenu qui dépasse max-height */
+  max-height: 0; /* complètement réduit = caché */
   transition: max-height 0.3s ease;
 }
 
+/* Quand .open est ajouté par JS : déploie le sous-menu jusqu'à 300px.
+   300px est suffisant pour 4-5 liens de navigation. */
 .nav-mobile-dropdown.open .nav-mobile-dropdown-menu {
-  max-height: 300px; /* assez grand pour tous les liens */
+  max-height: 300px; /* déployé — valeur max pour l'animation */
 }
 
+/* Chaque lien du sous-menu mobile, indenté à gauche (padding-left: 16px)
+   pour signifier visuellement qu'il est enfant du bouton "Gestion". */
 .nav-mobile-dropdown-menu a {
   display: block;
-  padding: 12px 0 12px 16px; /* un peu de padding à gauche */
+  padding: 12px 0 12px 16px; /* indentation gauche */
   font-size: 0.95rem;
   color: var(--text-muted);
   border-bottom: 1px solid var(--marron-bordure);
   transition: background 0.2s, color 0.2s;
 }
 
+/* Au survol ou sur le lien actif : fond crème + texte marron */
 .nav-mobile-dropdown-menu a:hover,
 .nav-mobile-dropdown-menu a.active {
   background: var(--marron-clair);

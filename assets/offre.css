@@ -1,13 +1,39 @@
+/* ═══════════════════════════════════════════════════════════════════
+   offre.css — Page de détail d'une offre de stage
+   Utilisé par : offre.twig.html, entreprise.twig.html (sections offres)
+   Affiche les détails d'une offre (titre, description, entreprise)
+   et le formulaire de candidature (CV + lettre de motivation) en sidebar.
+   Dépend de : /assets/css/variables.css (--marron*, --dark, --text-muted...)
+   ═══════════════════════════════════════════════════════════════════ */
+
+
+/* ===== MISE EN PAGE PRINCIPALE ===== */
+
+/* Conteneur centré avec largeur maximale de 1060px.
+   padding vertical/horizontal généreux pour l'espacement global. */
 .offre-page {
     max-width: 1060px;
     margin: 0 auto;
     padding: 1.8rem 1.25rem 3rem;
 }
 
+
+/* ===== FIL D'ARIANE (BREADCRUMB) ===== */
+
+/* Navigation "Accueil > Stages > Nom de l'offre" en petit texte atténué */
 .breadcrumb { margin-bottom: 1.25rem; font-size: .78rem; }
+
+/* Liens du fil d'ariane en gris-marron, sans soulignement */
 .breadcrumb a { color: var(--text-muted); text-decoration: none; transition: color .15s; }
+
+/* Au survol : passe en marron principal */
 .breadcrumb a:hover { color: var(--marron); }
 
+
+/* ===== ALERTE DE SUCCÈS ===== */
+
+/* Message de confirmation après candidature (ex: "Votre candidature a été envoyée !").
+   --marron-clair = fond crème, --marron-vif = texte marron foncé, --marron-mid = bordure beige. */
 .alert-success {
     background: var(--marron-clair);
     color: var(--marron-vif);
@@ -19,11 +45,25 @@
     margin-bottom: 1.25rem;
 }
 
+
+/* ===== MISE EN PAGE EN GRILLE (CONTENU + SIDEBAR) ===== */
+
+/* Sur mobile : colonne unique (grille sans colonnes explicites).
+   align-items: start = les enfants restent alignés en haut, ne s'étirent pas. */
 .offre-layout { display: grid; gap: 1.25rem; align-items: start; }
+
+/* Sur écrans >= 860px : deux colonnes — contenu principal (1fr) + sidebar (320px fixe).
+   La sidebar est plus étroite, le contenu prend le reste. */
 @media(min-width: 860px) { .offre-layout { grid-template-columns: 1fr 320px; } }
 
+/* Colonne principale : empilage flex vertical des cartes */
 .offre-main { display: flex; flex-direction: column; gap: 1rem; }
 
+
+/* ===== CARTE GÉNÉRIQUE ===== */
+
+/* Boîte blanche semi-transparente réutilisable.
+   Utilisée pour les différents blocs de la page (description, compétences, etc.) */
 .card {
     background: rgba(255, 255, 255, 0.95);
     border-radius: 1.1rem;
@@ -32,29 +72,51 @@
     box-shadow: 0 4px 20px rgba(124, 61, 18, 0.06);
 }
 
+
+/* ===== EN-TÊTE DE L'OFFRE ===== */
+
+/* Ligne du haut : badges/statuts à gauche, bouton favori à droite.
+   flex-wrap: wrap = se coupe sur 2 lignes si nécessaire sur petits écrans. */
 .offre-header-top {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: flex-start; /* alignement sur le haut, pas centré */
     flex-wrap: wrap;
     gap: .5rem;
     margin-bottom: .6rem;
 }
+
+/* Groupe interne à gauche (badges) alignés horizontalement */
 .offre-header-top > div { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
 
+/* Titre principal de l'offre en grand et gras */
 .offre-titre { font-size: 1.5rem; font-weight: 700; color: var(--dark); line-height: 1.3; margin-bottom: .75rem; }
 
+
+/* ===== MÉTADONNÉES DE L'OFFRE ===== */
+
+/* Rangée de "chips" (durée, localisation, compétences...) */
 .offre-meta-row { display: flex; flex-wrap: wrap; gap: .45rem; }
+
+/* Chip individuel : petite pilule avec fond dégradé crème-beige.
+   border-radius: 999px = forme pilule parfaite.
+   linear-gradient = fond dégradé de l'orange très pâle vers le beige. */
 .meta-chip {
     font-size: .72rem;
     font-weight: 500;
     padding: .3rem .7rem;
-    border-radius: 999px;
+    border-radius: 999px; /* pilule */
     background: linear-gradient(135deg, #faeee4, #e8c4a4);
     color: var(--marron-vif);
     border: 1px solid rgba(124, 61, 18, 0.2);
 }
 
+
+/* ===== BOUTON FAVORI ===== */
+
+/* Bouton "Ajouter aux favoris" / "Retirer des favoris".
+   border-radius: 999px = forme pilule.
+   white-space: nowrap = le texte ne se coupe pas sur plusieurs lignes. */
 .btn-favori {
     font: 600 .72rem/1 'DM Sans', sans-serif;
     padding: .45rem .9rem;
@@ -66,26 +128,60 @@
     transition: all .15s;
     white-space: nowrap;
 }
+
+/* Au survol : bordure et texte en marron */
 .btn-favori:hover { border-color: var(--marron); color: var(--marron); }
+
+/* État actif (déjà dans les favoris) : fond crème, bordure et texte marron */
 .btn-favori.actif { background: var(--marron-clair); border-color: var(--marron); color: var(--marron); }
 
+
+/* ===== CONTENU DES SECTIONS ===== */
+
+/* Titre de section (ex: "Description du poste", "Compétences requises") */
 .section-title { font-size: 1rem; font-weight: 700; color: var(--dark); margin-bottom: .85rem; }
+
+/* Texte de description de l'offre avec hauteur de ligne généreuse.
+   opacity: .85 = légèrement transparent pour hiérarchie visuelle. */
 .offre-description { font-size: .88rem; color: var(--dark); line-height: 1.75; opacity: .85; }
 
+
+/* ===== CONTACTS DE L'ENTREPRISE ===== */
+
+/* Ligne des liens de contact (email, site web, téléphone).
+   flex-wrap: wrap permet à plusieurs liens de passer à la ligne si nécessaire. */
 .entreprise-contact {
     display: flex;
     flex-wrap: wrap;
     gap: 1rem;
     margin-top: .85rem;
     font-size: .78rem;
-}   
+}
 
+
+/* ===== SIDEBAR (COLONNE LATÉRALE) ===== */
+
+/* Colonne latérale contenant le formulaire de candidature + infos de l'offre */
 .offre-aside { display: flex; flex-direction: column; gap: 1rem; }
+
+/* Carte interne de la sidebar */
 .aside-card { display: flex; flex-direction: column; gap: .65rem; }
+
+/* Texte d'aide sous les champs.
+   opacity: .75 = légèrement transparent (secondaire).
+   line-height: 1.55 = bonne lisibilité. */
 .aside-hint { font-size: .78rem; color: var(--dark); opacity: .75; line-height: 1.55; }
+
+/* Lien dans le texte d'aide (ex: "Voir le profil") */
 .aside-hint a { color: var(--marron); }
 
+
+/* ===== FORMULAIRE DE CANDIDATURE ===== */
+
+/* Groupe label + champ dans le formulaire de candidature */
 .form-group { display: flex; flex-direction: column; gap: .3rem; margin-bottom: .85rem; }
+
+/* Label en petites majuscules atténuées */
 .form-group label {
     font-size: .7rem;
     font-weight: 600;
@@ -93,61 +189,106 @@
     text-transform: uppercase;
     letter-spacing: .06em;
 }
+
+/* Indicateur de champ obligatoire (*) en marron */
 .required { color: var(--marron); }
 
+/* Champ de fichier (upload CV) avec bordure en pointillés.
+   border-style: dashed indique visuellement une zone de dépôt.
+   --marron-clair = fond crème pour différencier du fond blanc. */
 .input-file {
     font-size: .78rem;
     color: var(--dark);
-    border: 1.5px dashed var(--marron-bordure);
+    border: 1.5px dashed var(--marron-bordure); /* pointillés pour zone de dépôt */
     border-radius: .7rem;
     padding: .6rem .8rem;
     background: var(--marron-clair);
     cursor: pointer;
     width: 100%;
 }
+
+/* Au survol : bordure marron pleine (indique l'interactivité) */
 .input-file:hover { border-color: var(--marron); }
 
+/* Zone de texte (lettre de motivation).
+   resize: vertical = l'utilisateur peut agrandir verticalement seulement. */
 .input-textarea {
     font: .78rem/1.6 'DM Sans', sans-serif;
     color: var(--dark);
     border: 1.5px solid var(--marron-bordure);
     border-radius: .7rem;
     padding: .65rem .85rem;
-    resize: vertical;
+    resize: vertical; /* redimensionnable uniquement en hauteur */
     background: #fff;
     width: 100%;
     transition: border-color .15s;
 }
+
+/* Au focus : bordure marron + anneau d'ombre */
 .input-textarea:focus { outline: none; border-color: var(--marron); box-shadow: 0 0 0 3px rgba(124, 61, 18, 0.1); }
 
+/* Petite aide en gris très clair sous le champ (ex: "Formats acceptés: PDF") */
 .form-group small { font-size: .65rem; color: #c4a898; }
 
+
+/* ===== INFORMATIONS COMPLÉMENTAIRES DE L'OFFRE ===== */
+
+/* Titre de la section infos (ex: "Détails de l'offre") */
 .aside-info h3 { font-size: .85rem; font-weight: 700; margin-bottom: .65rem; color: var(--dark); }
+
+/* Liste des infos (durée, date, niveau requis...).
+   flex column avec un espace entre chaque élément. */
 .info-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: .5rem; }
+
+/* Chaque ligne info : clé à gauche, valeur à droite.
+   justify-content: space-between = espacement max entre les deux. */
 .info-list li {
     display: flex;
     justify-content: space-between;
     font-size: .78rem;
     color: var(--dark);
-    border-bottom: 1px solid var(--marron-bordure);
+    border-bottom: 1px solid var(--marron-bordure); /* ligne de séparation fine */
     padding-bottom: .4rem;
 }
+
+/* Dernier élément sans ligne de séparation en dessous */
 .info-list li:last-child { border-bottom: none; padding-bottom: 0; }
+
+/* Étiquette de l'info (ex: "Durée") en gras */
 .info-label { font-weight: 600; color: var(--dark); }
 
-/* Marge top pour les tags dans l'en-tête d'offre */
+
+/* ===== CLASSES UTILITAIRES ===== */
+
+/* Marge au-dessus des tags dans l'en-tête d'offre */
 .offre-tags { margin-top: .75rem; }
-/* Marge top pour la liste meta dans entreprise.twig */
+
+/* Marge au-dessus de la rangée de métadonnées dans la page entreprise */
 .offre-meta-row--mt { margin-top: .4rem; }
-/* Textarea redimensionnable verticalement */
+
+/* Zone de texte avec redimensionnement vertical uniquement */
 textarea.resize-v { resize: vertical; }
-/* Liste d'offres dans page entreprise */
+
+/* Marge au-dessus de la liste d'offres dans la page entreprise */
 .stages-list--inner { margin-top: 1rem; }
-/* Texte vide dans une card */
+
+/* Texte affiché quand une carte est vide (ex: "Aucune offre disponible") */
 .card-vide { color: var(--dark); opacity: .6; font-size: .85rem; }
 
+
+/* ===== ANIMATIONS D'ENTRÉE ===== */
+
+/* Animation de glissement depuis le bas avec montée en opacité */
 @keyframes up { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+
+/* L'en-tête apparaît en premier (pas de délai) */
 .offre-header { animation: up .35s ease both; }
+
+/* La 2e carte du contenu principal apparaît avec 0.07s de délai */
 .offre-main .card:nth-child(2) { animation: up .35s ease .07s both; }
+
+/* La 3e carte apparaît avec 0.13s de délai (effet en cascade) */
 .offre-main .card:nth-child(3) { animation: up .35s ease .13s both; }
+
+/* La sidebar apparaît avec 0.1s de délai */
 .offre-aside { animation: up .35s ease .1s both; }

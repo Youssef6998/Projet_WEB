@@ -5,6 +5,11 @@ require_once __DIR__ . '/BaseController.php';
 /**
  * Contrôleur de gestion des entreprises partenaires.
  *
+ * Chaque entreprise peut être associée à des évaluations (avis notés)
+ * consultables sur sa fiche publique.
+ * Les opérations d'écriture (création, modification, suppression) sont
+ * toutes protégées par une vérification CSRF en plus du contrôle de rôle.
+ *
  * Expose deux contextes d'utilisation :
  * - Vue publique de recherche (index / show) : accessible à tous les visiteurs.
  * - Vue de gestion CRUD (showEntrepriseList, store, showUpdate, update, destroy) :

@@ -1,5 +1,22 @@
+/* ═══════════════════════════════════════════════════════════════════
+   connexion.css — Page de connexion (login)
+   Utilisé par : connexion.twig.html
+   Affiche un formulaire centré avec champs email/mot de passe,
+   lien "mot de passe oublié" et lien vers l'inscription.
+   Dépend de : /assets/css/variables.css (--marron*, --dark, --text-muted...)
+   ═══════════════════════════════════════════════════════════════════ */
 
+
+/* ===== RESET ET BASE ===== */
+
+/* Réinitialisation du modèle de boîte : inclut padding et bordure dans la largeur.
+   margin: 0 supprime les marges par défaut de tous les éléments. */
 *, *::before, *::after { box-sizing: border-box; margin: 0; }
+
+/* Corps de page : fonte principale DM Sans, fond dégradé beige-crème fixe.
+   background-attachment: fixed = le dégradé reste fixe même si on défile.
+   display: flex + justify/align-items: center + height: 100vh = centre la carte
+   exactement au milieu de la fenêtre (horizontalement et verticalement). */
 body {
     font-family: 'DM Sans', sans-serif;
     background: linear-gradient(160deg, #fdf4ed 0%, #faeee4 100%);
@@ -7,49 +24,78 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    height: 100vh; /* la page fait exactement la hauteur de la fenêtre */
     color: var(--dark);
 }
+
+/* Supprime la décoration (soulignement) des liens et hérite la couleur du parent */
 a { text-decoration: none; color: inherit; }
+
+/* Largeur maximale du contenu (non utilisé directement sur la page login, prévu pour cohérence) */
 .page { max-width: 1060px; margin: 0 auto; padding: 1.8rem 1.25rem 2.5rem; }
 
+/* Conteneur intermédiaire pour le formulaire */
 .container { width: 100%; padding: 20px; }
 
+
+/* ===== CARTE DE CONNEXION ===== */
+
+/* Titre centré en marron dans la carte de login */
 .login-card h1 {
     text-align: center;
     margin-bottom: 20px;
     color: var(--marron);
 }
+
+/* Carte blanche semi-transparente qui contient le formulaire.
+   max-width: 400px = formulaire compact et lisible.
+   margin: auto = centrage horizontal (fonctionne grâce au flex du body).
+   padding-top: 60px = espace pour le bouton retour positionné en absolu en haut.
+   animation: fadeIn = apparition douce au chargement.
+   position: relative = ancrage pour le bouton retour absolu. */
 .login-card {
     background: rgba(255, 255, 255, 0.95);
     max-width: 400px;
     margin: auto;
     padding: 60px 40px 20px 40px;
     border-radius: 20px;
-    box-shadow: 0 20px 60px rgba(124, 61, 18, 0.1), 0 4px 16px rgba(124, 61, 18, 0.06);
+    box-shadow: 0 20px 60px rgba(124, 61, 18, 0.1), 0 4px 16px rgba(124, 61, 18, 0.06); /* double ombre pour la profondeur */
     border: 1.5px solid var(--marron-bordure);
     animation: fadeIn 0.5s ease-in-out;
-    position: relative;
+    position: relative; /* ancrage pour le bouton retour */
 }
 
+
+/* ===== GROUPES DE CHAMPS ===== */
+
+/* Chaque groupe empile le label au-dessus du champ (flex vertical) */
 .input-group { margin-bottom: 20px; display: flex; flex-direction: column; }
 
+/* Style du label : taille normale, demi-gras */
 .input-group label { margin-bottom: 8px; font-weight: 500; font-size: 14px; }
 
+/* Champ texte avec transition pour l'animation de focus */
 .input-group input {
     padding: 12px;
     border-radius: 10px;
     border: 1.5px solid var(--marron-bordure);
-    transition: 0.3s;
+    transition: 0.3s; /* anime border-color et box-shadow */
     font-size: 14px;
 }
 
+/* Quand le champ est actif : bordure marron, anneau d'ombre discret.
+   outline: none retire le contour bleu natif du navigateur. */
 .input-group input:focus {
     border-color: var(--marron);
     outline: none;
     box-shadow: 0 0 0 3px rgba(124, 61, 18, 0.1);
 }
 
+
+/* ===== OPTIONS SOUS LES CHAMPS ===== */
+
+/* Ligne "Se souvenir de moi" à gauche, "Mot de passe oublié ?" à droite.
+   justify-content: space-between écarte les deux éléments aux extrémités. */
 .options {
     display: flex;
     justify-content: space-between;
@@ -58,9 +104,15 @@ a { text-decoration: none; color: inherit; }
     margin-bottom: 25px;
 }
 
+/* Lien en marron (ex: "Mot de passe oublié ?") */
 .options a { text-decoration: none; color: var(--marron); }
 .options a:hover { text-decoration: underline; }
 
+
+/* ===== BOUTON DE CONNEXION ===== */
+
+/* Bouton pleine largeur avec dégradé marron diagonal.
+   box-shadow donne une ombre colorée pour l'effet de profondeur. */
 .btn-primary {
     width: 100%;
     padding: 12px;
@@ -76,17 +128,29 @@ a { text-decoration: none; color: inherit; }
     box-shadow: 0 4px 14px rgba(124, 61, 18, 0.3);
 }
 
+/* Au survol : ombre agrandie + bouton qui monte légèrement (effet de relief) */
 .btn-primary:hover {
     box-shadow: 0 6px 20px rgba(124, 61, 18, 0.45);
     transform: translateY(-1px);
 }
 
+
+/* ===== LIEN VERS L'INSCRIPTION ===== */
+
+/* Texte centré en bas : "Pas encore de compte ? S'inscrire" */
 .register { margin-top: 20px; text-align: center; font-size: 14px; }
 .register a { color: var(--marron); text-decoration: none; font-weight: 500; }
 .register a:hover { text-decoration: underline; }
 
+
+/* ===== BOUTON RETOUR ===== */
+
+/* Positionné en absolu dans le coin haut-gauche de .login-card (qui est position:relative) */
 .back-btn-container { position: absolute; top: 15px; left: 20px; }
 
+/* Bouton "< Retour" avec icône SVG inline.
+   display: inline-flex + align-items: center aligne l'icône et le texte sur la même ligne.
+   gap: 0.4rem espace l'icône du texte. */
 .btn-back {
     display: inline-flex;
     align-items: center;
@@ -103,20 +167,38 @@ a { text-decoration: none; color: inherit; }
     transition: all 0.2s ease;
 }
 
+/* Au survol : bordure + texte en marron, légère montée */
 .btn-back:hover { border-color: var(--marron); color: var(--marron); transform: translateY(-1px); }
+
+/* Taille de l'icône flèche dans le bouton retour */
 .btn-back svg { width: 16px; height: 16px; transition: transform 0.2s ease; }
+
+/* Au survol : la flèche se déplace légèrement vers la gauche pour indiquer la direction */
 .btn-back:hover svg { transform: translateX(-2px); }
 
+
+/* ===== MEDIA QUERY — MOBILE (< 480px) ===== */
+
+/* Sur très petits écrans : padding réduit, marges latérales maintenues */
 @media (max-width: 480px) {
     .login-card { padding: 30px 20px 15px 20px; margin: 20px; }
     .back-btn-container { top: 15px; left: 15px; }
     .btn-back { padding: 0.4rem 0.7rem; font-size: 0.75rem; }
 }
 
-/* Alerte d'erreur dans la carte de connexion */
+
+/* ===== ALERTE D'ERREUR ===== */
+
+/* Message d'erreur (mauvais mot de passe, compte inexistant, etc.)
+   --statut-err-fond, --statut-err, --statut-err-bordure sont définis dans variables.css */
 .alert { padding: 10px 14px; border-radius: 8px; margin-bottom: 16px; font-size: 14px; }
 .alert-error { background: var(--statut-err-fond); color: var(--statut-err); border: 1px solid var(--statut-err-bordure); }
 
+
+/* ===== ANIMATION D'ENTRÉE ===== */
+
+/* La carte de login glisse depuis le bas et monte en opacité en 0.5 seconde.
+   Utilisée par animation: fadeIn 0.5s ease-in-out sur .login-card */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(15px); }
     to { opacity: 1; transform: translateY(0); }

@@ -1,6 +1,19 @@
+/* ═══════════════════════════════════════════════════════════════════
+   pilote_list.css — Styles spécifiques à la liste des pilotes
+   Utilisé par : pilote_list.twig.html (liste des pilotes / enseignants référents)
+   Ce fichier est un complément de style-stage.css.
+   Dépend de : /assets/css/variables.css
+   ═══════════════════════════════════════════════════════════════════ */
+
+
+/* ===== BOUTONS D'ACTION D'UN PILOTE ===== */
+
+/* Groupe de boutons (Modifier, Supprimer...) aligné à droite dans la carte du pilote.
+   flex-direction: column empile les boutons verticalement.
+   align-items: flex-end aligne tous les boutons sur le bord droit. */
 .pilote-actions {
     display: flex;
     flex-direction: column;
-    gap: .5rem;
-    align-items: flex-end;
+    gap: .5rem;       /* espace vertical entre les boutons */
+    align-items: flex-end; /* boutons alignés à droite */
 }

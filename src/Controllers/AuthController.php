@@ -5,6 +5,13 @@ require_once __DIR__ . '/BaseController.php';
 /**
  * Contrôleur d'authentification et de création de comptes.
  *
+ * Point d'entrée unique pour tout ce qui concerne l'identité de l'utilisateur :
+ *  - Connexion (showLogin / login) : vérifie les identifiants et ouvre la session.
+ *  - Inscription (showRegister / register) : crée un compte selon le type demandé.
+ *  - Déconnexion (logout) : détruit la session et renvoie vers la page publique.
+ *
+ * Toutes les actions POST passent par verifyCsrf() pour bloquer les attaques CSRF.
+ *
  * Gère le cycle de vie de la session utilisateur :
  * - Affichage et traitement du formulaire de connexion.
  * - Création de nouveaux comptes (étudiant, pilote, admin) réservée aux admins/pilotes.

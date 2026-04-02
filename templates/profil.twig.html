@@ -1,7 +1,32 @@
+{#
+    profil.twig.html — Page de profil personnel de l'utilisateur connecté
+    Hérite de base.twig.html.
+    Accessible à tout utilisateur connecté (étudiant, pilote, admin).
+    Contenu affiché selon le rôle :
+      - Tous : avatar, informations personnelles modifiables, changement de mot de passe
+      - Étudiant : liste des candidatures (avec statuts) + liste des favoris (avec retrait)
+      - Pilote : liste des étudiants supervisés (avec lien vers leurs candidatures)
+      - Tous : zone de danger (suppression de compte)
+
+    Variables Twig reçues (ProfilController::index) :
+      - user               : objet de l'utilisateur connecté. Propriétés :
+                               prenom, nom, email, telephone, role, promotion (pilote uniquement)
+      - candidatures       : tableau des candidatures de l'étudiant (vide si non étudiant).
+                               Chaque objet : titre, entreprise, duree, statut, date_candidature
+      - wishlist           : tableau des offres en favoris (vide si non étudiant).
+                               Chaque objet : id_offre, titre, company, duree, date_ajout
+      - etudiants_supervises: tableau des étudiants du pilote (vide si non pilote).
+                               Chaque objet : id_utilisateur, prenom, nom, email
+      - success            : booléen — true après une modification de profil réussie
+      - erreur             : message d'erreur de validation côté serveur
+      - csrf_token         : jeton CSRF pour tous les formulaires POST de la page
+      - session_user       : utilisateur connecté (pour les vérifications de rôle)
+#}
 {% extends "base.twig.html" %}
 
 {% block title %}Mon Profil – Stage Finder{% endblock %}
 
+{# Bloc CSS : charge profil.css (avatar, candidature-card, badge statuts, favoris...) et favoris.css #}
 {% block css %}
 <link rel="stylesheet" href="/assets/css/variables.css">
 <link rel="stylesheet" href="/assets/style-stage.css">
@@ -12,32 +37,47 @@
 {% block content %}
 <main class="profil-page">
 
+    {# ===== EN-TÊTE PROFIL ===== #}
+    {# profil-header = flex row avec avatar + informations d'identité #}
     <section class="profil-header">
+        {# Avatar généré depuis les initiales (première lettre du prénom + première lettre du nom).
+           |slice(0,1)|upper = prend 1 caractère et le met en majuscule. #}
         <div class="profil-avatar">{{ user.prenom|slice(0,1)|upper }}{{ user.nom|slice(0,1)|upper }}</div>
         <div class="profil-info">
             <h1>{{ user.prenom }} {{ user.nom }}</h1>
             <p class="profil-email">{{ user.email }}</p>
+            {# Badge rôle : la classe role-{{ role }} permet des couleurs différentes par rôle
+               (ex: role-admin = rouge, role-pilote = bleu, role-etudiant = vert dans profil.css) #}
             <span class="profil-role role-{{ user.role }}">{{ user.role }}</span>
         </div>
     </section>
 
+    {# ===== MESSAGES DE RETOUR ===== #}
+    {# success = true après une mise à jour de champ (redirected after POST) #}
     {% if success %}
     <div class="alert alert-success">Modification enregistrée.</div>
     {% endif %}
+    {# erreur = message de validation ou d'authentification (ex: "Mot de passe incorrect") #}
     {% if erreur %}
     <div class="alert alert-error">{{ erreur }}</div>
     {% endif %}
 
-    {# ── Mes informations ── #}
+    {# ===== SECTION : MES INFORMATIONS ===== #}
+    {# Chaque champ est un formulaire POST indépendant pour permettre la modification champ par champ.
+       La boucle Twig itère sur un dictionnaire {clé_champ: label_affiché}.
+       attribute(user, champ) = accès dynamique à user.nom, user.prenom, etc. (équivalent PHP $$var). #}
     <section class="candidatures-section">
         <h2>Mes informations</h2>
         <div class="profil-fields">
+            {# Boucle sur les 4 champs courants : nom, prénom, email, téléphone #}
             {% for champ, label in {nom: 'Nom', prenom: 'Prénom', email: 'Email', telephone: 'Téléphone'} %}
             <form method="POST" action="/?uri=profil_update" class="profil-field-form">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                {# Champ caché "champ" : indique au contrôleur quel champ mettre à jour en BDD #}
                 <input type="hidden" name="champ" value="{{ champ }}">
                 <label class="profil-field-label">{{ label }}</label>
                 <div class="profil-field-row">
+                    {# type="email" pour le champ email (validation navigateur), "text" pour les autres #}
                     <input type="{{ champ == 'email' ? 'email' : 'text' }}" name="valeur"
                            value="{{ attribute(user, champ) }}" class="profil-field-input" required>
                     <button type="submit" class="btn btn-outline btn-sm">Modifier</button>
@@ -45,6 +85,8 @@
             </form>
             {% endfor %}
 
+            {# Champ Promotion — visible uniquement pour les pilotes.
+               Sélecteur déroulant au lieu d'un champ texte libre. #}
             {% if user.role == 'pilote' %}
             <form method="POST" action="/?uri=profil_update" class="profil-field-form">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
@@ -54,6 +96,7 @@
                     <select name="valeur" class="profil-field-input">
                         {% set promos = ['CPIA1','CPIA2','FISA A3','FISE A3','FISA A4','FISE A4','FISE A5','FISA A5'] %}
                         {% for p in promos %}
+                        {# Pré-sélectionne la promotion actuelle du pilote #}
                         <option value="{{ p }}" {% if user.promotion == p %}selected{% endif %}>{{ p }}</option>
                         {% endfor %}
                     </select>
@@ -64,7 +107,10 @@
         </div>
     </section>
 
-    {# ── Changer le mot de passe ── #}
+    {# ===== SECTION : CHANGER LE MOT DE PASSE ===== #}
+    {# Formulaire séparé pour le changement de mot de passe.
+       Requiert l'ancien mot de passe pour vérification (sécurité).
+       champ="mot_de_passe" = valeur spéciale reconnue par ProfilController::update. #}
     <section class="candidatures-section">
         <h2>Changer le mot de passe</h2>
         <form method="POST" action="/?uri=profil_update" class="profil-mdp-form">
@@ -73,10 +119,12 @@
             <div class="frow">
                 <div class="fgrp">
                     <label>Mot de passe actuel</label>
+                    {# ancien_mdp est vérifié côté serveur par password_verify() avant tout changement #}
                     <input type="password" name="ancien_mdp" required>
                 </div>
                 <div class="fgrp">
                     <label>Nouveau mot de passe</label>
+                    {# minlength="8" = 8 caractères minimum (validation HTML5 + vérification serveur) #}
                     <input type="password" name="nouveau_mdp" required minlength="8">
                 </div>
                 <div class="fgrp">
@@ -88,11 +136,15 @@
         </form>
     </section>
 
-    {# ── Candidatures & favoris (étudiant) ── #}
+    {# ===== SECTIONS ÉTUDIANT : CANDIDATURES + FAVORIS ===== #}
+    {# Ces sections ne s'affichent que pour les étudiants connectés #}
     {% if session_user and session_user.role == 'etudiant' %}
+
+    {# ── Mes candidatures ── #}
     <section class="candidatures-section">
         <h2>Mes candidatures</h2>
         {% if candidatures is empty %}
+            {# empty-state = zone vide avec message + appel à l'action #}
             <div class="empty-state">
                 <p>Vous n'avez pas encore postulé à un stage.</p>
                 <a href="/?uri=stages" class="btn-explore">Explorer les stages</a>
@@ -100,14 +152,21 @@
         {% else %}
             <div class="candidatures-list">
                 {% for c in candidatures %}
+                {# candidature-card statut-{{ statut }} = fond coloré selon le statut
+                   (statut-en_attente = beige, statut-acceptee = vert, statut-refusee = rouge) #}
                 <div class="candidature-card statut-{{ c.statut }}">
                     <div class="cand-info">
+                        {# Titre du poste visé #}
                         <span class="cand-titre">{{ c.titre }}</span>
+                        {# Nom de l'entreprise #}
                         <span class="cand-entreprise">{{ c.entreprise }}</span>
+                        {# Durée du stage — conditionnelle #}
                         {% if c.duree %}<span class="cand-duree">{{ c.duree }}</span>{% endif %}
                     </div>
                     <div class="cand-meta">
+                        {# Date de dépôt de la candidature en format français #}
                         <span class="cand-date">{{ c.date_candidature|date('d/m/Y') }}</span>
+                        {# Badge de statut : classe CSS badge-{{ statut }} (couleurs dans profil.css) #}
                         <span class="badge badge-{{ c.statut }}">
                             {% if c.statut == 'en_attente' %}En attente
                             {% elseif c.statut == 'acceptee' %}Acceptée
@@ -121,6 +180,8 @@
         {% endif %}
     </section>
 
+    {# ── Mes favoris ── #}
+    {# wishlist = offres que l'étudiant a mis en favori (bouton cœur sur la liste ou la page offre) #}
     <section class="candidatures-section">
         <h2>Mes favoris</h2>
         {% if wishlist is empty %}
@@ -131,16 +192,22 @@
         {% else %}
             <div class="candidatures-list">
                 {% for w in wishlist %}
+                {# favori-card = variante de candidature-card sans fond coloré de statut #}
                 <div class="candidature-card favori-card">
                     <div class="cand-info">
+                        {# Titre cliquable vers la page de l'offre #}
                         <a href="/?uri=offre&id={{ w.id_offre }}" class="cand-titre cand-titre-link">{{ w.titre }}</a>
                         <span class="cand-entreprise">{{ w.company }}</span>
                         {% if w.duree %}<span class="cand-duree">{{ w.duree }}</span>{% endif %}
                     </div>
                     <div class="cand-meta">
+                        {# Date d'ajout en favoris #}
                         <span class="cand-date">Ajouté le {{ w.date_ajout|date('d/m/Y') }}</span>
                         <div class="actions-row">
+                            {# Bouton pour voir l'offre #}
                             <a href="/?uri=offre&id={{ w.id_offre }}" class="btn-explore btn-explore-sm">Voir</a>
+                            {# Formulaire de retrait des favoris (POST + CSRF).
+                               Le champ "redirect" renvoie vers le profil après l'action. #}
                             <form method="post" action="/?uri=wishlist-toggle" class="form-clean">
                                 <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                                 <input type="hidden" name="id_offre" value="{{ w.id_offre }}">
@@ -156,7 +223,8 @@
     </section>
     {% endif %}
 
-    {# ── Étudiants supervisés (pilote) ── #}
+    {# ===== SECTION PILOTE : ÉTUDIANTS SUPERVISÉS ===== #}
+    {# Visible uniquement pour les pilotes — liste les étudiants qu'ils supervisent #}
     {% if session_user and session_user.role == 'pilote' %}
     <section class="candidatures-section">
         <h2>Étudiants que je supervise</h2>
@@ -170,10 +238,13 @@
                 {% for etudiant in etudiants_supervises %}
                 <div class="candidature-card">
                     <div class="cand-info">
+                        {# Nom complet de l'étudiant #}
                         <span class="cand-titre">{{ etudiant.prenom }} {{ etudiant.nom }}</span>
+                        {# Email de l'étudiant en sous-texte #}
                         <span class="cand-entreprise">{{ etudiant.email }}</span>
                     </div>
                     <div class="cand-meta">
+                        {# Lien vers la page des candidatures de l'étudiant #}
                         <a href="/?uri=etudiant_offres&id={{ etudiant.id_utilisateur }}" class="btn-explore btn-explore-sm">
                             Voir ses candidatures
                         </a>
@@ -185,7 +256,10 @@
     </section>
     {% endif %}
 
-    {# ── Zone dangereuse ── #}
+    {# ===== ZONE DANGEREUSE : SUPPRESSION DE COMPTE ===== #}
+    {# danger-zone-section = fond rouge très léger + bordure rouge.
+       La modale de confirmation est déclenchée par data-confirm-* (confirm-modal.js).
+       data-confirm-label = texte du bouton de confirmation dans la modale (ici rouge "Supprimer mon compte"). #}
     <section class="candidatures-section danger-zone-section">
         <h2>Zone dangereuse</h2>
         <p class="danger-desc">La suppression de votre compte est irréversible. Toutes vos données seront désactivées.</p>
@@ -199,5 +273,7 @@
     </section>
 
 </main>
+
+{# favoris.js gère les boutons cœur sur la page profil (retrait depuis la wishlist) #}
 <script src="/assets/js/favoris.js"></script>
 {% endblock %}

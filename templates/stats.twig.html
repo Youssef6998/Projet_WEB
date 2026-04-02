@@ -1,31 +1,55 @@
+{#
+    stats.twig.html — Tableau de bord statistiques public (accessible à tous)
+    Hérite de base.twig.html.
+    Affiche 4 indicateurs clés sous forme de cartes dans un carrousel horizontal.
+
+    Variables Twig reçues (StatsController::index) :
+      - nb_offres        : nombre total d'offres de stage en base
+      - moy_candidatures : moyenne de candidatures par offre (float, formaté en entier)
+      - repartition      : tableau des durées les plus fréquentes. Chaque objet :
+                             duree (texte, ex: "3 mois"), nb (nombre d'offres), pct (pourcentage 0-100)
+      - top_wishlist     : tableau des offres les plus mises en favoris. Chaque objet :
+                             titre, entreprise, nb_favoris (nombre de fois mis en favori)
+#}
 {% extends "base.twig.html" %}
+
+{# Bloc CSS : hérite du parent et ajoute stats.css (carrousel, cartes colorées, barres de progression) #}
 {% block css %}
 <link rel="stylesheet" href="/assets/css/variables.css">
 {{ parent() }}
 <link rel="stylesheet" href="/assets/stats.css">
 {% endblock %}
+
 {% block title %}Statistiques – Stage Finder{% endblock %}
 
 {% block content %}
 <div class="stats-page">
 
+    {# ===== INTRO ===== #}
     <div class="stats-intro">
         <h1>Statistiques des offres</h1>
         <p>Indicateurs clés sur les offres, candidatures et favoris.</p>
     </div>
 
+    {# ===== CARROUSEL DE STATISTIQUES ===== #}
+    {# stats-carousel = conteneur du carrousel (overflow: hidden).
+       carousel-track = la rangée de cartes qui se translate horizontalement via transform: translateX.
+       La navigation est gérée par stats.css + le JS natif du navigateur ou un script dans stats.css. #}
     <div class="stats-carousel" id="statsCarousel">
         <div class="carousel-track" id="statsTrack">
 
             {# ── Carte 1 : Nombre total d'offres ── #}
+            {# stat-card--marron = fond marron foncé (couleur principale du thème) #}
             <div class="stat-card stat-card--marron">
                 <span class="stat-card-label">Offres disponibles</span>
+                {# Valeur KPI principale en grand format #}
                 <span class="stat-card-value">{{ nb_offres }}</span>
                 <p class="stat-card-title">offres en base</p>
                 <p class="stat-card-sub">Nombre total d'offres de stage référencées sur la plateforme.</p>
             </div>
 
-            {# ── Carte 2 : Moyenne candidatures / offre ── #}
+            {# ── Carte 2 : Moyenne de candidatures par offre ── #}
+            {# stat-card--blue = fond bleu pour différencier visuellement les cartes #}
             <div class="stat-card stat-card--blue">
                 <span class="stat-card-label">Candidatures</span>
                 <span class="stat-card-value">{{ moy_candidatures }}</span>
@@ -33,7 +57,9 @@
                 <p class="stat-card-sub">Calculé sur l'ensemble des offres ayant reçu au moins une candidature.</p>
             </div>
 
-            {# ── Carte 3 : Répartition par durée ── #}
+            {# ── Carte 3 : Répartition des offres par durée ── #}
+            {# Affiche des barres de progression (duration-bar-fill) avec un pourcentage en largeur CSS.
+               Le style="width:{{ row.pct }}%" est généré dynamiquement par Twig pour chaque durée. #}
             <div class="stat-card stat-card--green">
                 <span class="stat-card-label">Répartition par durée</span>
                 <p class="stat-card-title">Durées de stage</p>
@@ -42,10 +68,13 @@
                 <div class="duration-list">
                     {% for row in repartition %}
                     <div class="duration-row">
+                        {# title="{{ row.duree }}" = tooltip au survol si le texte est tronqué #}
                         <span class="duration-label" title="{{ row.duree }}">{{ row.duree }}</span>
+                        {# Barre de progression : largeur = pourcentage de l'offre parmi les durées #}
                         <div class="duration-bar-track">
                             <div class="duration-bar-fill" style="width:{{ row.pct }}%"></div>
                         </div>
+                        {# Nombre absolu d'offres pour cette durée #}
                         <span class="duration-count">{{ row.nb }}</span>
                     </div>
                     {% endfor %}
@@ -55,7 +84,8 @@
                 {% endif %}
             </div>
 
-            {# ── Carte 4 : Top wishlist ── #}
+            {# ── Carte 4 : Top 10 des offres les plus mises en favoris ── #}
+            {# stat-card--amber = fond ambré/doré pour cette carte #}
             <div class="stat-card stat-card--amber">
                 <span class="stat-card-label">Favoris</span>
                 <p class="stat-card-title">Offres les plus ajoutées en favoris</p>
@@ -64,11 +94,14 @@
                 <div class="wishlist-list">
                     {% for item in top_wishlist %}
                     <div class="wishlist-row">
+                        {# Rang affiché avec zéro initial si < 10 (ex: "01", "09", "10").
+                           loop.index = numéro d'itération Twig (commence à 1). #}
                         <span class="wishlist-rank wishlist-rank--{{ loop.index }}">{{ loop.index < 10 ? '0' ~ loop.index : loop.index }}</span>
                         <div class="wishlist-info">
                             <div class="wishlist-titre">{{ item.titre }}</div>
                             <div class="wishlist-entreprise">{{ item.entreprise }}</div>
                         </div>
+                        {# Nombre de fois mis en favoris avec pluriel conditionnel #}
                         <span class="wishlist-count">{{ item.nb_favoris }} favori{{ item.nb_favoris > 1 ? 's' : '' }}</span>
                     </div>
                     {% endfor %}
@@ -78,11 +111,16 @@
                 {% endif %}
             </div>
 
-        </div>{# /carousel-track #}
+        </div>{# /carousel-track : fin de la rangée de cartes #}
 
+        {# ── Contrôles de navigation du carrousel ── #}
+        {# carousel-btn = bouton fléché (< et >) pour défiler manuellement.
+           carousel-dots = indicateurs de position (points) — point actif = classe "active".
+           aria-label = texte alternatif pour les lecteurs d'écran (accessibilité). #}
         <div class="carousel-controls">
             <button class="carousel-btn" id="statsPrev" aria-label="Précédent">&#8249;</button>
             <div class="carousel-dots" id="statsDots">
+                {# 4 points, un par carte — la carte 1 est active par défaut #}
                 <button class="carousel-dot active" aria-label="Carte 1"></button>
                 <button class="carousel-dot" aria-label="Carte 2"></button>
                 <button class="carousel-dot" aria-label="Carte 3"></button>

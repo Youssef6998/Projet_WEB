@@ -1,26 +1,54 @@
+{#
+    entreprise_list.twig.html — Gestion des entreprises partenaires (CRUD)
+    Hérite de base.twig.html.
+    Accessible aux admins et pilotes uniquement.
+
+    Variables Twig reçues (EntrepriseController::list) :
+      - entreprises  : tableau d'objets entreprise. Chaque objet contient :
+                         id_entreprise, nom, description, email_contact,
+                         telephone_contact, ville, nb_offres
+      - total        : nombre total d'entreprises correspondant au filtre
+      - totalPages   : nombre total de pages
+      - currentPage  : numéro de la page courante
+      - nom          : filtre de recherche actif sur le nom
+      - success      : message de confirmation ('supprime', 'cree')
+      - csrf_token   : jeton CSRF pour les formulaires de suppression
+      - session_user : utilisateur connecté (role: 'admin' ou 'pilote')
+#}
 {% extends "base.twig.html" %}
 {% block title %}Gestion des entreprises – Stage Finder{% endblock %}
+
 {% block content %}
 <div class="page">
 
+    {# ===== BARRE DE RECHERCHE ET EN-TÊTE ===== #}
     <div class="search-card search-card--mb">
         <div class="search-head">
+            {# Badge rôle #}
             <span class="pill pill-r">{% if session_user.role == 'admin' %}Administration{% else %}Pilote{% endif %}</span>
+            {# Compteur total avec pluriel conditionnel #}
             <span class="pill pill-count">{{ total }} entreprise{{ total != 1 ? 's' : '' }}</span>
         </div>
+
+        {# Titre + bouton de création #}
         <div class="list-header">
             <div>
                 <h2 class="list-title">Gestion des Entreprises</h2>
                 <p class="list-subtitle">Créez, modifiez et supprimez les entreprises partenaires.</p>
             </div>
+            {# Bouton de création d'une nouvelle entreprise #}
             <a href="/?uri=entreprise_create" class="btn btn-fill">+ Ajouter une entreprise</a>
         </div>
+
+        {# Formulaire de recherche par nom — méthode GET pour URL filtrable #}
         <form action="/?uri=entreprise_list" method="get" class="search-form">
             <input type="hidden" name="uri" value="entreprise_list">
+            {# search-grid-auto = grille CSS avec auto-fit (champ + bouton côte à côte) #}
             <div class="search-grid-auto">
                 <div class="field">
                     <label>Rechercher par nom</label>
                     <div class="field-input">
+                        {# value="{{ nom }}" restitue la valeur saisie après recherche #}
                         <input name="nom" value="{{ nom }}" class="cases" placeholder="Ex : TechCorp, DataSoft…">
                     </div>
                 </div>
@@ -29,6 +57,8 @@
         </form>
     </div>
 
+    {# ===== MESSAGES DE CONFIRMATION ===== #}
+    {# Affichage conditionnel selon la valeur du paramètre GET 'success' passé après redirection #}
     {% if success == 'supprime' %}
     <div class="alert alert-success">L'entreprise a bien été supprimée.</div>
     {% endif %}
@@ -36,27 +66,45 @@
     <div class="alert alert-success">L'entreprise a bien été créée.</div>
     {% endif %}
 
+    {# ===== LISTE DES ENTREPRISES ===== #}
     <div class="stages-list">
         {% for e in entreprises %}
         <article class="stage-card">
+
+            {# Colonne gauche : informations de l'entreprise #}
             <div class="stage-info">
                 <div class="stage-top">
+                    {# Nom en style "entreprise" (petites majuscules) #}
                     <span class="stage-company">{{ e.nom }}</span>
+                    {# Nombre d'offres actives avec pluriel #}
                     <span class="stage-type">{{ e.nb_offres }} offre{{ e.nb_offres != 1 ? 's' : '' }}</span>
+                    {# Ville — conditionnelle #}
                     {% if e.ville %}
                     <span class="card-location">📍 {{ e.ville }}</span>
                     {% endif %}
                 </div>
+
+                {# Description tronquée à 120 caractères #}
                 {% if e.description %}
                 <p class="stage-desc">{{ e.description|slice(0,120) }}{% if e.description|length > 120 %}…{% endif %}</p>
                 {% endif %}
+
+                {# Coordonnées : email + téléphone séparés par un point médian #}
                 <p class="stage-desc">
                     {{ e.email_contact }}
                     {% if e.telephone_contact %} · {{ e.telephone_contact }}{% endif %}
                 </p>
             </div>
+
+            {# Colonne droite : actions de gestion #}
             <div class="stage-right">
+                {# Lien vers le formulaire de modification de l'entreprise #}
                 <a href="/?uri=entreprise_update&id={{ e.id_entreprise }}" class="btn btn-outline">Modifier</a>
+
+                {# Formulaire de suppression avec modale de confirmation.
+                   Les attributs data-confirm-* sont lus par confirm-modal.js.
+                   Attention : la suppression d'une entreprise entraîne la suppression
+                   de toutes ses offres ET des candidatures associées (cascade BDD). #}
                 <form method="POST" action="/?uri=entreprise_delete"
                       data-confirm-title="Supprimer l'entreprise"
                       data-confirm-name="{{ e.nom }}"
@@ -66,12 +114,15 @@
                     <button type="submit" class="btn btn-ghost btn-danger">Supprimer</button>
                 </form>
             </div>
+
         </article>
         {% else %}
         <p class="liste-vide">Aucune entreprise trouvée.</p>
         {% endfor %}
     </div>
 
+    {# ===== PAGINATION ===== #}
+    {# Le paramètre nom est conservé pour ne pas perdre le filtre en changeant de page #}
     <div class="pagination">
         {% if currentPage > 1 %}
         <a href="/?uri=entreprise_list&page={{ currentPage - 1 }}&nom={{ nom }}" class="page-btn arrow">←</a>

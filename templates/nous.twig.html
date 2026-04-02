@@ -1,7 +1,16 @@
+{#
+    nous.twig.html — Page "À propos" de Stage Finder
+    Hérite de base.twig.html.
+    Accessible à tous (visiteurs, étudiants, admins, pilotes).
+    Contenu statique : mission, statistiques, équipe, valeurs.
+
+    Aucune variable Twig reçue du contrôleur (page purement statique).
+#}
 {% extends "base.twig.html" %}
 
 {% block title %}Stage Finder – À propos{% endblock %}
 
+{# Bloc CSS : charge nous.css (about-hero, team-grid, values-grid, stat-item) #}
 {% block css %}
 <link rel="stylesheet" href="/assets/css/variables.css">
 <link rel="stylesheet" href="/assets/style-stage.css">
@@ -9,13 +18,17 @@
 {% endblock %}
 
 {% block content %}
+{# card = carte blanche avec ombre portée, contient toute la page #}
 <div class="card">
 
+    {# ===== EN-TÊTE DE LA PAGE ===== #}
+    {# about-hero = section centrale avec grand titre et sous-titre (défini dans nous.css) #}
     <div class="about-hero">
         <h1>À propos de Stage Finder</h1>
         <p>Une plateforme conçue pour simplifier la mise en relation entre étudiants et entreprises.</p>
     </div>
 
+    {# ===== SECTION MISSION ===== #}
     <section class="mission">
         <h2>Notre mission</h2>
         <p>
@@ -28,6 +41,9 @@
         </p>
     </section>
 
+    {# ===== STATISTIQUES VISUELLES ===== #}
+    {# Chiffres clés statiques (marketing) affichés en grande typographie.
+       stats = flex row avec 3 colonnes (défini dans nous.css, différent du stats.css des KPI BDD). #}
     <section class="stats">
         <div class="stat-item">
             <span class="stat-number">+500</span>
@@ -43,19 +59,26 @@
         </div>
     </section>
 
+    {# ===== ÉQUIPE ===== #}
+    {# team-grid = grille CSS de cartes membres de l'équipe.
+       Chaque team-card contient : avatar initiales, nom, rôle, description.
+       Les avatars sont des initiales dans un cercle coloré (pas d'images uploadées). #}
     <section class="team-grid">
+        {# Membre 1 : CEO #}
         <div class="team-card">
             <div class="team-photo">YN</div>
             <h3>Youssef Najib</h3>
             <p class="team-role">CEO &amp; Fondateur</p>
             <p class="team-desc">10 ans d'expérience en RH et recrutement dans le secteur technologique</p>
         </div>
+        {# Membre 2 : Directeur Technique #}
         <div class="team-card">
             <div class="team-photo">RK</div>
             <h3>Kraiss Ryad</h3>
             <p class="team-role">Directeur Technique</p>
             <p class="team-desc">Spécialiste en développement web et architectures applicatives</p>
         </div>
+        {# Membre 3 : Partenariats #}
         <div class="team-card">
             <div class="team-photo">NV</div>
             <h3>Nathan Vellaissamy-Le Corneur</h3>
@@ -64,9 +87,14 @@
         </div>
     </section>
 
+    {# ===== VALEURS ===== #}
+    {# values-grid = grille 2×2 de cartes valeurs avec icône SVG + titre + description.
+       Les icônes sont des SVG inline (pas de font d'icônes externe requise). #}
     <section class="values">
         <h2>Nos valeurs</h2>
         <div class="values-grid">
+
+            {# Valeur 1 : Simplicité — icône de couches empilées (layers) #}
             <div class="value-item">
                 <div class="value-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -76,6 +104,8 @@
                 <h3>Simplicité</h3>
                 <p>Une interface épurée pour des résultats rapides et pertinents</p>
             </div>
+
+            {# Valeur 2 : Précision — icône de cercles concentriques (cible) #}
             <div class="value-item">
                 <div class="value-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -85,6 +115,8 @@
                 <h3>Précision</h3>
                 <p>Un matching efficace entre les profils étudiants et les besoins des entreprises</p>
             </div>
+
+            {# Valeur 3 : Confiance — icône de bouclier (sécurité) #}
             <div class="value-item">
                 <div class="value-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -94,6 +126,8 @@
                 <h3>Confiance</h3>
                 <p>Des processus transparents et des données sécurisées à chaque étape</p>
             </div>
+
+            {# Valeur 4 : Communauté — icône de groupe de personnes #}
             <div class="value-item">
                 <div class="value-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -103,6 +137,7 @@
                 <h3>Communauté</h3>
                 <p>Un réseau dynamique qui favorise les échanges entre étudiants et professionnels</p>
             </div>
+
         </div>
     </section>
 

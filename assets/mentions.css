@@ -1,18 +1,46 @@
+/* ═══════════════════════════════════════════════════════════════════
+   mentions.css — Page des mentions légales
+   Utilisé par : mentions.twig.html
+   Affiche les informations légales du site dans une carte centrée.
+   Dépend de : /assets/css/variables.css (--marron*, --dark, --text-muted...)
+   ═══════════════════════════════════════════════════════════════════ */
 
+
+/* ===== CARTE PRINCIPALE ===== */
+
+/* Boîte blanche semi-transparente qui contient tout le texte des mentions légales.
+   margin-top/bottom: 40px = espacement vertical avec la navigation et le footer.
+   border-radius: 18px = coins arrondis caractéristiques du design.
+   box-shadow = ombre portée légère pour la profondeur. */
 .card {
   background: rgba(255, 255, 255, 0.95);
   border-radius: 18px;
   margin-top: 40px;
   margin-bottom: 40px;
   padding: 40px;
-  box-shadow: 0 8px 30px rgba(124, 61, 18, 0.07);
-  border: 1.5px solid var(--marron-bordure);
+  box-shadow: 0 8px 30px rgba(124, 61, 18, 0.07); /* ombre très légère teintée marron */
+  border: 1.5px solid var(--marron-bordure); /* bordure subtile de la palette */
 }
 
+/* Titre principal de la page des mentions légales */
 .card h1 { margin-bottom: 20px; font-size: 28px; color: var(--dark); }
 
+
+/* ===== SECTIONS DES MENTIONS ===== */
+
+/* Chaque section (ex: Éditeur, Hébergeur, Données personnelles...) */
 .section { margin-top: 30px; }
+
+/* Titre de section en marron vif pour la hiérarchie visuelle */
 .section h2 { font-size: 18px; margin-bottom: 10px; color: var(--marron-vif); }
+
+/* Paragraphe de la section : hauteur de ligne généreuse (1.6) pour la lisibilité.
+   color: var(--text-muted) = gris-marron atténué pour les textes descriptifs */
 .section p { line-height: 1.6; color: var(--text-muted); font-size: 15px; }
 
+
+/* ===== FOOTER ===== */
+
+/* Ligne de séparation au-dessus du footer.
+   --marron-fond = fond très subtil marron semi-transparent */
 footer { border-top: 1px solid var(--marron-fond); }

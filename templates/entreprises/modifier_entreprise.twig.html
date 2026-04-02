@@ -1,37 +1,67 @@
+{#
+    modifier_entreprise.twig.html — Formulaire de modification d'une entreprise partenaire
+    Hérite de base.twig.html.
+    Accessible aux admins et pilotes uniquement.
+
+    Variables Twig reçues (EntrepriseController::update) :
+      - entreprise  : objet entreprise à modifier. Propriétés :
+                        id_entreprise, nom, ville, adresse, email_contact,
+                        telephone_contact, description
+      - erreur      : message d'erreur de validation côté serveur
+      - csrf_token  : jeton CSRF pour les deux formulaires (modification + suppression)
+#}
 {% extends "base.twig.html" %}
+
+{# Bloc CSS : hérite du parent et ajoute modifier_entreprise.css (styles spécifiques au formulaire) #}
 {% block css %}
 <link rel="stylesheet" href="/assets/css/variables.css">
 {{ parent() }}
 <link rel="stylesheet" href="/assets/modifier_entreprise.css">
 {% endblock %}
+
 {% block title %}Modifier l'entreprise – Stage Finder{% endblock %}
+
 {% block content %}
 <div class="page">
 
+    {# ===== EN-TÊTE DE LA PAGE ===== #}
+    {# Style différent de mgmt-header : utilise intro-page (même style que l'inscription) #}
     <div class="intro-page">
+        {# Étiquette de contexte #}
         <div class="intro-small-titre">Entreprise</div>
         <h1 class="titre-principal">Modifier l'entreprise</h1>
+        {# Affiche le nom de l'entreprise en gras pour contextualiser l'action #}
         <p class="sous-titre">Mettez à jour les informations de <strong>{{ entreprise.nom }}</strong>.</p>
     </div>
 
+    {# register-card = carte blanche centrée (même style que le formulaire d'inscription) #}
     <div class="register-card">
+        {# Lien de retour vers la liste de gestion des entreprises #}
         <div class="back-btn-container">
             <a href="/?uri=entreprise_list" class="btn-back">← Retour</a>
         </div>
 
+        {# Message d'erreur de validation (ex: "L'email est invalide") #}
         {% if erreur %}
         <div class="alert alert-error">{{ erreur }}</div>
         {% endif %}
 
+        {# ===== FORMULAIRE DE MODIFICATION ===== #}
         <form method="POST" action="/?uri=entreprise_update">
+            {# Jeton CSRF anti-falsification #}
             <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            {# ID de l'entreprise à mettre à jour en BDD #}
             <input type="hidden" name="id" value="{{ entreprise.id_entreprise }}">
 
+            {# ── Nom de l'entreprise ── #}
             <div class="input-group">
                 <label>Nom de l'entreprise *</label>
+                {# Pré-rempli avec la valeur actuelle de l'entreprise #}
                 <input type="text" name="nom" value="{{ entreprise.nom }}" required>
             </div>
 
+            {# ── Ligne Ville + Adresse ── #}
+            {# row = flex row (deux champs côte à côte sur bureau, défini dans modifier_entreprise.css) #}
             <div class="row">
                 <div class="input-group">
                     <label>Ville</label>
@@ -43,36 +73,50 @@
                 </div>
             </div>
 
+            {# ── Ligne Email + Téléphone ── #}
             <div class="row">
                 <div class="input-group">
+                    {# type="email" = validation native du navigateur #}
                     <label>Email de contact *</label>
                     <input type="email" name="email" value="{{ entreprise.email_contact }}" required>
                 </div>
                 <div class="input-group">
+                    {# type="tel" = clavier numérique sur mobile #}
                     <label>Téléphone</label>
                     <input type="tel" name="telephone" value="{{ entreprise.telephone_contact }}">
                 </div>
             </div>
 
+            {# ── Description ── #}
+            {# resize-v = redimensionnement vertical uniquement #}
             <div class="input-group">
                 <label>Description</label>
                 <textarea name="description" rows="3" class="resize-v">{{ entreprise.description }}</textarea>
             </div>
 
+            {# Bouton de sauvegarde avec icône SVG (disquette de sauvegarde) #}
             <button type="submit" class="btn-primary">
+                {# Icône SVG représentant une disquette — dessinée inline pour éviter une dépendance externe #}
                 <svg viewBox="0 0 20 20"><path d="M17 3H6L3 6v11a1 1 0 0 0 1 1h13a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1z"/><path d="M13 3v5H7V3"/><path d="M7 17v-6h6v6"/></svg>
                 Enregistrer les modifications
             </button>
         </form>
 
+        {# ===== ZONE DE DANGER : SUPPRESSION ===== #}
+        {# Visuellement séparée et encadrée en rouge (via modifier_entreprise.css).
+           Les attributs data-confirm-* sont lus par confirm-modal.js pour afficher
+           une modale de confirmation avant de soumettre ce formulaire.
+           Avertissement : suppression en cascade de toutes les offres et candidatures. #}
         <div class="danger-zone">
             <p>Zone dangereuse</p>
             <form method="POST" action="/?uri=entreprise_delete"
                   data-confirm-title="Supprimer l'entreprise"
                   data-confirm-name="{{ entreprise.nom }}"
                   data-confirm-detail="Toutes ses offres et les candidatures associées seront définitivement supprimées.">
+                {# CSRF requis même dans ce formulaire de suppression #}
                 <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                 <input type="hidden" name="id" value="{{ entreprise.id_entreprise }}">
+                {# btn-danger = bouton rouge (défini dans modifier_entreprise.css) #}
                 <button type="submit" class="btn-danger">Supprimer cette entreprise</button>
             </form>
         </div>

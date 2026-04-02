@@ -1,36 +1,73 @@
-/* Dépend de /assets/css/variables.css chargé via base.twig.html */
+/* ═══════════════════════════════════════════════════════════════════
+   creer_compte_pilote.css — Formulaire de création de compte pilote
+   Utilisé par : creer_compte_pilote.twig.html
+   Permet à un administrateur de créer un compte pilote (enseignant référent).
+   Dépend de : /assets/css/variables.css (--marron*, --dark, --text-muted...)
+   ═══════════════════════════════════════════════════════════════════ */
+
+
+/* ===== RESET GLOBAL ===== */
+
+/* Réinitialisation du modèle de boîte pour tous les éléments et pseudo-éléments.
+   margin: 0 supprime les marges par défaut des navigateurs. */
 *, *::before, *::after {
     box-sizing: border-box;
     margin: 0;
 }
+
+/* Supprime le soulignement des liens et hérite leur couleur du parent */
 a {
     text-decoration: none;
     color: inherit;
 }
+
+
+/* ===== MISE EN PAGE DE LA PAGE ===== */
+
+/* Conteneur principal centré avec largeur maximale de 700px.
+   padding: 30px 20px ajoute de l'espace vertical et horizontal. */
 .page {
     width: 100%;
     max-width: 700px;
     margin: 0 auto;
     padding: 30px 20px;
 }
+
+
+/* ===== EN-TÊTE DE LA PAGE ===== */
+
+/* Bloc d'introduction centré au-dessus du formulaire */
 .intro-page {
     text-align: center;
     margin-bottom: 30px;
 }
+
+/* Étiquette colorée en marron au-dessus du titre principal (ex: "NOUVEAU PILOTE") */
 .intro-small-titre {
     font-size: 13px;
     color: var(--marron);
     font-weight: 600;
     margin-bottom: 6px;
 }
+
+/* Titre principal de la page */
 .titre-principal {
     font-size: 28px;
     margin-bottom: 8px;
 }
+
+/* Sous-titre descriptif en couleur atténuée (--text-muted = gris-marron) */
 .sous-titre {
     color: var(--text-muted);
     font-size: 14px;
 }
+
+
+/* ===== CARTE DU FORMULAIRE ===== */
+
+/* Carte blanche semi-transparente qui contient le formulaire.
+   position: relative est nécessaire pour le bouton retour positionné en absolu.
+   animation: fadeIn = apparition douce au chargement de la page. */
 .register-card {
     background: rgba(255, 255, 255, 0.96);
     width: 100%;
@@ -38,35 +75,54 @@ a {
     border-radius: 1.25rem;
     border: 1.5px solid var(--marron-bordure);
     box-shadow: 0 16px 48px rgba(124, 61, 18, 0.09);
-    position: relative;
+    position: relative; /* ancrage pour .back-btn-container */
     animation: fadeIn .5s ease;
 }
+
+
+/* ===== BOUTON RETOUR ===== */
+
+/* Positionné en absolu dans le coin haut-gauche de la carte.
+   Fonctionne car .register-card est en position: relative. */
 .back-btn-container {
     position: absolute;
     top: 20px;
     left: 20px;
 }
+
+/* Petit bouton "< Retour" avec bordure discrète */
 .btn-back {
     padding: 6px 10px;
     border-radius: 8px;
     border: 1.5px solid var(--marron-bordure);
     font-size: 13px;
     color: var(--text-muted);
-    transition: .2s;
+    transition: .2s; /* animation de tous les changements de style au hover */
 }
+
+/* Au survol : bordure et texte en marron principal */
 .btn-back:hover {
     border-color: var(--marron);
     color: var(--marron);
 }
+
+
+/* ===== FORMULAIRE ===== */
+
+/* Le formulaire empile ses champs verticalement (flex column) */
 form {
     display: flex;
     flex-direction: column;
 }
+
+/* Groupe label + champ de saisie */
 .input-group {
     display: flex;
     flex-direction: column;
     margin-bottom: 18px;
 }
+
+/* Label en petites majuscules atténuées au-dessus du champ */
 .input-group label {
     font-size: .68rem;
     font-weight: 600;
@@ -74,6 +130,10 @@ form {
     letter-spacing: .02em;
     margin-bottom: 6px;
 }
+
+/* Style des champs texte et listes déroulantes.
+   background: #fafafa signale visuellement que c'est interactif.
+   transition: .2s anime la bordure et l'ombre au focus. */
 .input-group input,
 .input-group select {
     padding: .65rem .85rem;
@@ -83,41 +143,74 @@ form {
     background: #fafafa;
     color: var(--dark);
     transition: .2s;
-    font-family: inherit;
+    font-family: inherit; /* hérite de DM Sans défini sur body */
 }
+
+/* Quand le champ est focalisé : bordure marron, fond blanc, anneau d'ombre.
+   outline: none supprime le contour bleu natif du navigateur. */
 .input-group input:focus,
 .input-group select:focus {
     border-color: var(--marron);
     background: white;
     outline: none;
-    box-shadow: 0 0 0 3px rgba(124, 61, 18, 0.1);
+    box-shadow: 0 0 0 3px rgba(124, 61, 18, 0.1); /* anneau de focus semi-transparent */
 }
+
+
+/* ===== LIGNE DE CHAMPS CÔTE À CÔTE ===== */
+
+/* Conteneur flex horizontal pour grouper 2 champs sur la même ligne.
+   gap: 14px espace les champs entre eux. */
 .row {
     display: flex;
     gap: 14px;
 }
+
+/* Chaque .input-group dans une .row prend la même place (flex: 1 = parts égales) */
 .row .input-group {
     flex: 1;
 }
+
+
+/* ===== ALERTES ===== */
+
+/* Style commun pour les messages de retour (succès/erreur) */
 .alert {
     padding: 12px 16px;
     border-radius: 8px;
     font-size: 14px;
     margin-bottom: 16px;
 }
+
+/* Erreur : fond rouge pâle, texte rouge, bordure rose.
+   --statut-err-fond, --statut-err, --statut-err-bordure définis dans variables.css */
 .alert-error {
     background: var(--statut-err-fond);
     color: var(--statut-err);
     border: 1.5px solid var(--statut-err-bordure);
 }
+
+
+/* ===== CONDITIONS D'UTILISATION ===== */
+
+/* Texte "J'accepte les CGU" avec case à cocher */
 .terms {
     font-size: 13px;
     color: var(--text-muted);
     margin: 10px 0 20px;
 }
+
+/* Espace entre la case à cocher et le texte */
 .terms input {
     margin-right: 6px;
 }
+
+
+/* ===== BOUTON DE SOUMISSION ===== */
+
+/* Bouton pleine largeur avec dégradé marron diagonal.
+   box-shadow donne une profondeur visuelle.
+   transition anime le changement d'ombre et la translation au hover. */
 .btn-primary {
     width: 100%;
     padding: .85rem;
@@ -132,31 +225,53 @@ form {
     box-shadow: 0 4px 16px rgba(124, 61, 18, 0.28);
     transition: box-shadow .15s, transform .15s;
 }
+
+/* Au survol : ombre agrandie + légère montée du bouton */
 .btn-primary:hover {
     box-shadow: 0 8px 24px rgba(124, 61, 18, 0.42);
     transform: translateY(-1px);
 }
+
+
+/* ===== LIEN VERS LA CONNEXION ===== */
+
+/* Texte centré en bas : "Déjà un compte ? Se connecter" */
 .login-link {
     margin-top: 22px;
     text-align: center;
     font-size: 14px;
     color: var(--text-muted);
 }
+
+/* Lien en marron gras */
 .login-link a {
     color: var(--marron);
     font-weight: 600;
 }
+
 .login-link a:hover {
     text-decoration: underline;
 }
+
+
+/* ===== MEDIA QUERY — MOBILE (< 650px) ===== */
+
+/* Sur petits écrans : padding réduit et ligne de champs empilée verticalement */
 @media (max-width: 650px) {
     .register-card {
         padding: 35px 25px;
     }
+    /* Les champs côte à côte passent en colonne sur mobile */
     .row {
         flex-direction: column;
     }
 }
+
+
+/* ===== ANIMATION D'ENTRÉE ===== */
+
+/* La carte apparaît en glissant depuis le bas et montant en opacité en 0.5 seconde.
+   Utilisée via animation: fadeIn .5s ease sur .register-card */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(15px); }
     to   { opacity: 1; transform: translateY(0); }

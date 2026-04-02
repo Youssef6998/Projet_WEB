@@ -1,13 +1,34 @@
+{#
+    Avis.twig.html — Formulaire de création d'une évaluation d'entreprise
+    Hérite de base.twig.html.
+    Accessible aux admins et pilotes uniquement.
+    Permet de noter une entreprise sur 5 étoiles et de décrire les attendus du stage.
+
+    Variables Twig reçues (EvaluationController::create) :
+      - entreprises : tableau d'objets entreprise disponibles pour le sélecteur.
+                      Chaque objet contient : id_entreprise, nom
+      - success     : booléen — true si l'évaluation vient d'être enregistrée avec succès
+      - erreur      : message d'erreur de validation côté serveur
+      - old         : tableau des valeurs saisies avant une erreur — pour repopuler les champs.
+                      Clés : id_entreprise, note, attendus
+      - csrf_token  : jeton CSRF pour sécuriser la soumission POST
+#}
 {% extends "base.twig.html" %}
+
+{# Bloc CSS : hérite du parent et ajoute avis.css (sélecteur d'étoiles interactif) #}
 {% block css %}
 <link rel="stylesheet" href="/assets/css/variables.css">
 {{ parent() }}
 <link rel="stylesheet" href="/assets/avis.css">
 {% endblock %}
+
 {% block title %}Évaluer une entreprise – Stage Finder{% endblock %}
+
 {% block content %}
+{# mgmt-wrap = conteneur principal centré des pages de gestion #}
 <div class="mgmt-wrap">
 
+    {# ===== EN-TÊTE DE LA PAGE ===== #}
     <div class="mgmt-header">
         <span class="mgmt-eyebrow">Évaluation</span>
         <h1>Évaluer une entreprise</h1>
@@ -15,19 +36,28 @@
     </div>
 
     <div class="mgmt-card">
+        {# Lien de retour vers la liste des évaluations #}
         <a href="/?uri=evaluation_list" class="mgmt-back">← Voir les évaluations</a>
 
+        {# Message de confirmation affiché après un enregistrement réussi.
+           success est passé par le contrôleur après une redirection POST → GET. #}
         {% if success %}
         <div class="alert alert-success">Évaluation enregistrée avec succès.</div>
         {% endif %}
 
+        {# Message d'erreur de validation (ex: "Veuillez sélectionner une entreprise") #}
         {% if erreur %}
         <div class="alert alert-error">{{ erreur }}</div>
         {% endif %}
 
+        {# ===== FORMULAIRE D'ÉVALUATION ===== #}
         <form method="POST" action="/?uri=avis_create">
+            {# Jeton CSRF anti-falsification #}
             <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
 
+            {# ── Sélecteur Entreprise ── #}
+            {# Liste déroulante générée depuis la BDD.
+               old.id_entreprise ?? '' permet de pré-sélectionner l'entreprise après une erreur. #}
             <div class="fgrp">
                 <label>Entreprise *</label>
                 <select name="id_entreprise" required>
@@ -41,25 +71,40 @@
                 </select>
             </div>
 
+            {# ── Sélecteur d'étoiles ── #}
+            {# Les étoiles sont des boutons radio CSS déguisés.
+               La boucle va de 5 à 1 (ordre inversé) car en CSS, le sélecteur ~ (sibling)
+               permet de colorier les étoiles suivantes quand on survole/sélectionne une étoile.
+               Avec l'ordre inversé (5 → 1) et flex-direction: row-reverse, l'effet visuel est correct.
+               old.note ?? '' pré-coche la note saisie avant une erreur. #}
             <div class="fgrp">
                 <label>Note *</label>
                 <div class="stars">
                     {% for i in [5,4,3,2,1] %}
                     <label class="star-label">
+                        {# required sur le premier radio suffit (tous partagent le même name) #}
                         <input type="radio" name="note" value="{{ i }}"
                                {% if (old.note ?? '') == i %}checked{% endif %} required>
+                        {# L'étoile ★ s'affiche avec la couleur marron quand le radio est coché
+                           (géré par avis.css via input:checked ~ .star) #}
                         <span class="star">★</span>
                     </label>
                     {% endfor %}
                 </div>
             </div>
 
+            {# ── Champ Attendus du stage ── #}
+            {# Champ texte libre décrivant les missions confiées, compétences attendues, contexte.
+               Ce champ alimente le champ "dernier_attendus" visible dans la liste des évaluations.
+               rows="6" = hauteur initiale visible. resize-v = redimensionnement vertical uniquement.
+               old.attendus ?? '' = repopule la valeur après une erreur de validation. #}
             <div class="fgrp">
                 <label for="attendus">Détail des attendus du stage réalisé *</label>
                 <textarea id="attendus" name="attendus" rows="6" class="resize-v"
                           placeholder="Décrivez les missions confiées, les compétences attendues, le contexte du stage…">{{ old.attendus ?? '' }}</textarea>
             </div>
 
+            {# Bouton de soumission #}
             <button type="submit" class="mgmt-submit">Enregistrer l'évaluation</button>
 
         </form>

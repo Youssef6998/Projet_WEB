@@ -1,46 +1,70 @@
 <!DOCTYPE html>
+{#
+    connexion.twig.html — Page de connexion
+    Ce template est autonome (n'étend PAS base.twig.html) car il a son propre layout centré.
+    Affiche un formulaire de connexion par email + mot de passe.
+
+    Variables Twig reçues du contrôleur (AuthController::login) :
+      - erreur     : message d'erreur à afficher (mauvais mot de passe, email inconnu, etc.)
+      - csrf_token : jeton CSRF à inclure dans le formulaire pour éviter les attaques CSRF
+#}
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <title>Connexion</title>
+    {# Chargement de la palette de couleurs avant le CSS spécifique #}
     <link rel="stylesheet" href="/assets/css/variables.css">
+    {# CSS dédié à la page de connexion #}
     <link rel="stylesheet" href="/assets/connexion.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
     <div class="container">
+    {# Carte de connexion : boîte blanche centrée avec animation d'entrée #}
     <div class="login-card">
-    <div class="back-btn-container">
-        <a href="/?uri=home" class="btn-back">
-            ← Retour
-        </a>
-    </div>
 
-            <h1>Connexion</h1>
-
-            {% if erreur %}
-                <div class="alert alert-error">{{ erreur }}</div>
-            {% endif %}
-
-            <form method="POST" action="/?uri=login">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-                <div class="input-group">
-                    <label>Email</label>
-                    <input type="email" name="email" placeholder="Votre email" required>
-                </div>
-
-                <div class="input-group">
-                    <label>Mot de passe</label>
-                    <input type="password" name="motdepasse" placeholder="Votre mot de passe" required>
-                </div>
-
-                <button type="submit" class="btn-primary">Se connecter</button>
-
-                <p class="register">
-                    Pas encore de compte ? <a href="/?uri=register">Créer un compte</a>
-                </p>
-            </form>
+        {# Bouton retour positionné en absolu dans le coin haut-gauche de la carte #}
+        <div class="back-btn-container">
+            <a href="/?uri=home" class="btn-back">
+                ← Retour
+            </a>
         </div>
+
+        <h1>Connexion</h1>
+
+        {# Affichage conditionnel du message d'erreur (ex: "Email ou mot de passe incorrect") #}
+        {% if erreur %}
+            <div class="alert alert-error">{{ erreur }}</div>
+        {% endif %}
+
+        {# Formulaire de connexion — méthode POST vers le contrôleur AuthController::login #}
+        <form method="POST" action="/?uri=login">
+
+            {# Champ caché CSRF : protège contre les attaques de falsification de requête.
+               La valeur est vérifiée côté serveur avant de traiter la connexion. #}
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+            {# Champ email — type="email" déclenche la validation native du navigateur #}
+            <div class="input-group">
+                <label>Email</label>
+                <input type="email" name="email" placeholder="Votre email" required>
+            </div>
+
+            {# Champ mot de passe — type="password" masque la saisie #}
+            <div class="input-group">
+                <label>Mot de passe</label>
+                <input type="password" name="motdepasse" placeholder="Votre mot de passe" required>
+            </div>
+
+            {# Bouton de soumission du formulaire #}
+            <button type="submit" class="btn-primary">Se connecter</button>
+
+            {# Lien vers la page d'inscription pour les nouveaux utilisateurs #}
+            <p class="register">
+                Pas encore de compte ? <a href="/?uri=register">Créer un compte</a>
+            </p>
+        </form>
+    </div>
     </div>
 </body>
 </html>

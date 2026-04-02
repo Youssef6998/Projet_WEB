@@ -1,51 +1,114 @@
-/* ─── Évaluations sur la page entreprise ─── */
+/* ═══════════════════════════════════════════════════════════════════
+   evaluation.css — Composant d'évaluations / avis sur les entreprises
+   Utilisé par : entreprise.twig.html (liste + formulaire d'avis),
+                 pages de gestion admin (liste des évaluations)
+   Dépend de : /assets/css/variables.css (--marron*, --dark, --text-muted...)
+   ═══════════════════════════════════════════════════════════════════ */
+
+
+/* ===== EN-TÊTE DE SECTION ÉVALUATIONS ===== */
+
+/* Barre horizontale : titre à gauche, bouton/action à droite.
+   justify-content: space-between écarte les deux côtés aux extrémités. */
 .eval-section-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 1rem;
 }
+
+/* Annule la marge du titre de section quand il est dans l'en-tête */
 .eval-section-header .section-title { margin: 0; }
 
+
+/* ===== LISTE DES ÉVALUATIONS ===== */
+
+/* Colonne flex : les items s'empilent avec un espace de 0.75rem entre eux */
 .eval-list { display: flex; flex-direction: column; gap: .75rem; }
 
+
+/* ===== CARTE D'UNE ÉVALUATION ===== */
+
+/* Chaque avis est dans une petite carte avec fond crème et bordure subtile.
+   --marron-clair = fond beige très clair.
+   border-radius: .75rem = coins légèrement arrondis. */
 .eval-item {
     border: 1.5px solid var(--marron-bordure);
     border-radius: .75rem;
     padding: .85rem 1rem;
     background: var(--marron-clair);
 }
+
+/* En-tête de la carte : auteur à gauche, date à droite */
 .eval-item-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: .35rem;
 }
+
+/* Nom de l'auteur de l'avis (étudiant) */
 .eval-author { font-size: .82rem; font-weight: 600; color: var(--dark); }
+
+/* Date de l'avis : légèrement transparent pour la hiérarchie visuelle */
 .eval-date   { font-size: .75rem; color: var(--dark); opacity: .6; }
 
+
+/* ===== AFFICHAGE DES ÉTOILES (lecture seule) ===== */
+
+/* Conteneur des étoiles d'affichage (pas les étoiles du formulaire) */
 .eval-stars { margin-bottom: .3rem; }
+
+/* Étoile pleine (note donnée) : couleur marron principale */
 .eval-stars .star-filled { font-size: 1.1rem; color: var(--marron); }
+
+/* Étoile vide (note non donnée) : couleur beige moyen pour le contraste */
 .eval-stars .star-empty  { font-size: 1.1rem; color: var(--marron-mid); }
+
+/* Étiquette "X/5" à côté des étoiles */
 .eval-note-label { font-size: .72rem; color: var(--text-muted); margin-left: .3rem; }
 
+
+/* ===== CONTENU DE L'ÉVALUATION ===== */
+
+/* Commentaire en italique, légèrement transparent pour le différencier du titre */
 .eval-comment { font-size: .82rem; color: var(--dark); opacity: .78; font-style: italic; margin: 0; }
+
+/* Texte affiché quand il n'y a pas d'avis */
 .eval-empty   { font-size: .82rem; color: var(--dark); opacity: .6; }
 
-/* ─── Résumé entreprise (liste) ─── */
+
+/* ===== RÉSUMÉ ENTREPRISE (liste des entreprises) ===== */
+
+/* Description courte sous le nom de l'entreprise dans la liste */
 .eval-resume-desc    { margin-top: .35rem; font-size: .8rem; color: var(--text-muted); line-height: 1.45; }
+
+/* Texte des compétences attendues, en italique pour la distinguer */
 .eval-resume-attendus { margin-top: .3rem; font-size: .78rem; color: var(--text-muted); font-style: italic; }
 
-/* ─── Formulaire création ─── */
+
+/* ===== FORMULAIRE DE CRÉATION D'AVIS ===== */
+
+/* Carte qui contient le formulaire de dépôt d'avis */
 .avis-card { padding: 1.5rem; }
+
+/* Chaque champ du formulaire (label + input) */
 .avis-card .field { margin-bottom: 1.1rem; }
+
+/* Zone de texte redimensionnable verticalement uniquement.
+   width: 100% pour occuper toute la largeur disponible. */
 .avis-card textarea { width: 100%; resize: vertical; min-height: 120px; }
 
-/* ─── Page détail — carte résumé entreprise ─── */
+
+/* ===== CARTE RÉSUMÉ ENTREPRISE (page détail) ===== */
+
+/* Carte de présentation rapide de l'entreprise en haut de sa page détail.
+   --marron-clair = fond crème.
+   display: flex + flex-direction: column + gap: 1rem = empilage des blocs internes. */
 .ent-resume-card {
     background: var(--marron-clair);
     border: 1.5px solid var(--marron-bordure);
-    border-radius: var(--r);
+    border-radius: var(--r); /* rayon commun défini dans variables.css */
     padding: 1.4rem 1.5rem;
     margin-bottom: 2rem;
     display: flex;
@@ -53,16 +116,24 @@
     gap: 1rem;
 }
 
-/* Ligne du haut : avatar + nom/localisation + kpi */
+
+/* ===== EN-TÊTE DU RÉSUMÉ ENTREPRISE ===== */
+
+/* Ligne du haut : avatar (icône) + nom/localisation + KPI (note moyenne).
+   align-items: center aligne verticalement les 3 éléments. */
 .ent-resume-header {
     display: flex;
     align-items: center;
     gap: 1rem;
 }
+
+/* Avatar circulaire avec initiales de l'entreprise.
+   linear-gradient = dégradé marron diagonal.
+   flex-shrink: 0 empêche l'avatar de rétrécir si l'espace manque. */
 .ent-resume-avatar {
     width: 3rem;
     height: 3rem;
-    border-radius: .85rem;
+    border-radius: .85rem; /* légèrement arrondi (pas un cercle parfait) */
     background: linear-gradient(135deg, var(--marron), var(--marron-vif));
     color: #fff;
     font-size: 1.25rem;
@@ -70,39 +141,55 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
-    letter-spacing: -.02em;
+    flex-shrink: 0; /* empêche le rétrécissement dans le flex parent */
+    letter-spacing: -.02em; /* resserre légèrement les lettres des initiales */
 }
+
+/* Zone nom + localisation : flex: 1 permet de prendre tout l'espace disponible.
+   min-width: 0 est indispensable pour que text-overflow: ellipsis fonctionne en flex. */
 .ent-resume-meta {
     flex: 1;
-    min-width: 0;
+    min-width: 0; /* requis pour activer text-overflow dans les enfants */
 }
+
+/* Nom de l'entreprise : gras, couleur foncée.
+   white-space + overflow + text-overflow = tronque le nom si trop long (affiche "...") */
 .ent-resume-nom {
     font-size: 1.05rem;
     font-weight: 700;
     color: var(--dark);
     margin: 0 0 .15rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    white-space: nowrap;      /* interdit le retour à la ligne */
+    overflow: hidden;          /* masque le dépassement */
+    text-overflow: ellipsis;   /* affiche "..." si trop long */
 }
+
+/* Localisation de l'entreprise (ville, département) */
 .ent-resume-loc {
     font-size: .76rem;
     color: var(--text-muted);
     margin: 0;
 }
+
+/* KPI (indicateur clé) : note moyenne affiché à droite.
+   flex-shrink: 0 empêche le rétrécissement, flex-direction: column empile valeur + label. */
 .ent-resume-kpi {
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
+    align-items: flex-end; /* aligne à droite */
     flex-shrink: 0;
 }
+
+/* Valeur numérique de la note (ex: "4.2") en grand */
 .ent-kpi-val {
     font-size: 1.8rem;
     font-weight: 800;
     color: var(--marron);
-    line-height: 1;
+    line-height: 1; /* pas d'espace au-dessus/en-dessous de la valeur */
 }
+
+/* Étiquette sous la valeur (ex: "NOTE MOY.").
+   text-transform: uppercase + letter-spacing = style "badge discret" */
 .ent-kpi-lbl {
     font-size: .65rem;
     color: var(--text-muted);
@@ -111,40 +198,65 @@
     margin-top: .1rem;
 }
 
-/* Description */
+
+/* ===== DESCRIPTION DE L'ENTREPRISE ===== */
+
+/* Paragraphe de description, séparé du bloc supérieur par une ligne.
+   border-top crée visuellement une séparation sans élément HTML supplémentaire. */
 .ent-resume-desc {
     font-size: .84rem;
     color: var(--dark);
-    line-height: 1.7;
+    line-height: 1.7; /* hauteur de ligne généreuse pour la lisibilité */
     margin: 0;
     padding-top: .9rem;
-    border-top: 1px solid var(--marron-bordure);
+    border-top: 1px solid var(--marron-bordure); /* séparateur fin */
 }
 
-/* Contacts */
+
+/* ===== CONTACTS DE L'ENTREPRISE ===== */
+
+/* Section des contacts, séparée par une ligne du dessus */
 .ent-resume-contacts {
     padding-top: .75rem;
     border-top: 1px solid var(--marron-bordure);
     margin: 0;
 }
+
+/* Lien de contact (email, téléphone, site web) */
 .ent-contact-link {
     text-decoration: none;
     transition: opacity .15s;
 }
+
+/* Au survol : légère transparence pour indiquer l'interactivité */
 .ent-contact-link:hover { opacity: .75; }
 
-/* ─── Ancien détail-section (conservé pour compatibilité) ─── */
+
+/* ===== SECTIONS DE DÉTAIL (compatibilité ancienne version) ===== */
+
+/* Bloc de section avec padding et marge en bas */
 .detail-section { margin-bottom: 1.5rem; padding: 1.25rem 1.5rem; }
 .detail-section-title { font-size: .9rem; font-weight: 700; color: var(--dark); margin: 0 0 .75rem; }
 .detail-block { margin-bottom: 2rem; }
+
+/* Titre de bloc avec ligne de séparation en dessous */
 .detail-block-title { font-size: 1rem; font-weight: 700; color: var(--dark); margin: 0 0 .75rem; padding-bottom: .4rem; border-bottom: 1.5px solid var(--marron-bordure); }
+
+/* Texte des compétences attendues, en italique */
 .eval-attendus { margin-top: .6rem; font-size: .82rem; color: var(--text-muted); font-style: italic; line-height: 1.5; }
 
-/* ─── Liste des évaluations (page gestion) ─── */
+
+/* ===== ÉTOILES DANS LA LISTE DE GESTION ===== */
+
+/* Conteneur inline-flex pour aligner horizontalement les étoiles dans un tableau */
 .eval-list-stars {
     display: inline-flex;
     align-items: center;
     gap: .15rem;
 }
+
+/* Étoile pleine dans le contexte de la liste de gestion (marron plus vif) */
 .eval-list-stars .star-filled { color: var(--marron-vif); }
+
+/* Étoile vide dans le contexte de la liste de gestion (beige moyen) */
 .eval-list-stars .star-empty  { color: var(--marron-mid); }

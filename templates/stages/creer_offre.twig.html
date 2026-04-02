@@ -1,40 +1,76 @@
+{#
+    creer_offre.twig.html — Formulaire de création d'une offre de stage
+    Hérite de base.twig.html.
+    Accessible aux admins et pilotes uniquement (protection dans le contrôleur).
+
+    Variables Twig reçues (OffreController::create) :
+      - entreprises : tableau d'objets entreprise disponibles pour le sélecteur.
+                      Chaque objet contient : id_entreprise, nom
+      - erreur      : message d'erreur de validation côté serveur (ex: "Le titre est requis")
+      - old         : tableau des valeurs saisies avant l'erreur — permet de repopuler les champs
+                      sans que l'utilisateur ait à tout re-saisir. Clés : id_entreprise, titre,
+                      domaine, duree, date_offre, base_remuneration, description
+      - csrf_token  : jeton CSRF pour sécuriser la soumission POST
+#}
 {% extends "base.twig.html" %}
 {% block title %}Créer une offre – Stage Finder{% endblock %}
+
 {% block content %}
+{# mgmt-wrap = conteneur principal centré des pages de gestion (max-width + padding) #}
 <div class="mgmt-wrap">
 
+    {# ===== EN-TÊTE DE LA PAGE ===== #}
     <div class="mgmt-header">
+        {# Étiquette de contexte au-dessus du titre (breadcrumb visuel) #}
         <span class="mgmt-eyebrow">Offre de stage</span>
         <h1>Créer une offre</h1>
         <p>Renseignez les informations de la nouvelle offre de stage.</p>
     </div>
 
+    {# mgmt-card = carte blanche centrée avec ombre portée (style formulaire de gestion) #}
     <div class="mgmt-card">
+        {# Lien de retour vers la liste des offres #}
         <a href="/?uri=stages" class="mgmt-back">← Retour aux offres</a>
 
+        {# Message d'erreur de validation (ex: entreprise non sélectionnée, titre trop court...) #}
         {% if erreur %}
         <div class="alert alert-error">{{ erreur }}</div>
         {% endif %}
 
+        {# ===== FORMULAIRE DE CRÉATION ===== #}
+        {# Action vers OffreController::create (POST) #}
         <form method="POST" action="/?uri=offre_create">
+            {# Jeton CSRF anti-CSRF — vérifié côté serveur avant tout traitement #}
             <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+            {# ── Sélecteur Entreprise ── #}
+            {# Liste déroulante générée dynamiquement depuis la BDD.
+               old.id_entreprise permet de pré-sélectionner l'entreprise choisie avant une erreur. #}
             <div class="fgrp">
                 <label>Entreprise *</label>
                 <select name="id_entreprise" required>
                     <option value="">— Sélectionner une entreprise —</option>
                     {% for e in entreprises %}
+                    {# Comparaison == entre l'ancien choix et l'ID courant pour cocher l'option #}
                     <option value="{{ e.id_entreprise }}" {% if old.id_entreprise == e.id_entreprise %}selected{% endif %}>{{ e.nom }}</option>
                     {% endfor %}
                 </select>
             </div>
 
+            {# ── Titre de l'offre ── #}
+            {# old.titre ?? '' = valeur saisie avant l'erreur, ou chaîne vide par défaut #}
             <div class="fgrp">
                 <label>Titre *</label>
                 <input type="text" name="titre" value="{{ old.titre ?? '' }}" placeholder="Ex : Développeur web front-end" required>
             </div>
 
+            {# ── Ligne Domaine + Durée ── #}
+            {# frow = flex row (deux champs côte à côte sur bureau) défini dans style-stage.css #}
             <div class="frow">
                 <div class="fgrp">
+                    {# Domaine = secteur d'activité, liste figée dans le template.
+                       |capitalize = met la première lettre en majuscule (ex: "informatique" → "Informatique").
+                       old.domaine permet de pré-sélectionner après une erreur. #}
                     <label>Domaine</label>
                     <select name="domaine">
                         <option value="">— Tous les domaines —</option>
@@ -45,27 +81,37 @@
                     </select>
                 </div>
                 <div class="fgrp">
+                    {# Durée en texte libre (ex: "3 mois", "6 semaines") #}
                     <label>Durée</label>
                     <input type="text" name="duree" value="{{ old.duree ?? '' }}" placeholder="Ex : 3 mois">
                 </div>
             </div>
 
+            {# ── Ligne Date de début + Rémunération ── #}
             <div class="frow">
                 <div class="fgrp">
+                    {# Date de début : type="date" = sélecteur de date natif du navigateur.
+                       min="{{ "now"|date("Y-m-d") }}" = interdit les dates passées (filtre Twig sur "now"). #}
                     <label>Date de début *</label>
                     <input type="date" name="date_offre" value="{{ old.date_offre ?? '' }}" min="{{ "now"|date("Y-m-d") }}" required>
                 </div>
                 <div class="fgrp">
+                    {# Rémunération en euros/mois : type="number" avec min=0 et step=50 (multiples de 50€).
+                       Le navigateur affiche des flèches haut/bas par pas de 50. #}
                     <label>Rémunération (€/mois)</label>
                     <input type="number" name="base_remuneration" value="{{ old.base_remuneration ?? '' }}" placeholder="Ex : 600" min="0" step="50">
                 </div>
             </div>
 
+            {# ── Description ── #}
+            {# rows="5" = hauteur initiale visible en lignes de texte.
+               resize-v = classe CSS qui autorise uniquement le redimensionnement vertical. #}
             <div class="fgrp">
                 <label>Description</label>
                 <textarea name="description" rows="5" placeholder="Décrivez les missions, le contexte, les compétences souhaitées…" class="resize-v">{{ old.description ?? '' }}</textarea>
             </div>
 
+            {# Bouton de soumission du formulaire #}
             <button type="submit" class="mgmt-submit">Créer l'offre</button>
         </form>
     </div>

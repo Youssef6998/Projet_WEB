@@ -1,3 +1,15 @@
+/* ═══════════════════════════════════════════════════════════════════
+   avis.css — Page de dépôt d'un avis / évaluation d'entreprise
+   Utilisé par : avis.twig.html (formulaire de notation d'une entreprise)
+   Dépend de : /assets/css/variables.css (variables --marron*, --dark, etc.)
+   ═══════════════════════════════════════════════════════════════════ */
+
+
+/* ===== CARTE PRINCIPALE DU FORMULAIRE ===== */
+
+/* Conteneur central blanc semi-transparent qui encadre tout le formulaire.
+   max-width: 700px pour ne pas s'étirer sur grand écran.
+   position: relative est nécessaire pour positionner le bouton retour en absolu. */
 .register-card {
     background: rgba(255, 255, 255, 0.96);
     width: 100%;
@@ -5,32 +17,51 @@
     margin: 40px auto;
     padding: 50px 45px 35px;
     border-radius: 1.25rem;
-    border: 1.5px solid var(--marron-bordure);
-    box-shadow: 0 16px 48px rgba(124, 61, 18, 0.09);
-    position: relative;
-    animation: fadeIn .5s ease;
+    border: 1.5px solid var(--marron-bordure); /* bordure subtile de la palette */
+    box-shadow: 0 16px 48px rgba(124, 61, 18, 0.09); /* ombre portée légère, couleur marron */
+    position: relative; /* ancrage pour .back-btn-container en position: absolute */
+    animation: fadeIn .5s ease; /* apparition douce au chargement */
 }
+
+
+/* ===== BOUTON RETOUR ===== */
+
+/* Conteneur positionné en absolu dans le coin haut-gauche de la carte.
+   position: absolute fonctionne car le parent (.register-card) est en position: relative. */
 .back-btn-container {
     position: absolute;
     top: 20px;
     left: 20px;
 }
+
+/* Bouton "<< retour" avec bordure marron subtile.
+   transition: .2s crée une animation douce sur tous les changements de style au hover. */
 .btn-back {
     padding: 6px 10px;
     border-radius: 8px;
     border: 1.5px solid var(--marron-bordure);
     font-size: 13px;
-    color: var(--text-muted);
+    color: var(--text-muted); /* texte secondaire gris-marron */
     transition: .2s;
 }
+
+/* Au survol : accentuation du marron sur la bordure et le texte */
 .btn-back:hover {
     border-color: var(--marron);
     color: var(--marron);
 }
+
+
+/* ===== EN-TÊTE DE LA PAGE ===== */
+
+/* Bloc d'introduction centré au-dessus du formulaire */
 .intro-page {
     text-align: center;
     margin-bottom: 30px;
 }
+
+/* Petit surtittre en majuscules (ex : "ÉVALUEZ CETTE ENTREPRISE").
+   letter-spacing écarte légèrement les lettres pour l'effet "label" */
 .intro-small-titre {
     font-size: 13px;
     color: var(--marron);
@@ -39,40 +70,62 @@
     letter-spacing: .1em;
     margin-bottom: 6px;
 }
+
+/* Titre principal de la page, couleur foncée --dark */
 .titre-principal {
     font-size: 28px;
     margin-bottom: 8px;
     color: var(--dark);
 }
+
+/* Sous-titre descriptif en couleur atténuée */
 .sous-titre {
     color: var(--text-muted);
     font-size: 14px;
 }
+
+
+/* ===== ALERTES (messages retour serveur) ===== */
+
+/* Style commun aux alertes de succès et d'erreur */
 .alert {
     padding: 12px 16px;
     border-radius: 8px;
     font-size: 14px;
     margin-bottom: 20px;
 }
+
+/* Alerte de succès : fond crème clair, texte marron vif, bordure beige moyen */
 .alert-success {
     background: var(--marron-clair);
     color: var(--marron-vif);
     border: 1.5px solid var(--marron-mid);
 }
+
+/* Alerte d'erreur : fond rouge très pâle, texte rouge, bordure rose */
 .alert-error {
     background: #fff5f5;
     color: #c0392b;
     border: 1.5px solid #fecaca;
 }
+
+
+/* ===== FORMULAIRE ===== */
+
+/* Le formulaire est un conteneur flex vertical (les champs s'empilent de haut en bas) */
 form {
     display: flex;
     flex-direction: column;
 }
+
+/* Groupe label + champ de saisie. flex-direction: column empile le label au-dessus du champ */
 .input-group {
     display: flex;
     flex-direction: column;
     margin-bottom: 20px;
 }
+
+/* Style du label : petit, en majuscules légères, couleur atténuée */
 .input-group label {
     font-size: .68rem;
     font-weight: 600;
@@ -80,6 +133,10 @@ form {
     letter-spacing: .02em;
     margin-bottom: 6px;
 }
+
+/* Style commun pour les champs texte, listes déroulantes et zones de texte.
+   background: #fafafa donne un très léger gris qui indique que c'est interactif.
+   transition gère l'animation de focus (bordure + ombre + fond). */
 .input-group input,
 .input-group select,
 .input-group textarea {
@@ -92,35 +149,65 @@ form {
     color: var(--dark);
     transition: border-color .15s, box-shadow .15s, background .15s;
 }
+
+/* Quand le champ est focalisé : bordure marron, fond blanc pur, anneau d'ombre marron.
+   outline: none supprime l'anneau bleu natif du navigateur. */
 .input-group input:focus,
 .input-group select:focus,
 .input-group textarea:focus {
     border-color: var(--marron);
     background: #fff;
     outline: none;
-    box-shadow: 0 0 0 3px rgba(124, 61, 18, 0.1);
+    box-shadow: 0 0 0 3px rgba(124, 61, 18, 0.1); /* anneau de focus semi-transparent */
 }
+
+
+/* ===== SYSTÈME DE NOTATION PAR ÉTOILES ===== */
+
+/* Rangée d'étoiles. flex-direction: row-reverse inverse l'ordre afin que le CSS "~"
+   puisse sélectionner les étoiles précédentes (technique CSS pure sans JS).
+   justify-content: flex-end remet les étoiles dans le bon sens visuel. */
 .stars {
     display: flex;
     flex-direction: row-reverse;
     justify-content: flex-end;
     gap: 4px;
 }
+
+/* Les inputs radio sont cachés : seuls les labels (étoiles) sont visibles */
 .stars input {
     display: none;
 }
+
+/* Chaque étoile est un caractère unicode affiché en grand.
+   color: var(--marron-mid) = couleur beige par défaut (non sélectionné).
+   cursor: pointer indique que c'est cliquable.
+   transition: color .2s anime le changement de couleur. */
 .star {
     font-size: 32px;
     color: var(--marron-mid);
     cursor: pointer;
     transition: color .2s;
 }
+
+/* Règle CSS pure pour la notation interactive :
+   - Au survol d'une étoile (.star-label:hover), elle et toutes les étoiles AVANT elle
+     (techniquement "après" dans le DOM à cause du row-reverse) deviennent marron foncé.
+   - Quand un radio est coché (:has(input:checked)), l'étoile et ses voisines se colorent.
+   Le sélecteur "~" signifie "tous les éléments frères suivants". */
 .star-label:hover .star,
 .star-label:hover ~ .star-label .star,
 .star-label:has(input:checked) .star,
 .star-label:has(input:checked) ~ .star-label .star {
     color: var(--marron);
 }
+
+
+/* ===== BOUTON DE SOUMISSION ===== */
+
+/* Bouton pleine largeur avec dégradé marron.
+   linear-gradient(135deg, ...) crée un dégradé diagonal du marron vers le marron foncé.
+   box-shadow donne une ombre colorée pour l'effet de profondeur. */
 .btn-primary {
     width: 100%;
     padding: .85rem;
@@ -136,16 +223,30 @@ form {
     transition: box-shadow .15s, transform .15s;
     margin-top: 10px;
 }
+
+/* Au survol : ombre plus grande et légère montée (translateY(-1px)) pour effet de relief */
 .btn-primary:hover {
     box-shadow: 0 8px 24px rgba(124, 61, 18, 0.42);
     transform: translateY(-1px);
 }
+
+
+/* ===== MEDIA QUERY — MOBILE (< 650px) ===== */
+
+/* Sur petits écrans, on réduit le padding de la carte et on colle aux bords */
 @media (max-width: 650px) {
     .register-card {
         padding: 35px 25px;
         margin: 20px;
     }
 }
+
+
+/* ===== ANIMATION D'ENTRÉE ===== */
+
+/* La carte apparaît en glissant depuis le bas (translateY(15px) → 0)
+   et en montant progressivement en opacité (0 → 1).
+   Durée : 0.5 s, courbe ease (accélération puis décélération). */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(15px); }
     to   { opacity: 1; transform: translateY(0); }

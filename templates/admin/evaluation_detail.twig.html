@@ -1,26 +1,55 @@
+{#
+    evaluation_detail.twig.html — Détail des évaluations d'une entreprise spécifique
+    Hérite de base.twig.html.
+    Accessible aux admins et pilotes uniquement.
+    Affiche : résumé de l'entreprise, toutes ses évaluations (avec suppression), et ses offres.
+
+    Variables Twig reçues (EvaluationController::detail) :
+      - detail       : objet complet de l'entreprise avec ses données agrégées. Propriétés :
+                         id_entreprise, nom, ville, adresse, description,
+                         email_contact, telephone_contact, nb_offres,
+                         evaluations[] (tableau des évaluations — chaque objet :
+                           id_evaluation, note (1-5), attendus, date_evaluation),
+                         offres[] (tableau des offres — chaque objet :
+                           id_offre, titre, domaine, description, duree,
+                           base_remuneration, date_offre)
+      - session_user : utilisateur connecté (role: 'admin' ou 'pilote')
+      - csrf_token   : jeton CSRF pour les formulaires de suppression d'évaluation
+#}
 {% extends "base.twig.html" %}
+
+{# Bloc CSS : hérite du parent et ajoute evaluation.css (étoiles, cartes d'évaluation) #}
 {% block css %}
 <link rel="stylesheet" href="/assets/css/variables.css">
 {{ parent() }}
 <link rel="stylesheet" href="/assets/evaluation.css">
 {% endblock %}
+
+{# Titre de l'onglet : nom de l'entreprise #}
 {% block title %}{{ detail.nom }} – Détail évaluations{% endblock %}
+
 {% block content %}
 <div class="page">
 
-    {# ── En-tête ── #}
+    {# ===== EN-TÊTE ===== #}
     <div class="search-card search-card--mb">
         <div class="search-head">
+            {# Badge rôle #}
             <span class="pill pill-r">{% if session_user.role == 'admin' %}Administration{% else %}Pilote{% endif %}</span>
+            {# Compteur d'évaluations avec pluriel conditionnel.
+               detail.evaluations|length = filtre Twig qui compte les éléments du tableau. #}
             <span class="pill pill-count">{{ detail.evaluations|length }} évaluation{{ detail.evaluations|length != 1 ? 's' : '' }}</span>
         </div>
         <div class="list-header">
             <div>
+                {# Nom de l'entreprise comme titre de la page #}
                 <h2 class="list-title">{{ detail.nom }}</h2>
+                {# Sous-titre : ville et/ou adresse séparés par " · " si les deux sont présents #}
                 <p class="list-subtitle">
                     {% if detail.ville %}{{ detail.ville }}{% if detail.adresse %} · {{ detail.adresse }}{% endif %}{% endif %}
                 </p>
             </div>
+            {# Boutons d'action : créer une évaluation + retour à la liste #}
             <div class="actions-row">
                 <a href="/?uri=avis_create" class="btn btn-fill">+ Évaluation</a>
                 <a href="/?uri=evaluation_list" class="btn btn-outline">← Retour</a>
@@ -28,10 +57,15 @@
         </div>
     </div>
 
-    {# ── Résumé entreprise ── #}
+    {# ===== RÉSUMÉ DE L'ENTREPRISE ===== #}
+    {# ent-resume-card = carte de présentation avec avatar initial, coordonnées et KPI #}
     <div class="ent-resume-card">
         <div class="ent-resume-header">
+            {# Avatar généré depuis la première lettre du nom (|slice(0,1)|upper = 1ère lettre en majuscule).
+               Évite d'avoir à uploader un logo pour chaque entreprise. #}
             <div class="ent-resume-avatar">{{ detail.nom|slice(0,1)|upper }}</div>
+
+            {# Métadonnées : nom + localisation #}
             <div class="ent-resume-meta">
                 <h2 class="ent-resume-nom">{{ detail.nom }}</h2>
                 {% if detail.ville or detail.adresse %}
@@ -40,66 +74,88 @@
                 </p>
                 {% endif %}
             </div>
+
+            {# KPI : nombre d'offres publiées par l'entreprise #}
             <div class="ent-resume-kpi">
                 <span class="ent-kpi-val">{{ detail.nb_offres }}</span>
                 <span class="ent-kpi-lbl">offre{{ detail.nb_offres != 1 ? 's' : '' }}</span>
             </div>
         </div>
 
+        {# Description de l'entreprise (optionnelle) #}
         {% if detail.description %}
         <p class="ent-resume-desc">{{ detail.description }}</p>
         {% endif %}
 
+        {# Coordonnées de contact sous forme de tags cliquables.
+           Les liens mailto: et tel: permettent d'ouvrir directement le client mail / l'appel téléphonique. #}
         {% if detail.email_contact or detail.telephone_contact %}
         <div class="tag-list ent-resume-contacts">
             {% if detail.email_contact %}
+            {# tag-info = style bleu pour les informations #}
             <a href="mailto:{{ detail.email_contact }}" class="tag-info ent-contact-link">✉ {{ detail.email_contact }}</a>
             {% endif %}
             {% if detail.telephone_contact %}
+            {# tag-neutre = style gris pour les informations secondaires #}
             <a href="tel:{{ detail.telephone_contact }}" class="tag-neutre ent-contact-link">☏ {{ detail.telephone_contact }}</a>
             {% endif %}
         </div>
         {% endif %}
     </div>
 
-    {# ── Évaluations ── #}
+    {# ===== LISTE DES ÉVALUATIONS ===== #}
+    {# detail-block = section avec titre en h3 et séparateur visuel #}
     <div class="detail-block">
         <h3 class="detail-block-title">Évaluations</h3>
         <div class="stages-list">
             {% for ev in detail.evaluations %}
             <article class="stage-card">
                 <div class="stage-info">
+                    {# Tags : étoiles + note + date de l'évaluation #}
                     <div class="tag-list">
+                        {# eval-list-stars = tag crème contenant les étoiles (★) et la note numérique.
+                           Boucle de 1 à 5 : étoile remplie si i ≤ note, vide sinon. #}
                         <span class="tag-promo eval-list-stars">
                             {% for i in 1..5 %}
                             <span class="{{ i <= ev.note ? 'star-filled' : 'star-empty' }}">★</span>
                             {% endfor %}
                             {{ ev.note }}/5
                         </span>
+                        {# Date de l'évaluation en format français #}
                         <span class="tag-neutre">{{ ev.date_evaluation|date('d/m/Y') }}</span>
                     </div>
+                    {# Description des attendus du stage saisis lors de l'évaluation #}
                     {% if ev.attendus %}
                     <p class="eval-attendus">{{ ev.attendus }}</p>
                     {% endif %}
                 </div>
+
+                {# Bouton de suppression avec modale de confirmation.
+                   Le champ "redirect" indique au contrôleur vers quelle URL rediriger après suppression,
+                   ici vers cette même page de détail (pour maintenir le contexte). #}
                 <div class="card-actions">
                     <form method="POST" action="/?uri=evaluation_delete" class="form-clean"
                           data-confirm-title="Supprimer l'évaluation"
                           data-confirm-detail="Cette évaluation sera définitivement supprimée.">
                         <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                        {# ID de l'évaluation à supprimer #}
                         <input type="hidden" name="id" value="{{ ev.id_evaluation }}">
+                        {# Redirection vers cette même page après suppression #}
                         <input type="hidden" name="redirect" value="/?uri=evaluation_detail&id={{ detail.id_entreprise }}">
                         <button type="submit" class="btn btn-ghost btn-sm btn-danger-sm">Supprimer</button>
                     </form>
                 </div>
             </article>
             {% else %}
+            {# Affiché si l'entreprise n'a encore aucune évaluation #}
             <p class="liste-vide">Aucune évaluation pour cette entreprise.</p>
             {% endfor %}
         </div>
     </div>
 
-    {# ── Offres / missions passées ── #}
+    {# ===== LISTE DES OFFRES / MISSIONS PROPOSÉES ===== #}
+    {# Affiche les offres de stage publiées par cette entreprise pour contexte.
+       Permet de croiser les évaluations avec les stages proposés. #}
     <div class="detail-block">
         <h3 class="detail-block-title">Stages et missions proposés</h3>
         <div class="stages-list">
@@ -108,17 +164,21 @@
                 <div class="stage-info">
                     <div class="stage-top">
                         <span class="stage-company">{{ o.titre }}</span>
+                        {# Domaine de l'offre (ex: "informatique") — conditionnel #}
                         {% if o.domaine %}<span class="stage-type">{{ o.domaine }}</span>{% endif %}
                     </div>
+                    {# Description tronquée à 150 caractères #}
                     {% if o.description %}
                     <p class="stage-desc">{{ o.description|slice(0,150) }}{% if o.description|length > 150 %}…{% endif %}</p>
                     {% endif %}
+                    {# Tags de méta-données de l'offre #}
                     <div class="tag-list">
                         {% if o.duree %}<span class="tag-neutre">{{ o.duree }}</span>{% endif %}
                         {% if o.base_remuneration %}<span class="tag-info">{{ o.base_remuneration }} €/mois</span>{% endif %}
                         {% if o.date_offre %}<span class="tag-neutre">{{ o.date_offre|date('d/m/Y') }}</span>{% endif %}
                     </div>
                 </div>
+                {# Lien vers la page détail de l'offre #}
                 <div class="card-actions">
                     <a href="/?uri=offre&id={{ o.id_offre }}" class="btn btn-outline btn-sm">Voir l'offre</a>
                 </div>

@@ -1,44 +1,87 @@
+/* ═══════════════════════════════════════════════════════════════════
+   stats.css — Page des statistiques (tableau de bord chiffres clés)
+   Utilisé par : stats.twig.html
+   Affiche les statistiques du site sous forme d'un carousel de cartes :
+   - Nombre total de stages
+   - Taux d'acceptation
+   - Répartition par durée
+   - Top des stages les plus mis en favoris
+   Dépend de : /assets/css/variables.css (--marron*, --dark, --text-muted...)
+   ═══════════════════════════════════════════════════════════════════ */
+
+
+/* ===== MISE EN PAGE DE LA PAGE ===== */
+
+/* Conteneur centré, largeur maximale de 760px pour garder les cartes compactes */
 .stats-page {
     max-width: 760px;
     margin: 2.5rem auto;
     padding: 0 1.25rem 3rem;
 }
 
+
+/* ===== INTRODUCTION DE LA PAGE ===== */
+
+/* Bloc d'en-tête centré : titre + description */
 .stats-intro {
     text-align: center;
     margin-bottom: 2rem;
 }
+
+/* Titre principal de la page des statistiques */
 .stats-intro h1 {
     font-size: 1.45rem;
     font-weight: 700;
     color: var(--dark);
     margin-bottom: .35rem;
 }
+
+/* Description courte sous le titre */
 .stats-intro p {
     font-size: .85rem;
     color: var(--text-muted);
 }
 
-/* ── Carousel ── */
+
+/* ===== CAROUSEL DE STATISTIQUES ===== */
+
+/* Conteneur du carousel.
+   position: relative est nécessaire si des éléments positionnés en absolu
+   doivent être ancrés à l'intérieur (ex: boutons flottants). */
 .stats-carousel {
     position: relative;
 }
 
+/* Piste de défilement horizontal du carousel.
+   display: flex = cartes côte à côte.
+   overflow-x: auto = défilement horizontal activé.
+   scroll-snap-type: x mandatory = accroche magnétique sur l'axe X (chaque carte s'aligne).
+   scrollbar-width: none = cache la barre de défilement native (Firefox).
+   gap: 0 = pas d'espace entre les cartes (chacune occupe 100% de la piste). */
 .carousel-track {
     display: flex;
     overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
+    scroll-snap-type: x mandatory; /* défilement magnétique par carte */
+    scrollbar-width: none;          /* cache scrollbar Firefox */
+    -ms-overflow-style: none;       /* cache scrollbar IE/Edge */
     gap: 0;
     border-radius: 1.1rem;
 }
+
+/* Cache la barre de défilement dans les navigateurs WebKit (Chrome, Safari) */
 .carousel-track::-webkit-scrollbar { display: none; }
 
-/* ── Stat cards ── */
+
+/* ===== CARTES DE STATISTIQUES ===== */
+
+/* Chaque carte occupe 100% de la largeur de la piste (une carte visible à la fois).
+   flex: 0 0 100% = pas de rétrécissement, largeur fixe à 100%.
+   scroll-snap-align: start = la carte s'accroche sur le bord gauche.
+   min-height: 320px = hauteur minimale pour les cartes avec peu de contenu.
+   animation: up = apparition avec glissement depuis le bas. */
 .stat-card {
-    flex: 0 0 100%;
-    scroll-snap-align: start;
+    flex: 0 0 100%; /* occupe exactement 100% de la largeur */
+    scroll-snap-align: start; /* accroche au bord gauche */
     background: rgba(255, 255, 255, 0.95);
     border: 1.5px solid var(--marron-bordure);
     border-radius: 1.1rem;
@@ -50,6 +93,8 @@
     animation: up .35s ease both;
 }
 
+/* Étiquette de catégorie de la stat (ex: "STAGES PUBLIÉS").
+   Petites majuscules espacées pour l'effet "kpi label". */
 .stat-card-label {
     font-size: .65rem;
     font-weight: 700;
@@ -57,48 +102,75 @@
     letter-spacing: .1em;
     margin-bottom: .75rem;
 }
+
+/* Grande valeur numérique (ex: "1 247").
+   font-size: 4.5rem = très grand pour l'impact visuel.
+   letter-spacing: -.03em = resserre légèrement les chiffres. */
 .stat-card-value {
     font-size: 4.5rem;
     font-weight: 700;
-    line-height: 1;
+    line-height: 1; /* pas d'espace vertical autour des chiffres */
     letter-spacing: -.03em;
     margin-bottom: .5rem;
 }
+
+/* Titre descriptif sous la valeur (ex: "Offres de stage actives") */
 .stat-card-title {
     font-size: 1.15rem;
     font-weight: 700;
     color: var(--dark);
     margin-bottom: .3rem;
 }
+
+/* Sous-texte explicatif */
 .stat-card-sub {
     font-size: .82rem;
     color: var(--text-muted);
     margin-bottom: 0;
 }
 
-/* Color accents per card */
+
+/* ===== COULEURS D'ACCENT PAR CARTE ===== */
+
+/* Carte marron (ex: total stages) : label et valeur en marron principal */
 .stat-card--marron .stat-card-label  { color: var(--marron); }
 .stat-card--marron .stat-card-value  { color: var(--marron); }
+
+/* Carte bleue (ex: candidatures) : label et valeur en bleu */
 .stat-card--blue   .stat-card-label  { color: #2563eb; }
 .stat-card--blue   .stat-card-value  { color: #2563eb; }
+
+/* Carte verte (ex: taux d'acceptation) : label en vert */
 .stat-card--green  .stat-card-label  { color: #16a34a; }
+
+/* Carte ambre (ex: en attente) : label en ambre-brun */
 .stat-card--amber  .stat-card-label  { color: #b45309; }
 
-/* ── Duration bars (card 3) ── */
+
+/* ===== BARRES DE DURÉE (CARTE 3 — Répartition par durée) ===== */
+
+/* Colonne des lignes de durée.
+   flex: 1 = occupe tout l'espace vertical restant dans la carte. */
 .duration-list {
     display: flex;
     flex-direction: column;
     gap: .65rem;
     margin-top: .75rem;
-    flex: 1;
+    flex: 1; /* prend tout l'espace disponible */
 }
+
+/* Chaque ligne : label | barre | compteur.
+   grid-template-columns: 8rem 1fr 2.5rem = label fixe, barre flexible, compteur fixe. */
 .duration-row {
     display: grid;
-    grid-template-columns: 8rem 1fr 2.5rem;
+    grid-template-columns: 8rem 1fr 2.5rem; /* 3 colonnes : texte, barre, nombre */
     align-items: center;
     gap: .6rem;
     font-size: .78rem;
 }
+
+/* Étiquette de durée (ex: "6 mois").
+   text-overflow: ellipsis = tronque si trop long. */
 .duration-label {
     color: var(--dark);
     font-weight: 500;
@@ -106,18 +178,28 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+/* Piste de la barre (fond gris-marron pâle).
+   overflow: hidden masque la barre de remplissage qui dépasse. */
 .duration-bar-track {
     height: .45rem;
-    background: var(--marron-bordure);
-    border-radius: 999px;
-    overflow: hidden;
+    background: var(--marron-bordure); /* fond de la piste = gris-marron pâle */
+    border-radius: 999px; /* arrondi extrême = pilule */
+    overflow: hidden; /* masque le débordement de la barre de remplissage */
 }
+
+/* Barre de remplissage (portion colorée).
+   width défini dynamiquement en HTML (ex: style="width: 75%").
+   linear-gradient vert = couleur "positive" pour la durée.
+   transition: width .6s ease = animation de la barre au chargement. */
 .duration-bar-fill {
     height: 100%;
-    background: linear-gradient(90deg, #16a34a, #4ade80);
+    background: linear-gradient(90deg, #16a34a, #4ade80); /* dégradé vert */
     border-radius: 999px;
-    transition: width .6s ease;
+    transition: width .6s ease; /* animation progressive de la barre */
 }
+
+/* Compteur à droite de la barre (nombre de stages de cette durée) */
 .duration-count {
     font-size: .72rem;
     font-weight: 600;
@@ -125,7 +207,11 @@
     text-align: right;
 }
 
-/* ── Wishlist top (card 4) ── */
+
+/* ===== LISTE DES STAGES LES PLUS FAVORIS (CARTE 4) ===== */
+
+/* Colonne des lignes de la liste des favoris.
+   flex: 1 = occupe tout l'espace vertical disponible dans la carte. */
 .wishlist-list {
     display: flex;
     flex-direction: column;
@@ -133,15 +219,22 @@
     margin-top: .75rem;
     flex: 1;
 }
+
+/* Chaque ligne : rang | infos | compteur.
+   background: var(--marron-clair) = fond crème doux. */
 .wishlist-row {
     display: flex;
     align-items: center;
     gap: .85rem;
     padding: .55rem .75rem;
     border-radius: .6rem;
-    background: var(--marron-clair);
+    background: var(--marron-clair); /* fond crème */
     border: 1px solid var(--marron-bordure);
 }
+
+/* Numéro de rang (1, 2, 3...).
+   width: 1.4rem fixe = largeur cohérente pour tous les rangs.
+   flex-shrink: 0 = ne rétrécit pas. */
 .wishlist-rank {
     font-size: .65rem;
     font-weight: 700;
@@ -150,35 +243,52 @@
     text-align: center;
     flex-shrink: 0;
 }
-.wishlist-rank--1 { color: #b45309; }
-.wishlist-rank--2 { color: var(--text-muted); }
-.wishlist-rank--3 { color: #92400e; }
+
+/* Couleurs spéciales pour les 3 premiers rangs (podium) */
+.wishlist-rank--1 { color: #b45309; } /* or (brun-ambre) */
+.wishlist-rank--2 { color: var(--text-muted); } /* argent (gris par défaut) */
+.wishlist-rank--3 { color: #92400e; } /* bronze (brun foncé) */
+
+/* Zone de texte (titre + entreprise).
+   flex: 1 = prend tout l'espace disponible entre le rang et le compteur.
+   overflow: hidden active text-overflow sur les enfants. */
 .wishlist-info {
     flex: 1;
-    overflow: hidden;
+    overflow: hidden; /* nécessaire pour text-overflow des enfants */
 }
+
+/* Titre de l'offre (tronqué si trop long) */
 .wishlist-titre {
     font-size: .82rem;
     font-weight: 600;
     color: var(--dark);
     white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis;
+    text-overflow: ellipsis; /* "..." si trop long */
 }
+
+/* Nom de l'entreprise en texte atténué */
 .wishlist-entreprise {
     font-size: .68rem;
     color: var(--text-muted);
 }
+
+/* Badge compteur (nombre de fois en favoris).
+   border-radius: 999px = pilule.
+   background: fond marron très transparent (8% d'opacité).
+   flex-shrink: 0 = ne rétrécit pas. */
 .wishlist-count {
     font-size: .72rem;
     font-weight: 600;
     color: var(--marron-vif);
-    background: rgba(124, 61, 18, 0.08);
+    background: rgba(124, 61, 18, 0.08); /* fond marron très transparent */
     padding: .2rem .55rem;
     border-radius: 999px;
     white-space: nowrap;
     flex-shrink: 0;
 }
+
+/* Texte affiché quand aucun stage n'est encore mis en favoris */
 .wishlist-empty {
     font-size: .82rem;
     color: var(--text-muted);
@@ -186,7 +296,10 @@
     padding: 1.5rem 0;
 }
 
-/* ── Carousel controls ── */
+
+/* ===== CONTRÔLES DU CAROUSEL ===== */
+
+/* Barre de contrôles sous le carousel : bouton précédent | points | bouton suivant */
 .carousel-controls {
     display: flex;
     justify-content: center;
@@ -194,10 +307,12 @@
     gap: 1rem;
     margin-top: 1.25rem;
 }
+
+/* Bouton circulaire de navigation (flèche gauche / droite) */
 .carousel-btn {
     width: 2rem;
     height: 2rem;
-    border-radius: 50%;
+    border-radius: 50%; /* cercle parfait */
     border: 1.5px solid var(--marron-bordure);
     background: rgba(255, 255, 255, 0.9);
     color: var(--dark);
@@ -210,44 +325,64 @@
     transition: border-color .15s, background .15s;
     flex-shrink: 0;
 }
+
+/* Au survol : bordure + fond crème */
 .carousel-btn:hover {
     border-color: var(--marron);
     background: var(--marron-clair);
     color: var(--marron);
 }
+
+/* Quand le bouton est désactivé (ex: déjà sur la première/dernière carte).
+   cursor: default = curseur normal (pas de pointeur). */
 .carousel-btn:disabled {
     opacity: .3;
     cursor: default;
 }
+
+/* Conteneur des points de navigation */
 .carousel-dots {
     display: flex;
     gap: .45rem;
     align-items: center;
 }
+
+/* Chaque point de navigation (un par carte).
+   Petit cercle avec fond gris-marron pâle par défaut. */
 .carousel-dot {
     width: .45rem;
     height: .45rem;
     border-radius: 50%;
     border: none;
-    background: var(--marron-bordure);
+    background: var(--marron-bordure); /* gris-marron pâle quand inactif */
     cursor: pointer;
     padding: 0;
     transition: background .2s, transform .2s;
 }
+
+/* Point actif (carte actuellement visible) : marron vif + légèrement agrandi.
+   transform: scale(1.35) = 35% plus grand que les autres points. */
 .carousel-dot.active {
     background: var(--marron);
-    transform: scale(1.35);
+    transform: scale(1.35); /* agrandi pour indiquer la carte active */
 }
 
+/* Compteur textuel "2 / 4" entre les boutons de navigation */
 .carousel-counter {
     font-size: .72rem;
     color: var(--text-muted);
-    min-width: 2.5rem;
+    min-width: 2.5rem; /* largeur fixe pour éviter les décalages de mise en page */
     text-align: center;
 }
 
+
+/* ===== MEDIA QUERY — MOBILE (< 600px) ===== */
+
+/* Sur petits écrans : padding réduit, valeur numérique plus petite,
+   colonnes de la grille de durée réduites. */
 @media (max-width: 600px) {
     .stat-card { padding: 2rem 1.5rem 1.5rem; }
-    .stat-card-value { font-size: 3.5rem; }
+    .stat-card-value { font-size: 3.5rem; } /* réduit de 4.5rem à 3.5rem sur mobile */
+    /* Grille durée : label plus court, compteur plus étroit */
     .duration-row { grid-template-columns: 6rem 1fr 2rem; }
 }

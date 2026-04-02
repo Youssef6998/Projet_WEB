@@ -1,39 +1,43 @@
-/* ═══════════════════════════════════════════════
-   Palette de couleurs — Thème Marron
-   Source unique de vérité pour toutes les couleurs.
-   Importer ce fichier en premier via base.twig.html.
-   ═══════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════════
+   variables.css — Source unique de vérité pour toutes les couleurs
+   Thème : Marron / Crème (palette "caramel")
+
+   Ce fichier doit être chargé EN PREMIER via base.twig.html,
+   avant tout autre fichier CSS du projet.
+   Toutes les variables sont déclarées sur :root (portée globale).
+   ═══════════════════════════════════════════════════════════════════ */
+
 :root {
     /* ── Couleurs principales ── */
-    --marron:          #7c3d12;               /* marron principal */
-    --marron-vif:      #6b2d0f;               /* marron foncé / hover */
-    --marron-profond:  #3d1508;               /* très foncé / dégradé */
-    --marron-clair:    #fdf4ed;               /* crème / fond clair */
-    --marron-mid:      #e8c4a4;               /* beige moyen / badges */
-    --marron-bordure:  rgba(124, 61, 18, 0.16); /* bordures */
-    --marron-fond:     rgba(124, 61, 18, 0.12); /* fonds subtils */
+    --marron:          #7c3d12;               /* marron principal : boutons, liens, accents */
+    --marron-vif:      #6b2d0f;               /* marron foncé : états hover, dégradés */
+    --marron-profond:  #3d1508;               /* très foncé : dégradés, texte sur fond clair */
+    --marron-clair:    #fdf4ed;               /* crème / fond clair : alertes succès, fonds */
+    --marron-mid:      #e8c4a4;               /* beige moyen : badges, bordures accentuées */
+    --marron-bordure:  rgba(124, 61, 18, 0.16); /* bordures : encadrés, séparateurs (semi-transparent) */
+    --marron-fond:     rgba(124, 61, 18, 0.12); /* fonds subtils : séparateurs, hover léger */
 
     /* ── Texte & neutres ── */
-    --text-muted:  #8b6555;   /* texte secondaire */
-    --dark:        #1a0a04;   /* texte principal */
-    --white:       #ffffff;
+    --text-muted:  #8b6555;   /* texte secondaire : labels, sous-titres, infos */
+    --dark:        #1a0a04;   /* texte principal : titres, contenu important */
+    --white:       #ffffff;   /* blanc pur : fonds de cartes, texte sur fond sombre */
 
-    /* ── Statuts ── */
-    --statut-ok:          #166534;  /* texte accepté */
-    --statut-ok-fond:     #bbf7d0;  /* fond accepté */
-    --statut-ok-bordure:  #bbf7d0;
-    --statut-err:         #c0392b;  /* texte refusé/erreur */
-    --statut-err-fond:    #fecaca;  /* fond erreur */
-    --statut-err-bordure: #fecaca;
-    --statut-attente:     #713f12;  /* texte en attente */
-    --statut-attente-fond:     #fef9c3;
-    --statut-attente-bordure:  #fde68a;
+    /* ── Statuts — Candidatures et validations ── */
+    --statut-ok:          #166534;  /* texte "Accepté" : vert foncé lisible */
+    --statut-ok-fond:     #bbf7d0;  /* fond "Accepté" : vert très pâle */
+    --statut-ok-bordure:  #bbf7d0;  /* bordure "Accepté" : même vert pâle */
+    --statut-err:         #c0392b;  /* texte "Refusé" / erreur : rouge moyen */
+    --statut-err-fond:    #fecaca;  /* fond erreur : rose très pâle */
+    --statut-err-bordure: #fecaca;  /* bordure erreur : même rose pâle */
+    --statut-attente:     #713f12;  /* texte "En attente" : brun-ambre */
+    --statut-attente-fond:     #fef9c3;  /* fond "En attente" : jaune très pâle */
+    --statut-attente-bordure:  #fde68a;  /* bordure "En attente" : jaune pâle */
 
-    /* ── Danger (suppression) ── */
-    --danger:       #dc2626;
-    --danger-clair: #fca5a5;
-    --danger-fond:  #fff5f5;
+    /* ── Danger (suppression, actions destructives) ── */
+    --danger:       #dc2626;   /* rouge vif pour boutons et icônes de suppression */
+    --danger-clair: #fca5a5;   /* rouge pâle pour bordures danger */
+    --danger-fond:  #fff5f5;   /* fond très pâle pour zones de danger */
 
     /* ── Rayon de bordure commun ── */
-    --r: 1.1rem;
+    --r: 1.1rem;   /* rayon utilisé pour les cartes, modales et conteneurs principaux */
 }

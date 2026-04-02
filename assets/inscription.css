@@ -1,6 +1,23 @@
+/* ═══════════════════════════════════════════════════════════════════
+   inscription.css — Page de choix du type de compte / inscription
+   Utilisé par : inscription.twig.html
+   Affiche le formulaire principal d'inscription (choix étudiant / pilote)
+   avec en-tête, formulaire, footer et liens utiles.
+   Dépend de : /assets/css/variables.css (--marron*, --dark, --text-muted...)
+   ═══════════════════════════════════════════════════════════════════ */
 
+
+/* ===== RESET GLOBAL ===== */
+
+/* Réinitialisation du modèle de boîte et des marges pour tous les éléments */
 *, *::before, *::after { box-sizing: border-box; margin: 0; }
 
+
+/* ===== BASE DU CORPS DE PAGE ===== */
+
+/* Corps de page : fonte DM Sans, fond dégradé beige fixe.
+   background-attachment: fixed = le dégradé reste fixe lors du défilement.
+   min-height: 100vh = la page occupe au moins toute la hauteur de l'écran. */
 body {
     font-family: 'DM Sans', sans-serif;
     background: linear-gradient(160deg, #fdf4ed 0%, #faeee4 100%);
@@ -9,8 +26,15 @@ body {
     color: var(--dark);
 }
 
+/* Supprime la décoration des liens */
 a { text-decoration: none; color: inherit; }
 
+
+/* ===== MISE EN PAGE PRINCIPALE ===== */
+
+/* Colonne flex centrée avec largeur maximale de 600px.
+   min-height: 100vh = la colonne s'étend sur toute la hauteur de l'écran.
+   Cela permet de pousser le footer en bas grâce à margin-top: auto sur footer. */
 .page-inscription {
     max-width: 600px;
     margin: 0 auto;
@@ -18,11 +42,16 @@ a { text-decoration: none; color: inherit; }
     display: flex;
     flex-direction: column;
     align-items: center;
-    min-height: 100vh;
+    min-height: 100vh; /* pleine hauteur pour footer en bas */
 }
 
+
+/* ===== EN-TÊTE ===== */
+
+/* Bloc d'introduction centré au-dessus du formulaire */
 .intro-page { text-align: center; margin-bottom: 2rem; }
 
+/* Étiquette "INSCRIPTION" en petites majuscules marron */
 .intro-small-titre {
     font-size: 0.8rem;
     font-weight: 600;
@@ -32,24 +61,39 @@ a { text-decoration: none; color: inherit; }
     margin-bottom: 0.5rem;
 }
 
+/* Titre principal de la page d'inscription */
 .titre-principal { font-size: 2rem; font-weight: 700; color: var(--dark); margin-bottom: 0.6rem; }
+
+/* Sous-titre descriptif en couleur atténuée */
 .sous-titre { font-size: 0.95rem; color: var(--text-muted); }
 
+
+/* ===== CARTE DU FORMULAIRE ===== */
+
+/* Boîte blanche semi-transparente qui contient le formulaire.
+   padding-top: 60px ménage l'espace pour le bouton retour en absolu.
+   position: relative est nécessaire pour le bouton retour (position: absolute).
+   animation: fadeIn = apparition douce au chargement. */
 .formulaire-carte {
     background: rgba(255, 255, 255, 0.95);
     width: 100%;
     max-width: 400px;
     padding: 60px 40px 20px 40px;
     border-radius: 20px;
-    box-shadow: 0 20px 60px rgba(124, 61, 18, 0.1), 0 4px 16px rgba(124, 61, 18, 0.06);
+    box-shadow: 0 20px 60px rgba(124, 61, 18, 0.1), 0 4px 16px rgba(124, 61, 18, 0.06); /* double ombre */
     border: 1.5px solid var(--marron-bordure);
     animation: fadeIn 0.5s ease-in-out;
     margin-bottom: 1.5rem;
-    position: relative;
+    position: relative; /* ancrage pour .back-btn-container */
 }
 
+
+/* ===== BOUTON RETOUR ===== */
+
+/* Positionné en absolu dans le coin haut-gauche de la carte */
 .back-btn-container { position: absolute; top: 15px; left: 20px; }
 
+/* Bouton "< Retour" avec icône et texte alignés horizontalement */
 .btn-back {
     display: inline-flex;
     align-items: center;
@@ -66,28 +110,43 @@ a { text-decoration: none; color: inherit; }
     transition: all 0.2s ease;
 }
 
+/* Au survol : bordure et texte en marron, légère montée */
 .btn-back:hover { border-color: var(--marron); color: var(--marron); transform: translateY(-1px); }
 
+
+/* ===== CHAMPS DU FORMULAIRE ===== */
+
+/* Groupe label + input empilés verticalement */
 .champ { margin-bottom: 1.1rem; display: flex; flex-direction: column; }
+
+/* Label au-dessus du champ */
 .champ label { margin-bottom: 8px; font-weight: 500; font-size: 14px; color: var(--dark); }
 
+/* Champ de saisie avec arrondi et transition de focus */
 .champ-input {
     padding: 12px;
     border-radius: 10px;
     border: 1.5px solid var(--marron-bordure);
-    transition: 0.3s;
+    transition: 0.3s; /* anime border-color et box-shadow */
     font-size: 14px;
     font-family: 'DM Sans', sans-serif;
 }
 
+/* Au focus : bordure marron, anneau d'ombre, suppression du contour natif */
 .champ-input:focus {
     border-color: var(--marron);
     outline: none;
     box-shadow: 0 0 0 3px rgba(124, 61, 18, 0.1);
 }
 
+
+/* ===== ZONE D'ACTIONS DU FORMULAIRE ===== */
+
+/* Conteneur du bouton de soumission avec espacement au-dessus */
 .actions-formulaire { margin-top: 1.5rem; }
 
+/* Bouton "S'inscrire" pleine largeur avec dégradé marron.
+   letter-spacing: 0.3px améliore très légèrement la lisibilité. */
 .bouton-principal {
     width: 100%;
     padding: 12px;
@@ -104,17 +163,29 @@ a { text-decoration: none; color: inherit; }
     box-shadow: 0 4px 14px rgba(124, 61, 18, 0.3);
 }
 
+/* Au survol : ombre agrandie + légère montée du bouton */
 .bouton-principal:hover {
     box-shadow: 0 6px 20px rgba(124, 61, 18, 0.45);
     transform: translateY(-1px);
 }
 
+
+/* ===== LIEN VERS LA CONNEXION ===== */
+
+/* Texte centré "Déjà un compte ? Se connecter" */
 .texte-centre { margin-top: 1.2rem; text-align: center; font-size: 14px; color: var(--text-muted); }
+
+/* Lien "Se connecter" en marron */
 .lien-connexion { color: var(--marron); font-weight: 500; text-decoration: none; }
 .lien-connexion:hover { text-decoration: underline; }
 
+
+/* ===== FOOTER ===== */
+
+/* Footer poussé en bas grâce à margin-top: auto (fonctionne car .page-inscription est flex).
+   flex horizontal avec liens à droite. */
 footer {
-    margin-top: auto;
+    margin-top: auto; /* pousse le footer en bas de la colonne flex */
     padding-top: 2rem;
     display: flex;
     justify-content: space-between;
@@ -124,10 +195,16 @@ footer {
     color: var(--text-muted);
 }
 
+/* Liens du footer alignés horizontalement */
 .liens-pied-de-page { display: flex; gap: 1rem; }
 .liens-pied-de-page a { color: var(--text-muted); font-size: 13px; }
 .liens-pied-de-page a:hover { color: var(--marron); text-decoration: underline; }
 
+
+/* ===== MEDIA QUERY — MOBILE (< 480px) ===== */
+
+/* Sur petits écrans : paddings réduits, taille du titre diminuée.
+   Le footer passe en colonne centrée. */
 @media (max-width: 480px) {
     .page-inscription { padding: 1.5rem 1rem; }
     .formulaire-carte { padding: 50px 20px 15px 20px; }
@@ -137,6 +214,10 @@ footer {
     footer { flex-direction: column; gap: 0.5rem; text-align: center; }
 }
 
+
+/* ===== ANIMATION D'ENTRÉE ===== */
+
+/* La carte apparaît en remontant depuis le bas en 0.5 seconde */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(15px); }
     to { opacity: 1; transform: translateY(0); }

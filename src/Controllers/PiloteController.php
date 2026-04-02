@@ -5,6 +5,16 @@ require_once __DIR__ . '/BaseController.php';
 /**
  * Contrôleur de gestion des pilotes et des étudiants.
  *
+ * Un "pilote" est un enseignant référent qui supervise un groupe d'étudiants.
+ * Ce contrôleur centralise :
+ *  - Le CRUD des comptes pilotes, réservé exclusivement aux administrateurs.
+ *  - Le CRUD des comptes étudiants, accessible aux admins et aux pilotes.
+ *  - La gestion du lien de supervision (affectation/retrait).
+ *  - La consultation des candidatures d'un étudiant depuis la vue admin/pilote.
+ *  - Le téléchargement sécurisé des CV déposés par les étudiants lors de leur candidature.
+ *
+ * Toutes les actions POST vérifient le jeton CSRF avant tout traitement.
+ *
  * Responsabilités :
  *  - Opérations CRUD sur les comptes pilotes (admin uniquement).
  *  - Opérations CRUD sur les comptes étudiants (admin ou pilote).

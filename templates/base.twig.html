@@ -1,67 +1,125 @@
+{#
+    base.twig.html — Template de base (layout principal)
+    Toutes les pages du site héritent de ce template via {% extends "base.twig.html" %}.
+    Il définit la structure HTML commune : <head>, header de navigation, contenu, footer, scripts.
+
+    Blocs Twig disponibles pour les templates enfants :
+      - {% block title %}  : titre de l'onglet (ex: "Stages – Stage Finder")
+      - {% block css %}    : feuilles de style supplémentaires (chaque page peut ajouter les siennes)
+      - {% block content %}: contenu principal de la page
+
+    Variables Twig disponibles (injectées par BaseController) :
+      - session_user : objet utilisateur connecté (null si non connecté)
+                       propriétés : .prenom, .nom, .role ('admin', 'pilote', 'etudiant')
+      - csrf_token   : jeton CSRF injecté dans la meta tag pour les requêtes AJAX
+      - uri          : URI courante (ex: 'stages', 'profil') pour marquer le lien actif
+#}
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    {# Jeton CSRF injecté dans une meta tag.
+       Récupéré en JS (document.querySelector('meta[name="csrf-token"]').content)
+       pour les requêtes fetch/AJAX (ex: favoris.js). #}
     <meta name="csrf-token" content="{{ csrf_token }}">
+
+    {# Titre de l'onglet — peut être surchargé par chaque page enfant #}
     <title>{% block title %}Stage Finder{% endblock %}</title>
-{% block css %}
-<link rel="stylesheet" href="/assets/css/variables.css">
-<link rel="stylesheet" href="/assets/style-stage.css">
-{% endblock %}
-<link rel="stylesheet" href="/assets/confirm-modal.css">
+
+    {# Bloc CSS : charge les styles communs (variables + style-stage).
+       Les pages enfants peuvent surcharger ce bloc ou appeler {{ parent() }}
+       pour conserver les styles communs ET ajouter les leurs. #}
+    {% block css %}
+    <link rel="stylesheet" href="/assets/css/variables.css">
+    <link rel="stylesheet" href="/assets/style-stage.css">
+    {% endblock %}
+
+    {# CSS de la modale de confirmation (chargé sur toutes les pages car utilisé partout) #}
+    <link rel="stylesheet" href="/assets/confirm-modal.css">
 </head>
 <body>
   <div class="page">
+
+    {# ===== HEADER (EN-TÊTE / NAVIGATION DESKTOP) ===== #}
     <header>
+
+      {# Logo cliquable qui renvoie vers la page d'accueil/recherche #}
       <a href="/?uri=cherche-stage" class="logo">
         <div class="logo-icon">SF</div>
         <span class="logo-name">Stage Finder</span>
       </a>
-<nav>
+
+      {# Navigation principale — masquée sur mobile (< 768px), affichée en flex sur bureau #}
+      <nav>
+            {# Lien "Accueil" — actif si l'URI est 'cherche-stage' ou 'home' #}
             <a href="/?uri=cherche-stage" class="{% if uri == 'cherche-stage' or uri == 'home' %}active{% endif %}">Accueil</a>
+
+            {# Lien "Stages" — liste publique des offres #}
             <a href="/?uri=stages" class="{% if uri == 'stages' %}active{% endif %}">Stages</a>
+
+            {# Lien "Entreprises" — liste publique des entreprises #}
             <a href="/?uri=entreprises" class="{% if uri == 'entreprises' %}active{% endif %}">Entreprises</a>
 
-
+            {# Menu déroulant "Gestion" — visible uniquement pour les admins et pilotes.
+               session_user.role in ['admin', 'pilote'] = vérifie si le rôle est autorisé.
+               Le bouton est marqué .active si l'URI courante correspond à une page de gestion. #}
             {% if session_user and session_user.role in ['admin', 'pilote'] %}
             <div class="nav-dropdown" id="nav-gestion">
+                {# Bouton déclencheur du menu déroulant.
+                   onclick="toggleDropdown(this)" = JS dans main.js qui ouvre/ferme le menu.
+                   Le bloc {% if uri in [...] %} marque le bouton comme actif sur les pages de gestion. #}
                 <button class="nav-dropdown-btn {% if uri in ['etudiant_list','entreprise_list','entreprise_create','entreprise_update','pilote_list','register','evaluation_list','avis_create','offre_create','offre_update'] %}active{% endif %}"
                         onclick="toggleDropdown(this)" type="button">
                     Gestion
+                    {# Chevron SVG animé (tourne à 180° quand le menu est ouvert) #}
                     <svg class="nav-chevron" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4"/></svg>
                 </button>
+
+                {# Contenu du menu déroulant : liens vers les sections d'administration #}
                 <div class="nav-dropdown-menu">
+                    {# Lien vers la gestion des offres de stage #}
                     <a href="/?uri=stages" class="{% if uri in ['stages','offre_create','offre_update'] %}active{% endif %}">
                         <span class="nav-item-icon">
                             <svg viewBox="0 0 16 16"><path d="M2 4h12M2 8h12M2 12h8"/></svg>
                         </span>
                         Offres
                     </a>
+
+                    {# Lien vers la liste des étudiants #}
                     <a href="/?uri=etudiant_list" class="{% if uri == 'etudiant_list' %}active{% endif %}">
                         <span class="nav-item-icon">
                             <svg viewBox="0 0 16 16"><path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0 1c-3.5 0-6 1.8-6 3.5V14h12v-1.5C14 9.8 11.5 8 8 8z"/></svg>
                         </span>
                         Étudiants
                     </a>
+
+                    {# Lien vers la liste des entreprises #}
                     <a href="/?uri=entreprise_list" class="{% if uri in ['entreprise_list','entreprise_create','entreprise_update'] %}active{% endif %}">
                         <span class="nav-item-icon">
                             <svg viewBox="0 0 16 16"><rect x="2" y="6" width="12" height="8" rx="1"/><path d="M5 6V4a3 3 0 0 1 6 0v2"/><path d="M6 10h4"/></svg>
                         </span>
                         Entreprises
                     </a>
+
+                    {# Lien vers la liste des évaluations (avis sur les entreprises) #}
                     <a href="/?uri=evaluation_list" class="{% if uri in ['evaluation_list','avis_create'] %}active{% endif %}">
                         <span class="nav-item-icon">
                             <svg viewBox="0 0 16 16"><path d="M8 1l2 4.5H15l-4 3 1.5 5L8 11l-4.5 2.5L5 8.5 1 5.5h5z"/></svg>
                         </span>
                         Évaluations
                     </a>
+
+                    {# Lien vers les statistiques des offres #}
                     <a href="/?uri=stats_offres" class="{% if uri == 'stats_offres' %}active{% endif %}">
                         <span class="nav-item-icon">
                             <svg viewBox="0 0 16 16"><path d="M2 12h2V8H2zm4 0h2V4H6zm4 0h2V2h-2z"/></svg>
                         </span>
                         Stats offres
                     </a>
+
+                    {# Lien vers la liste des pilotes — visible uniquement pour les admins #}
                     {% if session_user.role == 'admin' %}
                     <a href="/?uri=pilote_list" class="{% if uri == 'pilote_list' %}active{% endif %}">
                         <span class="nav-item-icon">
@@ -74,20 +132,26 @@
             </div>
             {% endif %}
 
+            {# Lien "À propos" — page de présentation de l'équipe #}
             <a href="/?uri=nous" class="{% if uri == 'nous' %}active{% endif %}">À propos</a>
         </nav>
+
+        {# Boutons d'en-tête (Connexion / Déconnexion / Nom utilisateur) #}
         <div class="hdr-btns">
             {% if session_user %}
+                {# Utilisateur connecté : affiche son prénom + nom comme lien vers son profil #}
                 <a href="/?uri=profil" class="btn btn-outline {% if uri == 'profil' %}active{% endif %}">
                     {{ session_user.prenom }} {{ session_user.nom }}
                 </a>
                 <a href="/?uri=logout" class="btn btn-fill">Se déconnecter</a>
             {% else %}
+                {# Utilisateur non connecté : bouton "Se connecter" uniquement #}
                 <a href="/?uri=login" class="btn btn-outline">Se connecter</a>
-                
             {% endif %}
-        </div>      
-      <!-- Menu Burger Mobile -->
+        </div>
+
+      <!-- Bouton burger mobile : 3 barres animées en croix à l'ouverture du menu.
+           Géré par menu-burger.js (toggle de .active sur #mobile-toggle et #nav-mobile). -->
       <div class="mobile-menu-toggle" id="mobile-toggle">
         <span></span>
         <span></span>
@@ -95,42 +159,57 @@
       </div>
     </header>
 
-    <!-- Menu Mobile (un seul, en dehors du header) -->
+    {# ===== NAVIGATION MOBILE (panneau latéral coulissant) ===== #}
+    {# En dehors du header pour ne pas être imbriqué dans le flex du header.
+       Glisse depuis la gauche quand .active est ajouté par menu-burger.js. #}
     <nav class="nav-mobile" id="nav-mobile">
+
+      {# Liens principaux — mêmes que la nav desktop #}
       <a href="/?uri=cherche-stage" class="{% if uri == 'cherche-stage' or uri == 'home' %}active{% endif %}">Accueil</a>
       <a href="/?uri=stages" class="{% if uri == 'stages' %}active{% endif %}">Stages</a>
       <a href="/?uri=entreprises" class="{% if uri == 'entreprises' %}active{% endif %}">Entreprises</a>
-{% if session_user and session_user.role in ['admin', 'pilote'] %}
-  <div class="nav-mobile-dropdown">
-    <button class="nav-mobile-dropdown-btn" type="button">Gestion</button>
-    <div class="nav-mobile-dropdown-menu">
-      <a href="/?uri=stages" class="{% if uri in ['stages','offre_create','offre_update'] %}active{% endif %}">Offres</a>
-      <a href="/?uri=etudiant_list" class="{% if uri == 'etudiant_list' %}active{% endif %}">Étudiants</a>
-      <a href="/?uri=entreprise_list" class="{% if uri in ['entreprise_list','entreprise_create','entreprise_update'] %}active{% endif %}">Entreprises</a>
-      <a href="/?uri=evaluation_list" class="{% if uri in ['evaluation_list','avis_create'] %}active{% endif %}">Évaluations</a>
-      <a href="/?uri=stats_offres" class="{% if uri == 'stats_offres' %}active{% endif %}">Stats offres</a>
-      {% if session_user.role == 'admin' %}
-        <a href="/?uri=pilote_list" class="{% if uri in ['pilote_list','pilote_create'] %}active{% endif %}">Pilotes</a>
+
+      {# Sous-menu accordéon "Gestion" mobile — visible uniquement pour admin et pilote.
+         L'ouverture/fermeture est gérée par menu-burger.js (toggle de .open). #}
+      {% if session_user and session_user.role in ['admin', 'pilote'] %}
+        <div class="nav-mobile-dropdown">
+          <button class="nav-mobile-dropdown-btn" type="button">Gestion</button>
+          <div class="nav-mobile-dropdown-menu">
+            <a href="/?uri=stages" class="{% if uri in ['stages','offre_create','offre_update'] %}active{% endif %}">Offres</a>
+            <a href="/?uri=etudiant_list" class="{% if uri == 'etudiant_list' %}active{% endif %}">Étudiants</a>
+            <a href="/?uri=entreprise_list" class="{% if uri in ['entreprise_list','entreprise_create','entreprise_update'] %}active{% endif %}">Entreprises</a>
+            <a href="/?uri=evaluation_list" class="{% if uri in ['evaluation_list','avis_create'] %}active{% endif %}">Évaluations</a>
+            <a href="/?uri=stats_offres" class="{% if uri == 'stats_offres' %}active{% endif %}">Stats offres</a>
+            {# Lien "Pilotes" visible uniquement pour les admins #}
+            {% if session_user.role == 'admin' %}
+              <a href="/?uri=pilote_list" class="{% if uri in ['pilote_list','pilote_create'] %}active{% endif %}">Pilotes</a>
+            {% endif %}
+          </div>
+        </div>
       {% endif %}
-    </div>
-  </div>
-{% endif %}
+
       <a href="/?uri=nous" class="{% if uri == 'nous' %}active{% endif %}">À propos</a>
 
+      {# Section utilisateur en bas du menu mobile #}
       {% if session_user %}
       <div class="mobile-user-section">
+        {# Lien vers le profil avec le nom de l'utilisateur connecté #}
         <a href="/?uri=profil" class="{% if uri == 'profil' %}active{% endif %}">
           Profil - {{ session_user.prenom }} {{ session_user.nom }}
         </a>
         <a href="/?uri=logout" class="btn-fill-mobile">Se déconnecter</a>
       </div>
       {% else %}
+      {# Utilisateur non connecté : bouton "Se connecter" en pleine largeur #}
       <a href="/?uri=login" class="btn-fill-mobile">Se connecter</a>
       {% endif %}
     </nav>
 
+    {# ===== CONTENU PRINCIPAL ===== #}
+    {# Bloc vide ici — chaque template enfant remplace ce bloc avec son contenu. #}
     {% block content %}{% endblock %}
 
+    {# ===== FOOTER ===== #}
     <footer>
       <p>© 2026 Stage Finder. Tous droits réservés.</p>
       <div class="foot-links">
@@ -139,11 +218,24 @@
     </footer>
   </div>
 
+  {# ===== SCRIPTS JAVASCRIPT ===== #}
+  {# main.js : dropdowns, validation email, carrousel — chargé en premier (sans defer) #}
   <script src="/assets/js/main.js"></script>
+
+  {# CV.js : validation du fichier CV (taille, extension) — defer = exécuté après le DOM #}
   <script src="/assets/js/CV.js" defer></script>
+
+  {# bouton-haut.js : bouton "retour en haut" flottant — defer #}
   <script src="/assets/js/bouton-haut.js" defer></script>
+
+  {# bouton-retour.js : boutons "← Retour" avec gestion de l'historique — defer #}
   <script src="/assets/js/bouton-retour.js" defer></script>
+
+  {# menu-burger.js : ouverture/fermeture du menu mobile et de ses sous-menus — defer #}
   <script src="/assets/js/menu-burger.js" defer></script>
+
+  {# confirm-modal.js : modale de confirmation pour les actions destructives — sans defer
+     (doit être disponible immédiatement pour les boutons qui l'utilisent) #}
   <script src="/assets/js/confirm-modal.js"></script>
 </body>
 </html>

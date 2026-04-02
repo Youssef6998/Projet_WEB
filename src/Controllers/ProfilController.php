@@ -5,6 +5,15 @@ require_once __DIR__ . '/BaseController.php';
 /**
  * Contrôleur du profil utilisateur.
  *
+ * Permet à tout utilisateur connecté (quel que soit son rôle) de :
+ *  - Consulter son profil enrichi avec les données les plus récentes de la base.
+ *  - Modifier ses informations personnelles champ par champ.
+ *  - Changer son mot de passe (vérification de l'ancien mot de passe obligatoire).
+ *  - Supprimer définitivement son propre compte.
+ *
+ * Les données spécifiques au rôle (candidatures pour les étudiants, liste des
+ * étudiants supervisés pour les pilotes) sont chargées conditionnellement.
+ *
  * Gère toutes les actions liées au profil de l'utilisateur connecté :
  * affichage des données, modification de champs individuels (dont le mot
  * de passe) et suppression définitive du compte.

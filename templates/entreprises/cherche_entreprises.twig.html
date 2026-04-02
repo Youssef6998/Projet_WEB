@@ -1,21 +1,46 @@
+{#
+    cherche_entreprises.twig.html — Liste publique des entreprises avec recherche
+    Hérite de base.twig.html.
+    Accessible à tous (visiteurs, étudiants, admins, pilotes).
+    Permet de parcourir et filtrer les entreprises partenaires.
+
+    Variables Twig reçues (EntrepriseController::index) :
+      - entreprises  : tableau d'objets entreprise. Chaque objet contient :
+                         id_entreprise, nom, description, email_contact,
+                         telephone_contact, nb_offres (nombre d'offres actives)
+      - total        : nombre total d'entreprises correspondant au filtre
+      - totalPages   : nombre total de pages
+      - currentPage  : numéro de la page courante
+      - nom          : filtre de recherche actif sur le nom de l'entreprise
+#}
 {% extends "base.twig.html" %}
+
+{# Bloc CSS : charge style-stage.css pour les cartes, boutons et pagination #}
 {% block css %}
 <link rel="stylesheet" href="/assets/css/variables.css">
 <link rel="stylesheet" href="/assets/style-stage.css">
 {% endblock %}
+
 {% block title %}Stage Finder – Toutes les entreprises{% endblock %}
 
 {% block content %}
+
+{# ===== BARRE DE RECHERCHE ===== #}
 <div class="search-card">
     <div class="search-head">
         <span class="pill pill-r">Recherche d'entreprises</span>
+        {# Compteur de résultats mis à jour après chaque soumission du formulaire #}
         <span class="pill pill-count">{{ total }} résultats</span>
     </div>
+
+    {# Formulaire de recherche par nom — méthode GET pour partager l'URL filtrée #}
     <form action="/?uri=entreprises" method="get">
+        {# Champ caché "uri" requis par le router PHP pour identifier la route #}
         <input type="hidden" name="uri" value="entreprises">
         <div class="field-grid-4">
             <div class="field">
                 <label>Nom de l'entreprise</label>
+                {# value="{{ nom }}" restitue la valeur saisie lors de la dernière recherche #}
                 <div class="field-input"><input name="nom" value="{{ nom }}" class="cases" placeholder="Ex : TechCorp, DataSoft..."></div>
             </div>
         </div>
@@ -25,36 +50,54 @@
     </form>
 </div>
 
+{# ===== LISTE DES ENTREPRISES ===== #}
+{# stages-list--mt = marge haute pour séparer la liste de la barre de recherche #}
 <div class="stages-list stages-list--mt">
     {% for e in entreprises %}
     <article class="stage-card">
+
+        {# Colonne gauche : informations de l'entreprise #}
         <div class="stage-info">
             <div class="stage-top">
+                {# Nom de l'entreprise en petites majuscules espacées #}
                 <span class="stage-company">{{ e.nom }}</span>
+                {# Nombre d'offres actives avec pluriel conditionnel #}
                 <span class="stage-type">{{ e.nb_offres }} offre{{ e.nb_offres != 1 ? 's' : '' }}</span>
             </div>
+            {# Description tronquée à 140 caractères avec "…" si plus longue #}
             {% if e.description %}
             <p class="stage-desc">{{ e.description|slice(0, 140) }}{% if e.description|length > 140 %}…{% endif %}</p>
             {% endif %}
         </div>
+
+        {# Colonne droite : coordonnées + lien vers la fiche entreprise #}
         <div class="stage-right">
+            {# Email de contact (affiché comme texte, sans lien mailto ici) #}
             <span class="stage-duration">{{ e.email_contact }}</span>
+            {# Téléphone — conditionnel #}
             {% if e.telephone_contact %}
             <span class="stage-date">{{ e.telephone_contact }}</span>
             {% endif %}
+            {# Lien vers la page détail de l'entreprise (toutes ses offres, évaluations...) #}
             <a href="/?uri=entreprise&id={{ e.id_entreprise }}" class="btn btn-dark">Voir l'entreprise</a>
         </div>
+
     </article>
     {% else %}
+    {# Affiché si aucune entreprise ne correspond au filtre nom #}
     <p class="liste-vide">Aucune entreprise trouvée.</p>
     {% endfor %}
 </div>
 
+{# ===== PAGINATION ===== #}
+{# Le paramètre nom est conservé dans les liens de pagination pour ne pas perdre le filtre. #}
 <div class="pagination">
+    {# Bouton page précédente #}
     {% if currentPage > 1 %}
         <a href="/?uri=entreprises&page={{ currentPage - 1 }}&nom={{ nom }}" class="page-btn arrow">←</a>
     {% endif %}
 
+    {# Boutons numérotés — la page courante reçoit la classe 'active' #}
     {% for i in 1..totalPages %}
         <a href="/?uri=entreprises&page={{ i }}&nom={{ nom }}"
            class="page-btn {{ i == currentPage ? 'active' : '' }}">
@@ -62,6 +105,7 @@
         </a>
     {% endfor %}
 
+    {# Bouton page suivante #}
     {% if currentPage < totalPages %}
         <a href="/?uri=entreprises&page={{ currentPage + 1 }}&nom={{ nom }}" class="page-btn arrow">→</a>
     {% endif %}

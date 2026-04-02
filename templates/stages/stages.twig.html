@@ -1,36 +1,75 @@
+{#
+    stages.twig.html — Liste publique des offres de stage avec recherche et filtres
+    Hérite de base.twig.html.
+    Page principale de recherche de stages : accessible à tous, avec actions supplémentaires
+    pour les étudiants (favoris) et les admins/pilotes (créer, modifier, supprimer).
+
+    Variables Twig reçues (StageController::index) :
+      - stages       : tableau d'offres. Chaque objet contient :
+                         id, title, company, description, ville, duration, date, tags[]
+      - totalStages  : nombre total d'offres correspondant aux filtres
+      - totalPages   : nombre total de pages
+      - currentPage  : numéro de page courante
+      - domaine      : filtre domaine actif (ex: 'informatique')
+      - ville        : filtre ville actif
+      - competence   : filtre compétence actif
+      - duree        : filtre durée actif
+      - tri          : critère de tri actif ('date_desc', 'date_asc', 'alpha_asc', 'alpha_desc')
+      - wishlist_ids : tableau des IDs d'offres mis en favoris par l'étudiant connecté
+      - success      : message de confirmation ('creee', 'modifiee', 'supprimee')
+      - csrf_token   : jeton CSRF (pour les formulaires de suppression)
+      - session_user : utilisateur connecté (null si visiteur)
+#}
 {% extends "base.twig.html" %}
+
+{# Bloc CSS : ajoute favoris.css pour les animations du bouton cœur et du toast #}
 {% block css %}
 <link rel="stylesheet" href="/assets/css/variables.css">
 <link rel="stylesheet" href="/assets/style-stage.css">
 <link rel="stylesheet" href="/assets/favoris.css">
 {% endblock %}
+
 {% block title %}Stage Finder – Tous les stages{% endblock %}
 
 {% block content %}
+
+{# ===== BARRE DE RECHERCHE AVEC FILTRES ===== #}
 <div class="search-card">
     <div class="search-head">
         <span class="pill pill-r">Recherche de stage</span>
+        {# Compteur de résultats mis à jour après chaque recherche #}
         <span class="pill pill-count">{{ totalStages }} résultats</span>
     </div>
+
+    {# Messages de confirmation après action CRUD sur les offres #}
     {% if success == 'creee' %}<div class="alert alert-success">L'offre a bien été créée.</div>{% endif %}
     {% if success == 'modifiee' %}<div class="alert alert-success">L'offre a bien été modifiée.</div>{% endif %}
     {% if success == 'supprimee' %}<div class="alert alert-success">L'offre a bien été supprimée.</div>{% endif %}
+
+    {# Formulaire de recherche multi-critères — méthode GET pour partager l'URL filtrée #}
     <form action="/?uri=stages" method="get">
         <input type="hidden" name="uri" value="stages">
+
+        {# Grille de filtres : 5 colonnes sur bureau, moins sur mobile #}
         <div class="field-grid-4">
+
+            {# Filtre Domaine : liste déroulante avec les secteurs disponibles.
+               select-domaine = flèche SVG personnalisée (voir style-stage.css) #}
             <div class="field">
                 <label>Domaine</label>
                 <div class="field-input">
-                <select name="domaine" id="domaine-select" class="cases select-domaine">
-                    <option value="">Tous les domaines</option>
-                    <option value="informatique">Informatique & Digital</option>
-                    <option value="marketing">Marketing & Communication</option>
-                    <option value="commerce">Commerce & Management</option>
-                    <option value="industrie">Industrie & Ingénierie</option>
-                    <option value="services">Services & Autres</option>
-                </select>
+                    <select name="domaine" id="domaine-select" class="cases select-domaine">
+                        <option value="">Tous les domaines</option>
+                        <option value="informatique">Informatique & Digital</option>
+                        <option value="marketing">Marketing & Communication</option>
+                        <option value="commerce">Commerce & Management</option>
+                        <option value="industrie">Industrie & Ingénierie</option>
+                        <option value="services">Services & Autres</option>
+                    </select>
                 </div>
             </div>
+
+            {# Filtre Ville — saisie libre, value="{{ ville|default('') }}" restitue la valeur active #}
             <div class="field">
                 <label>Ville</label>
                 <div class="field-input">
@@ -38,6 +77,7 @@
                 </div>
             </div>
 
+            {# Filtre Compétence — saisie libre (ex: "Python", "marketing digital") #}
             <div class="field">
                 <label>Compétence</label>
                 <div class="field-input">
@@ -45,6 +85,7 @@
                 </div>
             </div>
 
+            {# Filtre Durée — saisie libre (ex: "2 mois", "6 mois") #}
             <div class="field">
                 <label>Durée</label>
                 <div class="field-input">
@@ -52,6 +93,7 @@
                 </div>
             </div>
 
+            {# Sélecteur de tri — pré-sélectionne l'option active via l'opérateur ternaire Twig #}
             <div class="field">
                 <label>Trier par</label>
                 <div class="field-input">
@@ -65,8 +107,11 @@
             </div>
 
         </div>
+
+        {# Actions : bouton Rechercher + bouton "Créer une offre" (admin/pilote uniquement) #}
         <div class="search-actions">
             <button type="submit" class="btn btn-fill">Rechercher</button>
+            {# Le bouton de création n'est visible que pour les admins et pilotes #}
             {% if session_user and session_user.role in ['admin', 'pilote'] %}
             <a href="/?uri=offre_create" class="btn btn-fill">+ Créer une offre</a>
             {% endif %}
@@ -74,50 +119,76 @@
     </form>
 </div>
 
-
-
+{# ===== LISTE DES OFFRES ===== #}
 <!-- Liste des stages -->
 <div class="stages-list stages-list--mt">
     {% for stage in stages %}
     <article class="stage-card">
+
+        {# Informations de l'offre (colonne gauche) #}
         <div class="stage-info">
             <div class="stage-top">
+                {# Nom de l'entreprise en petites majuscules #}
                 <span class="stage-company">{{ stage.company }}</span>
                 <span class="stage-type">Stage</span>
+                {# Ville — "Lieu Non précisé" si non renseignée #}
                 {% if stage.ville %}
                     <span class="stage-type">{{ stage.ville }}</span>
                 {% else %}
                     <span class="stage-type"> Lieu Non précisé</span>
                 {% endif %}
             </div>
+
+            {# Titre de l'offre #}
             <h3 class="stage-title">{{ stage.title }}</h3>
+
+            {# Description tronquée à 120 caractères #}
             {% if stage.description %}
             <p class="stage-desc">{{ stage.description|slice(0, 120) }}{% if stage.description|length > 120 %}…{% endif %}</p>
             {% endif %}
+
+            {# Tags de compétences (ex: Python, React, SQL...) #}
             <div class="stage-tags">
                 {% for tag in stage.tags %}
                 <span class="stage-tag">{{ tag }}</span>
                 {% endfor %}
             </div>
         </div>
-                <div class="stage-right">
+
+        {# Métadonnées + actions (colonne droite) #}
+        <div class="stage-right">
+            {# Durée du stage (si renseignée) #}
             {% if stage.duration %}
                 <span class="stage-duration">{{ stage.duration }}</span>
             {% endif %}
+            {# Date de publication #}
             {% if stage.date %}
                 <span class="stage-date"> publié le {{ stage.date }}</span>
             {% endif %}
 
+            {# ===== ACTIONS PAR RÔLE ===== #}
             <div class="stage-actions">
+
+                {# Bouton cœur (favoris) — visible uniquement pour les étudiants connectés.
+                   data-offre-id = lu par favoris.js pour l'appel AJAX vers /?uri=wishlist-toggle.
+                   La classe .actif = déjà en favoris (fond marron + cœur visible même sans survol).
+                   wishlist_ids contient les IDs des offres favorites de l'étudiant. #}
                 {% if session_user and session_user.role == 'etudiant' %}
                 <button type="button"
                         class="btn btn-dark btn-heart {% if stage.id in wishlist_ids %}actif{% endif %}"
                         data-offre-id="{{ stage.id }}"
                         title="{{ stage.id in wishlist_ids ? 'Retirer des favoris' : 'Ajouter aux favoris' }}">❤</button>
                 {% endif %}
+
+                {# Bouton "Voir l'offre" — accessible à tous #}
                 <a href="/?uri=offre&id={{ stage.id }}" class="btn btn-dark">Voir l'offre</a>
+
+                {# Boutons Modifier et Supprimer — admins et pilotes uniquement #}
                 {% if session_user and session_user.role in ['admin', 'pilote'] %}
                 <a href="/?uri=offre_update&id={{ stage.id }}" class="btn btn-outline">Modifier</a>
+
+                {# Formulaire de suppression avec modale de confirmation.
+                   Attention : les candidatures associées seront aussi supprimées. #}
                 <form method="post" action="/?uri=offre_delete"
                       data-confirm-title="Supprimer l'offre"
                       data-confirm-name="{{ stage.title }}"
@@ -129,25 +200,24 @@
                 {% endif %}
             </div>
         </div>
+
     </article>
     {% else %}
+    {# Affiché si aucune offre ne correspond aux filtres #}
     <p class="liste-vide">Aucun stage trouvé.</p>
     {% endfor %}
 </div>
 
-
-
-
-
-
-
-
-
+{# ===== PAGINATION ===== #}
+{# Les paramètres de filtre (domaine, tri) sont conservés dans les liens de pagination
+   pour ne pas perdre les filtres en changeant de page. #}
 <div class="pagination">
+    {# Bouton page précédente #}
     {% if currentPage > 1 %}
         <a href="/?uri=stages&page={{ currentPage - 1 }}&domaine={{ domaine }}&tri={{ tri }}" class="page-btn arrow">←</a>
     {% endif %}
 
+    {# Boutons numérotés — la page courante reçoit la classe 'active' #}
     {% for i in 1..totalPages %}
         <a href="/?uri=stages&page={{ i }}&domaine={{ domaine }}&tri={{ tri }}"
            class="page-btn {{ i == currentPage ? 'active' : '' }}">
@@ -155,10 +225,12 @@
         </a>
     {% endfor %}
 
+    {# Bouton page suivante #}
     {% if currentPage < totalPages %}
         <a href="/?uri=stages&page={{ currentPage + 1 }}&domaine={{ domaine }}&tri={{ tri }}" class="page-btn arrow">→</a>
     {% endif %}
 </div>
 
+{# favoris.js gère les clics sur les boutons cœur (AJAX vers /?uri=wishlist-toggle) #}
 <script src="/assets/js/favoris.js"></script>
 {% endblock %}

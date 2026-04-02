@@ -1,9 +1,23 @@
+{#
+    creer_compte_pilote.twig.html — Formulaire de création d'un compte pilote (version legacy)
+    Hérite de base.twig.html.
+    Accessible aux admins uniquement.
+    Note : ce formulaire est en doublon avec inscription.twig.html (type=pilote).
+    Il subsiste pour la route /?uri=pilote_create directe.
+
+    Variables Twig reçues (AdminController::piloteCreate) :
+      - erreur      : message d'erreur de validation côté serveur
+      - csrf_token  : jeton CSRF pour sécuriser la soumission POST
+#}
 {% extends "base.twig.html" %}
 {% block title %}Créer un compte Pilote – Stage Finder{% endblock %}
+
 {% block content %}
 <div class="page">
+    {# mgmt-wrap = conteneur principal centré des pages de gestion #}
     <div class="mgmt-wrap">
 
+        {# ===== EN-TÊTE DE LA PAGE ===== #}
         <div class="mgmt-header">
             <span class="mgmt-eyebrow">Pilote</span>
             <h1>Créer un compte Pilote</h1>
@@ -11,14 +25,20 @@
         </div>
 
         <div class="mgmt-card">
+            {# Lien de retour vers la liste des pilotes #}
             <a href="/?uri=pilote_list" class="mgmt-back">← Retour à la liste</a>
 
+            {# Message d'erreur de validation (ex: "Cet email est déjà utilisé") #}
             {% if erreur %}
             <div class="alert alert-error">{{ erreur }}</div>
             {% endif %}
 
+            {# ===== FORMULAIRE DE CRÉATION ===== #}
             <form method="POST" action="/?uri=pilote_create">
+                {# Jeton CSRF anti-falsification #}
                 <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+                {# ── Ligne Nom + Prénom ── #}
                 <div class="frow">
                     <div class="fgrp">
                         <label>Nom *</label>
@@ -29,14 +49,24 @@
                         <input type="text" name="prenom" placeholder="Prénom" required>
                     </div>
                 </div>
+
+                {# ── Email ── #}
+                {# type="email" = validation native du navigateur #}
                 <div class="fgrp">
                     <label>Email *</label>
                     <input type="email" name="email" placeholder="pilote@stageconnect.fr" required>
                 </div>
+
+                {# ── Téléphone ── #}
+                {# type="tel" = clavier numérique sur mobile. Requis ici (contrairement au formulaire étudiant). #}
                 <div class="fgrp">
                     <label>Téléphone *</label>
                     <input type="tel" name="telephone" placeholder="+33 6 12 34 56 78" required>
                 </div>
+
+                {# ── Promotion ── #}
+                {# Liste des promotions CESI disponibles (valeurs fixes, non issues de BDD).
+                   Le pilote sera affecté à cette promotion pour superviser les étudiants correspondants. #}
                 <div class="fgrp">
                     <label>Promotion *</label>
                     <select name="promotion" required>
@@ -51,6 +81,10 @@
                         <option>FISA A5</option>
                     </select>
                 </div>
+
+                {# ── Ligne Mot de passe + Confirmation ── #}
+                {# Deux champs côte à côte pour créer et confirmer le mot de passe initial.
+                   La vérification que les deux valeurs correspondent est faite côté serveur. #}
                 <div class="frow">
                     <div class="fgrp">
                         <label>Mot de passe *</label>
@@ -61,10 +95,16 @@
                         <input type="password" name="confirmation" placeholder="Confirmer" required>
                     </div>
                 </div>
+
+                {# ── Case à cocher CGU ── #}
+                {# fcb = flex container (checkbox + label alignés sur la même ligne).
+                   required = l'utilisateur doit cocher avant de soumettre. #}
                 <div class="fcb">
                     <input type="checkbox" id="cgu" required>
                     <label for="cgu">J'accepte les conditions générales</label>
                 </div>
+
+                {# Bouton de soumission #}
                 <button type="submit" class="mgmt-submit">Créer le compte pilote</button>
             </form>
         </div>

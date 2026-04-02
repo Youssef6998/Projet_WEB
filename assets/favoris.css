@@ -1,6 +1,19 @@
-/* ── Animations favoris ─────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════
+   favoris.css — Animations et styles du système de favoris
+   Utilisé par : liste des stages (btn cœur), page profil (cartes favoris)
+   Ce fichier gère les animations des boutons favoris et le toast
+   de confirmation "Retiré des favoris".
+   Dépend de : /assets/css/variables.css (--marron*, --dark, --text-muted...)
+   ═══════════════════════════════════════════════════════════════════ */
 
-/* Bouton : pop au clic "Ajouter" */
+
+/* ===== ANIMATIONS DU BOUTON FAVORI ===== */
+
+/* Animation "pop" : le bouton s'agrandit puis revient à sa taille normale.
+   Déclenchée quand l'utilisateur ajoute une offre aux favoris.
+   0% → 35% : grandit jusqu'à 125% de sa taille
+   35% → 65% : revient légèrement en dessous (93%)
+   65% → 100% : revient exactement à 100% */
 @keyframes favori-pop {
     0%   { transform: scale(1); }
     35%  { transform: scale(1.25); }
@@ -8,21 +21,35 @@
     100% { transform: scale(1); }
 }
 
+/* Animation "glow" : un halo marron apparaît et disparaît autour du bouton.
+   box-shadow s'étend de 0 à 7px de rayon au milieu de l'animation (50%)
+   puis revient à 0 à la fin. Renforce le feedback visuel. */
 @keyframes favori-glow {
     0%, 100% { box-shadow: 0 0 0 0 rgba(124, 61, 18, 0); }
     50%       { box-shadow: 0 0 0 7px rgba(124, 61, 18, 0.18); }
 }
 
+/* État du bouton pendant l'animation d'ajout aux favoris.
+   Les deux animations s'enchaînent simultanément (durée 0.4s).
+   cubic-bezier(.36,.07,.19,.97) crée un effet de rebond physique.
+   !important est nécessaire pour forcer les couleurs malgré les états CSS normaux.
+   pointer-events: none empêche un double-clic pendant l'animation. */
 .btn-favori.adding {
     animation: favori-pop .4s cubic-bezier(.36,.07,.19,.97),
                favori-glow .4s ease;
-    background: var(--marron-clair) !important;
+    background: var(--marron-clair) !important; /* fond crème forcé pendant l'animation */
     border-color: var(--marron) !important;
     color: var(--marron) !important;
-    pointer-events: none;
+    pointer-events: none; /* non cliquable pendant l'animation */
 }
 
-/* Carte favori qui disparaît (profil) */
+
+/* ===== ANIMATION DE SUPPRESSION D'UN FAVORI (PAGE PROFIL) ===== */
+
+/* Quand une carte favori est retirée, elle s'efface en glissant vers la droite.
+   opacity: 0 = disparaît progressivement.
+   transform: translateX(24px) = glisse vers la droite de 24px.
+   pointer-events: none empêche toute interaction pendant la disparition. */
 .favori-card.removing {
     opacity: 0;
     transform: translateX(24px);
@@ -30,20 +57,34 @@
     pointer-events: none;
 }
 
-/* Cœur actif sur la liste des stages — toujours visible */
+
+/* ===== BOUTON CŒUR ACTIF SUR LA LISTE DES STAGES ===== */
+
+/* Quand une offre est déjà dans les favoris, le cœur reste visible en rouge.
+   Normalement le cœur est caché (opacity: 0) et n'apparaît qu'au survol de la carte.
+   !important est requis pour forcer l'affichage par-dessus le comportement hover par défaut. */
 .stage-card .btn-heart.actif {
-    opacity: 1 !important;
-    pointer-events: auto !important;
-    transform: translateX(0) !important;
-    color: #e53e3e;
+    opacity: 1 !important;           /* toujours visible même sans survol */
+    pointer-events: auto !important;  /* cliquable même sans survol */
+    transform: translateX(0) !important; /* pas de décalage horizontal */
+    color: #e53e3e; /* rouge vif pour indiquer "dans les favoris" */
 }
 
-/* ── Toast "Retiré des favoris" ─────────────────────────────────────────── */
+
+/* ===== TOAST "RETIRÉ DES FAVORIS" ===== */
+
+/* Notification flottante qui apparaît en bas de l'écran après suppression d'un favori.
+   position: fixed = reste à l'écran même si la page défile.
+   bottom: 2.2rem = distance du bas de la fenêtre.
+   left: 50% + transform: translateX(-50%) = centrage horizontal.
+   translateY(1.5rem) = position initiale légèrement en dessous (avant apparition).
+   z-index: 9999 = au-dessus de tout le contenu.
+   pointer-events: none = non interactif (juste une notification). */
 .toast-favoris {
     position: fixed;
     bottom: 2.2rem;
     left: 50%;
-    transform: translateX(-50%) translateY(1.5rem);
+    transform: translateX(-50%) translateY(1.5rem); /* centré + décalé vers le bas au départ */
     background: #fff;
     border: 1.5px solid var(--marron-bordure);
     border-radius: 14px;
@@ -51,28 +92,36 @@
     display: flex;
     align-items: center;
     gap: .7rem;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, .13);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, .13); /* ombre portée nette */
     font-family: 'DM Sans', sans-serif;
     font-size: .88rem;
     font-weight: 500;
     color: var(--dark);
-    opacity: 0;
-    transition: opacity .24s ease, transform .3s cubic-bezier(.22,.68,0,1.35);
+    opacity: 0; /* invisible par défaut */
+    transition: opacity .24s ease, transform .3s cubic-bezier(.22,.68,0,1.35); /* apparition avec rebond */
     z-index: 9999;
-    white-space: nowrap;
+    white-space: nowrap; /* empêche le retour à la ligne du texte */
     pointer-events: none;
 }
 
+/* Classe ajoutée par JS pour afficher le toast.
+   translateY(0) fait remonter le toast à sa position finale.
+   cubic-bezier(.22,.68,0,1.35) crée un léger rebond à l'arrivée. */
 .toast-favoris.visible {
     opacity: 1;
     transform: translateX(-50%) translateY(0);
 }
 
+
+/* ===== ICÔNE DU TOAST ===== */
+
+/* Cercle rouge pâle qui contient l'emoji cœur barré.
+   flex-shrink: 0 empêche le cercle de rétrécir si le texte est long. */
 .toast-favoris-icon {
     width: 1.75rem;
     height: 1.75rem;
-    border-radius: 50%;
-    background: #fee2e2;
+    border-radius: 50%; /* cercle parfait */
+    background: #fee2e2; /* fond rouge très pâle */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -81,19 +130,25 @@
     line-height: 1;
 }
 
+
+/* ===== CONTENU TEXTUEL DU TOAST ===== */
+
+/* Conteneur flex vertical pour le titre et le sous-texte du toast */
 .toast-favoris-text {
     display: flex;
     flex-direction: column;
-    gap: .05rem;
+    gap: .05rem; /* très léger espace entre le titre et le sous-texte */
 }
 
+/* Titre principal du toast (ex: "Favori retiré") */
 .toast-favoris-title {
     font-weight: 600;
     font-size: .88rem;
     color: var(--dark);
 }
 
+/* Sous-texte secondaire du toast (ex: "L'offre a été retirée de vos favoris") */
 .toast-favoris-sub {
     font-size: .74rem;
-    color: var(--text-muted);
+    color: var(--text-muted); /* texte atténué gris-marron */
 }

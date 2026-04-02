@@ -1,71 +1,122 @@
+{#
+    modifier_offre.twig.html — Formulaire de modification d'une offre de stage existante
+    Hérite de base.twig.html.
+    Accessible aux admins et pilotes uniquement (protection dans le contrôleur).
+
+    Variables Twig reçues (OffreController::update) :
+      - offre        : objet offre à modifier. Propriétés utilisées :
+                         id_offre, titre, id_entreprise, duree, date_offre,
+                         base_remuneration, description
+      - entreprises  : tableau d'objets entreprise pour le sélecteur.
+                         Chaque objet contient : id_entreprise, nom
+      - erreur       : message d'erreur de validation côté serveur
+      - csrf_token   : jeton CSRF pour les deux formulaires POST de la page
+                         (modification ET suppression en zone de danger)
+#}
 {% extends "base.twig.html" %}
 {% block title %}Modifier l'offre – Stage Finder{% endblock %}
+
 {% block content %}
+{# mgmt-wrap = conteneur principal centré des pages de gestion #}
 <div class="mgmt-wrap">
 
+    {# ===== EN-TÊTE DE LA PAGE ===== #}
     <div class="mgmt-header">
+        {# Étiquette de contexte (breadcrumb visuel) #}
         <span class="mgmt-eyebrow">Offre de stage</span>
         <h1>Modifier une offre</h1>
+        {# Affiche le titre de l'offre en gras dans le sous-titre pour contextualiser #}
         <p>Mettez à jour les informations de <strong>{{ offre.titre }}</strong>.</p>
     </div>
 
+    {# mgmt-card = carte blanche avec ombre portée #}
     <div class="mgmt-card">
+        {# Lien de retour vers la liste des offres #}
         <a href="/?uri=stages" class="mgmt-back">← Retour aux offres</a>
 
+        {# Message d'erreur de validation (ex: "Le titre ne peut pas être vide") #}
         {% if erreur %}
         <div class="alert alert-error">{{ erreur }}</div>
         {% endif %}
 
+        {# ===== FORMULAIRE DE MODIFICATION ===== #}
+        {# Action vers OffreController::update (POST) #}
         <form method="POST" action="/?uri=offre_update">
+            {# Jeton CSRF anti-falsification #}
             <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            {# ID de l'offre — identifie l'enregistrement à mettre à jour en BDD #}
             <input type="hidden" name="id" value="{{ offre.id_offre }}">
 
+            {# ── Sélecteur Entreprise ── #}
+            {# Pré-sélectionne l'entreprise actuelle en comparant offre.id_entreprise avec l'ID courant #}
             <div class="fgrp">
                 <label>Entreprise *</label>
                 <select name="id_entreprise" required>
                     <option value="">— Sélectionner une entreprise —</option>
                     {% for e in entreprises %}
+                    {# Marque "selected" si l'entreprise de l'offre correspond à l'option courante #}
                     <option value="{{ e.id_entreprise }}" {% if offre.id_entreprise == e.id_entreprise %}selected{% endif %}>{{ e.nom }}</option>
                     {% endfor %}
                 </select>
             </div>
 
+            {# ── Titre de l'offre ── #}
+            {# Pré-rempli avec la valeur actuelle de l'offre (pas besoin de ?? '' car offre existe toujours) #}
             <div class="fgrp">
                 <label>Titre *</label>
                 <input type="text" name="titre" value="{{ offre.titre }}" required>
             </div>
 
+            {# ── Ligne Durée + Date de début ── #}
+            {# frow = flex row (deux champs côte à côte sur bureau) #}
             <div class="frow">
                 <div class="fgrp">
+                    {# Durée en texte libre, pré-remplie avec la valeur actuelle #}
                     <label>Durée</label>
                     <input type="text" name="duree" value="{{ offre.duree }}">
                 </div>
                 <div class="fgrp">
+                    {# Date de début : type="date" — format attendu par le navigateur : YYYY-MM-DD
+                       (c'est le format retourné par MySQL pour les colonnes DATE) #}
                     <label>Date de début *</label>
                     <input type="date" name="date_offre" value="{{ offre.date_offre }}" required>
                 </div>
             </div>
 
+            {# ── Rémunération ── #}
+            {# step="50" = incrément de 50€ via les flèches du navigateur #}
             <div class="fgrp">
                 <label>Rémunération (€/mois)</label>
                 <input type="number" name="base_remuneration" value="{{ offre.base_remuneration }}" min="0" step="50">
             </div>
 
+            {# ── Description ── #}
+            {# resize-v = redimensionnement vertical uniquement.
+               Le contenu de la textarea est placé entre les balises (pas d'attribut value). #}
             <div class="fgrp">
                 <label>Description</label>
                 <textarea name="description" rows="5" class="resize-v">{{ offre.description }}</textarea>
             </div>
 
+            {# Bouton de sauvegarde des modifications #}
             <button type="submit" class="mgmt-submit">Enregistrer les modifications</button>
         </form>
 
+        {# ===== ZONE DE DANGER : SUPPRESSION ===== #}
+        {# Séparée visuellement du formulaire de modification pour éviter les clics accidentels.
+           danger-zone = style CSS avec bordure rouge et fond légèrement rosé.
+           Les attributs data-confirm-* sont lus par confirm-modal.js pour afficher
+           une modale de confirmation avant d'envoyer ce formulaire. #}
         <div class="danger-zone">
             <form method="POST" action="/?uri=offre_delete"
                   data-confirm-title="Supprimer l'offre"
                   data-confirm-name="{{ offre.titre }}"
                   data-confirm-detail="Les candidatures associées à cette offre seront également supprimées.">
+                {# CSRF requis même ici (formulaire POST indépendant) #}
                 <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                {# ID de l'offre à supprimer #}
                 <input type="hidden" name="id" value="{{ offre.id_offre }}">
+                {# btn-danger = bouton rouge (style avertissement) #}
                 <button type="submit" class="btn-danger">Supprimer cette offre</button>
             </form>
         </div>

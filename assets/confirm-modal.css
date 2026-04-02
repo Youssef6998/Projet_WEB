@@ -1,78 +1,115 @@
-/* ═══════════════════════════════════════════
-   Modale de confirmation — confirm-modal.css
-   ═══════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════════
+   confirm-modal.css — Modale de confirmation réutilisable
+   Utilisée pour toutes les actions destructives ou sensibles du projet
+   (suppression, désactivation, retrait...).
+   Composant déclenché en JavaScript via les attributs data-type="danger"
+   ou data-type="warning" sur l'overlay.
+   Dépend de : /assets/css/variables.css
+   ═══════════════════════════════════════════════════════════════════ */
 
+
+/* ===== FOND ASSOMBRI (OVERLAY) ===== */
+
+/* Couche qui recouvre toute la fenêtre quand la modale est ouverte.
+   position: fixed + inset: 0 = placé sur toute la fenêtre, même si la page a défilé.
+   display: grid + place-items: center = centre la carte modale au milieu.
+   z-index: 9999 = placé au-dessus de tout le reste de la page.
+   backdrop-filter: blur(5px) = flou de l'arrière-plan pour l'effet vitré.
+   opacity: 0 + pointer-events: none = caché sans display:none
+   (évite les conflits d'animation avec display:none qui bloque les transitions CSS). */
 .cm-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(26, 10, 4, 0.5);
+    background: rgba(26, 10, 4, 0.5); /* fond foncé semi-transparent, teinte --dark */
     backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px); /* préfixe Safari/WebKit */
     display: grid;
     place-items: center;
     z-index: 9999;
     padding: 1rem;
     /* Caché par défaut via pointer-events + opacity (évite le conflit avec display:none) */
     opacity: 0;
-    pointer-events: none;
+    pointer-events: none; /* non cliquable quand invisible */
     transition: opacity .2s ease;
 }
 
+/* Classe ajoutée par JS pour rendre l'overlay visible et interactif */
 .cm-overlay.cm-visible {
     opacity: 1;
     pointer-events: auto;
 }
 
-/* ── Carte centrale ── */
+
+/* ===== CARTE CENTRALE DE LA MODALE ===== */
+
+/* Boîte blanche qui contient l'icône, le texte et les boutons.
+   transform: translateY(16px) scale(0.96) = état initial légèrement décalé et réduit
+   pour créer l'animation d'apparition (ressort visuel).
+   cubic-bezier(.34,1.56,.64,1) = courbe de Bézier qui crée un effet de rebond léger. */
 .cm-modal {
     background: var(--white);
-    border-radius: var(--r);
+    border-radius: var(--r); /* rayon commun défini dans variables.css */
     padding: 2rem;
     max-width: 420px;
     width: 100%;
-    box-shadow: 0 24px 64px rgba(26, 10, 4, 0.22);
-    transform: translateY(16px) scale(0.96);
+    box-shadow: 0 24px 64px rgba(26, 10, 4, 0.22); /* ombre profonde teintée --dark */
+    transform: translateY(16px) scale(0.96); /* position initiale pour l'animation */
     opacity: 0;
     transition: transform .25s cubic-bezier(.34, 1.56, .64, 1), opacity .2s ease;
 }
 
+/* Quand l'overlay devient visible, la carte remonte et reprend sa taille normale */
 .cm-overlay.cm-visible .cm-modal {
     transform: translateY(0) scale(1);
     opacity: 1;
 }
 
-/* ── Icône ── */
+
+/* ===== ICÔNE DE TYPE (DANGER / WARNING) ===== */
+
+/* Cercle coloré qui contient l'icône SVG.
+   display: grid + place-items: center centre l'SVG dans le cercle. */
 .cm-icon {
     width: 3rem;
     height: 3rem;
-    border-radius: 50%;
+    border-radius: 50%; /* cercle parfait */
     display: grid;
     place-items: center;
     margin-bottom: 1.25rem;
 }
 
+/* Taille de l'icône SVG à l'intérieur du cercle */
 .cm-icon svg {
     width: 1.4rem;
     height: 1.4rem;
 }
 
+/* Fond rouge pâle + icône rouge pour les actions dangereuses (ex: suppression).
+   --danger-fond et --danger sont définis dans variables.css */
 .cm-overlay[data-type="danger"] .cm-icon {
     background: var(--danger-fond);
     color: var(--danger);
 }
 
+/* Fond jaune pâle + icône ambre pour les avertissements (ex: action irréversible).
+   --statut-attente-fond et --statut-attente viennent de variables.css */
 .cm-overlay[data-type="warning"] .cm-icon {
     background: var(--statut-attente-fond);
     color: var(--statut-attente);
 }
 
-/* ── Texte ── */
+
+/* ===== TEXTE DE LA MODALE ===== */
+
+/* Titre de la modale (ex : "Confirmer la suppression ?") */
 .cm-title {
     font: 700 1.1rem 'DM Sans', sans-serif;
     color: var(--dark);
     margin: 0 0 .5rem;
 }
 
+/* Message descriptif sous le titre.
+   line-height: 1.6 améliore la lisibilité des textes plus longs. */
 .cm-message {
     font: 400 .875rem 'DM Sans', sans-serif;
     color: var(--text-muted);
@@ -80,21 +117,27 @@
     line-height: 1.6;
 }
 
+/* Parties en gras dans le message (ex: nom de l'étudiant à supprimer) */
 .cm-message strong {
     color: var(--dark);
     font-weight: 600;
 }
 
-/* ── Actions ── */
+
+/* ===== BOUTONS D'ACTION ===== */
+
+/* Conteneur flex qui aligne les boutons à droite (Annuler | Confirmer).
+   justify-content: flex-end pousse les boutons vers la droite. */
 .cm-actions {
     display: flex;
     gap: .625rem;
     justify-content: flex-end;
 }
 
+/* Bouton "Annuler" : transparent, bordure subtile, texte atténué */
 .cm-cancel {
     padding: .55rem 1.25rem;
-    border-radius: 2rem;
+    border-radius: 2rem; /* très arrondi, effet "pilule" */
     border: 1.5px solid var(--marron-bordure);
     background: transparent;
     color: var(--text-muted);
@@ -104,11 +147,13 @@
     line-height: 1;
 }
 
+/* Au survol : fond crème et texte foncé */
 .cm-cancel:hover {
     background: var(--marron-clair);
     color: var(--dark);
 }
 
+/* Bouton "Confirmer" : couleur dynamique selon le type (danger ou warning) */
 .cm-confirm {
     padding: .55rem 1.25rem;
     border-radius: 2rem;
@@ -119,21 +164,25 @@
     line-height: 1;
 }
 
+/* Bouton de confirmation rouge pour le type "danger" */
 .cm-overlay[data-type="danger"] .cm-confirm {
-    background: var(--danger);
+    background: var(--danger); /* rouge vif défini dans variables.css */
     color: var(--white);
 }
 
+/* Au survol du bouton danger : rouge plus foncé + ombre colorée */
 .cm-overlay[data-type="danger"] .cm-confirm:hover {
     background: #b91c1c;
     box-shadow: 0 4px 14px rgba(220, 38, 38, 0.38);
 }
 
+/* Bouton de confirmation brun foncé pour le type "warning" */
 .cm-overlay[data-type="warning"] .cm-confirm {
-    background: #92400e;
+    background: #92400e; /* brun foncé */
     color: var(--white);
 }
 
+/* Au survol du bouton warning : brun encore plus foncé + ombre brun */
 .cm-overlay[data-type="warning"] .cm-confirm:hover {
     background: #78350f;
     box-shadow: 0 4px 14px rgba(146, 64, 14, 0.35);

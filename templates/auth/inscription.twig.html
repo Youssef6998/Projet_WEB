@@ -1,19 +1,39 @@
+{#
+    inscription.twig.html — Formulaire de création de compte
+    Hérite de base.twig.html (navigation complète incluse).
+    Permet la création de comptes Étudiant, Pilote ou Administrateur.
+    Accessible uniquement aux admins et pilotes (via AuthController::register).
+
+    Variables Twig reçues du contrôleur (AuthController::register) :
+      - type        : type de compte à créer ('etudiant', 'pilote', 'admin') — détermine l'affichage
+      - erreur      : message d'erreur de validation ou de création
+      - old         : tableau des valeurs saisies avant erreur (pour repopuler le formulaire)
+                      ex: old.nom, old.prenom, old.email, old.telephone, old.promotion
+      - csrf_token  : jeton de sécurité CSRF
+      - session_user: utilisateur connecté (pour l'affichage conditionnel des options de type)
+#}
 {% extends "base.twig.html" %}
+
+{# Bloc CSS : conserve les styles communs et ajoute le CSS spécifique à l'inscription #}
 {% block css %}
 <link rel="stylesheet" href="/assets/css/variables.css">
 {{ parent() }}
 <link rel="stylesheet" href="/assets/inscription.css">
 {% endblock %}
+
 {% block title %}Créer un compte – Stage Finder{% endblock %}
 
 {% block content %}
 <div class="page-inscription">
 
+  {# En-tête de la page : étiquette + titre + sous-titre adaptatif selon le type #}
   <div class="intro-page">
+    {# Étiquette en majuscules : "Administration" pour admin, "Pilote" pour pilote #}
     <div class="intro-small-titre">
       {% if session_user.role == 'admin' %}Administration{% else %}Pilote{% endif %}
     </div>
     <h1 class="titre-principal">Créer un compte</h1>
+    {# Sous-titre adaptatif selon le type de compte sélectionné #}
     <p class="sous-titre">
       {% if type == 'pilote' %}Renseignez les informations du nouveau pilote.
       {% elseif type == 'admin' %}Renseignez les informations du nouvel administrateur.
@@ -21,8 +41,11 @@
     </p>
   </div>
 
+  {# Carte principale contenant le formulaire #}
   <section class="formulaire-carte">
 
+    {# Bouton retour : renvoie vers la liste des pilotes (si type pilote/admin)
+       ou vers la liste des étudiants (si type étudiant) #}
     <div class="back-btn-container">
       {% if type == 'pilote' or type == 'admin' %}
         <a href="/?uri=pilote_list" class="btn-back">← Retour</a>
@@ -31,11 +54,16 @@
       {% endif %}
     </div>
 
-    {# ── Sélecteur de type ── #}
+    {# Sélecteur de type de compte.
+       onchange="changerType(this.value)" = JS inline qui met à jour dynamiquement
+       le champ caché #input-type, le sous-titre et le lien retour.
+       Les options "Pilote" et "Admin" ne sont visibles que pour les admins. #}
     <div class="champ">
       <label for="type-select">Type de compte</label>
       <select id="type-select" class="champ-input" onchange="changerType(this.value)">
+        {# Option étudiant : sélectionné par défaut si aucun type n'est passé #}
         <option value="etudiant" {% if type == 'etudiant' or not type %}selected{% endif %}>Étudiant</option>
+        {# Options réservées aux admins uniquement #}
         {% if session_user.role == 'admin' %}
         <option value="pilote" {% if type == 'pilote' %}selected{% endif %}>Pilote</option>
         <option value="admin"  {% if type == 'admin'  %}selected{% endif %}>Administrateur</option>
@@ -43,57 +71,75 @@
       </select>
     </div>
 
+    {# Message d'erreur de validation ou de création (ex: "Cet email est déjà utilisé") #}
     {% if erreur %}
       <div class="message-erreur">{{ erreur }}</div>
     {% endif %}
 
+    {# Formulaire de création de compte — POST vers AuthController::register #}
     <form method="POST" action="/?uri=register" id="form-creation">
+
+      {# Jeton CSRF pour protéger la soumission du formulaire #}
       <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+      {# Champ caché "type" : mis à jour dynamiquement par changerType().
+         Valeur par défaut : 'etudiant' si non défini (opérateur ?: de Twig). #}
       <input type="hidden" name="type" id="input-type" value="{{ type ?: 'etudiant' }}">
 
+      {# Champ Nom — old.nom restitue la valeur saisie en cas d'erreur de validation #}
       <div class="champ">
         <label for="nom">Nom *</label>
         <input type="text" id="nom" name="nom" class="champ-input" value="{{ old.nom ?? '' }}" required>
       </div>
 
+      {# Champ Prénom #}
       <div class="champ">
         <label for="prenom">Prénom *</label>
         <input type="text" id="prenom" name="prenom" class="champ-input" value="{{ old.prenom ?? '' }}" required>
       </div>
 
+      {# Champ Téléphone — pattern="[0-9]{10}" = validation côté client (10 chiffres) #}
       <div class="champ">
         <label for="telephone">Téléphone *</label>
         <input type="tel" id="telephone" name="telephone" class="champ-input"
                value="{{ old.telephone ?? '' }}" required pattern="[0-9]{10}" placeholder="Ex: 0612345678">
       </div>
 
+      {# Champ Email — type="email" = validation native du navigateur #}
       <div class="champ">
         <label for="email">Email *</label>
         <input type="email" id="email" name="email" class="champ-input"
                value="{{ old.email ?? '' }}" required placeholder="exemple@email.com">
       </div>
 
+      {# Champ Mot de passe — minlength="8" = minimum 8 caractères #}
       <div class="champ">
         <label for="motdepasse">Mot de passe *</label>
         <input type="password" id="motdepasse" name="motdepasse" class="champ-input" required minlength="8">
       </div>
 
+      {# Champ Confirmation — doit correspondre au mot de passe (vérifié côté serveur) #}
       <div class="champ">
         <label for="confirmation">Confirmer le mot de passe *</label>
         <input type="password" id="confirmation" name="confirmation" class="champ-input" required minlength="8">
       </div>
 
-      {# ── Champ promotion (pilote uniquement) ── #}
+      {# Champ Promotion — visible uniquement pour les comptes "Pilote".
+         hidden = attribut HTML masquant le champ.
+         Mis à jour dynamiquement par changerType() dans le JS ci-dessous. #}
       <div class="champ" id="champ-promotion" {% if type != 'pilote' %}hidden{% endif %}>
         <label for="promotion">Promotion</label>
+        {# Liste des promotions disponibles (définie directement dans le template) #}
         <select name="promotion" id="promotion" class="champ-input">
           {% set promos = ['CPIA1','CPIA2','FISA A3','FISE A3','FISA A4','FISE A4','FISE A5','FISA A5'] %}
           {% for p in promos %}
+          {# Pré-sélectionne la promotion saisie avant erreur #}
           <option value="{{ p }}" {% if (old.promotion ?? '') == p %}selected{% endif %}>{{ p }}</option>
           {% endfor %}
         </select>
       </div>
 
+      {# Bouton de soumission du formulaire #}
       <div class="actions-formulaire">
         <button type="submit" class="bouton-principal">Créer le compte</button>
       </div>
@@ -104,15 +150,21 @@
 
 </div>
 
+{# Script inline de gestion du sélecteur de type de compte.
+   changerType(val) est appelé quand l'utilisateur change le type dans le select.
+   Met à jour : le champ caché, le sous-titre descriptif, et le lien retour. #}
 <script>
 function changerType(val) {
+    // Met à jour le champ caché envoyé avec le formulaire
     document.getElementById('input-type').value = val;
+    // Affiche/masque le champ Promotion (uniquement pour les pilotes)
     document.getElementById('champ-promotion').hidden = (val !== 'pilote');
+    // Adapte le sous-titre selon le type sélectionné
     const sous = document.querySelector('.sous-titre');
     if (val === 'pilote')       sous.textContent = 'Renseignez les informations du nouveau pilote.';
     else if (val === 'admin')   sous.textContent = "Renseignez les informations du nouvel administrateur.";
     else                        sous.textContent = "Renseignez les informations du nouvel étudiant.";
-    // Adapte le lien retour
+    // Adapte le lien "← Retour" vers la bonne liste
     const back = document.querySelector('.btn-back');
     if (back) back.href = (val === 'pilote' || val === 'admin') ? '/?uri=pilote_list' : '/?uri=etudiant_list';
 }

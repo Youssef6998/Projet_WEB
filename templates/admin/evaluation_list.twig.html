@@ -1,39 +1,70 @@
+{#
+    evaluation_list.twig.html — Liste des évaluations par entreprise
+    Accessible aux admins et pilotes.
+    Hérite de base.twig.html.
+    Affiche une vue résumée par entreprise (note moyenne, nb évaluations, nb offres...).
+
+    Variables Twig reçues (EvaluationController::list) :
+      - resumes      : tableau d'objets résumés par entreprise. Chaque objet contient :
+                         id_entreprise, entreprise_nom, ville, description,
+                         note_moyenne (float), nb_evaluations, nb_offres,
+                         meilleure_note, moins_bonne_note,
+                         dernier_attendus (texte des compétences attendues, dernier avis),
+                         derniere_eval (date ISO)
+      - success      : message de confirmation ('supprime')
+      - session_user : utilisateur connecté (role: 'admin' ou 'pilote')
+#}
 {% extends "base.twig.html" %}
+
+{# Bloc CSS : ajoute evaluation.css pour les étoiles et la mise en page des avis #}
 {% block css %}
 <link rel="stylesheet" href="/assets/css/variables.css">
 {{ parent() }}
 <link rel="stylesheet" href="/assets/evaluation.css">
 {% endblock %}
+
 {% block title %}Gestion des évaluations – Stage Finder{% endblock %}
+
 {% block content %}
 <div class="page">
 
+    {# ===== EN-TÊTE ===== #}
     <div class="search-card search-card--mb">
         <div class="search-head">
+            {# Badge rôle #}
             <span class="pill pill-r">{% if session_user.role == 'admin' %}Administration{% else %}Pilote{% endif %}</span>
+            {# Compteur d'entreprises évaluées (resumes|length = nombre d'entreprises dans le tableau) #}
             <span class="pill pill-count">{{ resumes|length }} entreprise{{ resumes|length != 1 ? 's' : '' }}</span>
         </div>
+
         <div class="list-header">
             <div>
                 <h2 class="list-title">Évaluations des entreprises</h2>
                 <p class="list-subtitle">Récapitulatif des entreprises notées par l'équipe pédagogique.</p>
             </div>
+            {# Bouton pour créer une nouvelle évaluation #}
             <a href="/?uri=avis_create" class="btn btn-fill">+ Nouvelle évaluation</a>
         </div>
     </div>
 
+    {# Message de confirmation après suppression d'une évaluation #}
     {% if success == 'supprime' %}
     <div class="alert-delete">L'évaluation a bien été supprimée.</div>
     {% endif %}
 
+    {# ===== LISTE DES RÉSUMÉS PAR ENTREPRISE ===== #}
     <div class="stages-list">
         {% for r in resumes %}
+        {# Chaque article représente une entreprise avec toutes ses évaluations agrégées #}
         <article class="stage-card eval-resume-card">
 
-            {# ── Ligne titre ── #}
             <div class="stage-info">
+                {# Ligne titre : nom entreprise + étoiles + note moyenne #}
                 <div class="stage-top">
                     <span class="stage-company">{{ r.entreprise_nom }}</span>
+                    {# Étoiles de notation : boucle de 1 à 5.
+                       r.note_moyenne|round = arrondi de la note pour savoir combien d'étoiles remplir.
+                       Les étoiles ★ remplies sont en marron, les vides en beige. #}
                     <span class="eval-list-stars tag-promo">
                         {% for i in 1..5 %}
                         <span class="{{ i <= r.note_moyenne|round ? 'star-filled' : 'star-empty' }}">★</span>
@@ -42,32 +73,39 @@
                     </span>
                 </div>
 
-                {# ── Localisation + description ── #}
+                {# Ville de l'entreprise (si renseignée) #}
                 {% if r.ville %}
                 <p class="stage-desc">{{ r.ville }}</p>
                 {% endif %}
+
+                {# Description tronquée à 120 caractères avec "…" si plus longue #}
                 {% if r.description %}
                 <p class="eval-resume-desc">{{ r.description|slice(0, 120) }}{% if r.description|length > 120 %}…{% endif %}</p>
                 {% endif %}
 
-                {# ── Dernier attendus ── #}
+                {# Extrait des compétences attendues du dernier avis (100 caractères max) #}
                 {% if r.dernier_attendus %}
                 <p class="eval-resume-attendus">"{{ r.dernier_attendus|slice(0, 100) }}{% if r.dernier_attendus|length > 100 %}…{% endif %}"</p>
                 {% endif %}
 
-                {# ── Tags stats ── #}
+                {# Tags statistiques de l'entreprise #}
                 <div class="tag-list">
+                    {# Nombre d'évaluations reçues #}
                     <span class="tag-info">{{ r.nb_evaluations }} évaluation{{ r.nb_evaluations != 1 ? 's' : '' }}</span>
+                    {# Nombre d'offres publiées #}
                     <span class="tag-info">{{ r.nb_offres }} offre{{ r.nb_offres != 1 ? 's' : '' }} publiée{{ r.nb_offres != 1 ? 's' : '' }}</span>
+                    {# Fourchette de notes : si toutes identiques → "Notes constantes", sinon fourchette #}
                     {% if r.meilleure_note == r.moins_bonne_note %}
                     <span class="tag-neutre">Notes constantes ({{ r.meilleure_note }}/5)</span>
                     {% else %}
                     <span class="tag-neutre">Entre {{ r.moins_bonne_note }}/5 et {{ r.meilleure_note }}/5</span>
                     {% endif %}
+                    {# Date de la dernière évaluation — filtre |date('d/m/Y') = format français #}
                     <span class="tag-neutre">Dernière éval. {{ r.derniere_eval|date('d/m/Y') }}</span>
                 </div>
             </div>
 
+            {# Bouton vers le détail complet de l'entreprise (toutes ses évaluations) #}
             <div class="card-actions">
                 <a href="/?uri=evaluation_detail&id={{ r.id_entreprise }}" class="btn btn-dark btn-sm">
                     Voir le détail
@@ -76,6 +114,7 @@
 
         </article>
         {% else %}
+        {# Affiché si aucune évaluation n'a été saisie #}
         <p class="liste-vide">Aucune évaluation enregistrée.</p>
         {% endfor %}
     </div>

@@ -1,13 +1,33 @@
-/* ── Page profil ── */
+/* ═══════════════════════════════════════════════════════════════════
+   profil.css — Page de profil utilisateur
+   Utilisé par : profil.twig.html, etudiant_offres.twig.html
+   Affiche les informations de l'utilisateur (avatar, nom, rôle),
+   ses candidatures, ses favoris, et les formulaires de modification
+   (champs du profil, mot de passe, suppression du compte).
+   Dépend de : /assets/css/variables.css (--marron*, --dark, --text-muted...)
+   ═══════════════════════════════════════════════════════════════════ */
+
+
+/* ===== MISE EN PAGE DE LA PAGE PROFIL ===== */
+
+/* Conteneur principal centré, max 860px de large.
+   display: flex + flex-direction: column + gap: 2.5rem = empile les blocs
+   avec un grand espace entre eux. */
 .profil-page {
     max-width: 860px;
     margin: 2.5rem auto;
     padding: 0 1.25rem 3rem;
     display: flex;
     flex-direction: column;
-    gap: 2.5rem;
+    gap: 2.5rem; /* espace entre les grandes sections */
 }
 
+
+/* ===== EN-TÊTE DU PROFIL (avatar + nom + rôle) ===== */
+
+/* Carte horizontale : avatar à gauche, infos à droite.
+   display: flex + align-items: center = alignés verticalement au centre.
+   gap: 1.5rem = espace entre avatar et texte. */
 .profil-header {
     display: flex;
     align-items: center;
@@ -19,10 +39,15 @@
     box-shadow: 0 8px 30px rgba(124, 61, 18, 0.08);
 }
 
+/* Cercle avatar avec les initiales de l'utilisateur.
+   linear-gradient du marron vers le marron profond.
+   display: flex + align/justify: center = centre les initiales dans le cercle.
+   flex-shrink: 0 = le cercle ne rétrécit jamais même si l'espace manque.
+   box-shadow colorée = ombre portée aux teintes marron. */
 .profil-avatar {
     width: 72px;
     height: 72px;
-    border-radius: 50%;
+    border-radius: 50%; /* cercle parfait */
     background: linear-gradient(135deg, var(--marron) 0%, var(--marron-profond) 100%);
     color: #fff;
     font-size: 1.6rem;
@@ -30,28 +55,43 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
+    flex-shrink: 0; /* ne rétrécit pas dans le flex parent */
     letter-spacing: .03em;
     box-shadow: 0 6px 20px rgba(124, 61, 18, 0.3);
 }
 
+/* Nom complet de l'utilisateur */
 .profil-info h1 { font-size: 1.5rem; font-weight: 700; color: var(--dark); margin-bottom: .25rem; }
+
+/* Adresse email en texte atténué */
 .profil-email { color: var(--text-muted); font-size: .95rem; margin-bottom: .5rem; }
 
+/* Badge de rôle (Étudiant / Pilote / Admin).
+   inline-block = s'ajuste à la largeur du contenu.
+   text-transform: uppercase + letter-spacing = style "badge" lisible. */
 .profil-role {
     display: inline-block;
     padding: .2rem .75rem;
-    border-radius: 20px;
+    border-radius: 20px; /* très arrondi */
     font-size: .78rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: .05em;
 }
 
+/* Badge étudiant : fond dégradé crème-beige, texte marron vif */
 .role-etudiant { background: linear-gradient(135deg, #faeee4, #e8c4a4); color: var(--marron-vif); }
+
+/* Badge pilote : fond dégradé jaune pâle, texte brun-ambre */
 .role-pilote   { background: linear-gradient(135deg, #fef9c3, #fde68a); color: #713f12; }
+
+/* Badge admin : fond dégradé crème très pâle, texte marron profond */
 .role-admin    { background: linear-gradient(135deg, #faeee4, #fdf4ed); color: var(--marron-profond); }
 
+
+/* ===== SECTION DES CANDIDATURES ===== */
+
+/* Carte qui liste toutes les candidatures de l'étudiant */
 .candidatures-section {
     background: rgba(255, 255, 255, 0.95);
     border-radius: 16px;
@@ -60,10 +100,19 @@
     box-shadow: 0 2px 12px rgba(124, 61, 18, 0.06);
 }
 
+/* Titre de la section */
 .candidatures-section h2 { font-size: 1.2rem; font-weight: 700; color: var(--dark); margin-bottom: 1rem; }
 
+/* Colonne flex pour les cartes de candidatures */
 .candidatures-list { display: flex; flex-direction: column; gap: .75rem; }
 
+
+/* ===== CARTE D'UNE CANDIDATURE ===== */
+
+/* Chaque candidature dans une carte avec une bordure gauche colorée
+   selon le statut (en attente / acceptée / refusée).
+   justify-content: space-between = infos à gauche, statut/date à droite.
+   border-left: 4px solid = bande colorée caractéristique du statut. */
 .candidature-card {
     background: rgba(255, 255, 255, 0.95);
     border-radius: 12px;
@@ -73,33 +122,70 @@
     justify-content: space-between;
     align-items: center;
     gap: 1rem;
-    border-left: 4px solid var(--marron-mid);
+    border-left: 4px solid var(--marron-mid); /* bande gauche par défaut = beige */
     border-top: 1.5px solid var(--marron-bordure);
     border-right: 1.5px solid var(--marron-bordure);
     border-bottom: 1.5px solid var(--marron-bordure);
-    transition: box-shadow .2s;
+    transition: box-shadow .2s; /* ombre animée au survol */
 }
 
+/* Au survol : ombre légèrement plus marquée */
 .candidature-card:hover { box-shadow: 0 6px 20px rgba(124, 61, 18, 0.1); }
 
+/* Bande latérale orange-ambre = candidature en attente */
 .candidature-card.statut-en_attente { border-left-color: #f59e0b; }
+
+/* Bande latérale verte = candidature acceptée */
 .candidature-card.statut-acceptee   { border-left-color: #22c55e; }
+
+/* Bande latérale rouge = candidature refusée */
 .candidature-card.statut-refusee    { border-left-color: #ef4444; }
+
+/* Bande latérale marron = favori (pas une candidature formelle) */
 .candidature-card.favori-card       { border-left-color: var(--marron); }
 
+
+/* ===== CONTENU D'UNE CARTE DE CANDIDATURE ===== */
+
+/* Colonne flex à gauche : titre, entreprise, durée */
 .cand-info { display: flex; flex-direction: column; gap: .2rem; }
+
+/* Titre de l'offre en gras */
 .cand-titre { font-weight: 600; color: var(--dark); font-size: 1rem; }
+
+/* Nom de l'entreprise en texte atténué */
 .cand-entreprise { color: var(--text-muted); font-size: .88rem; }
+
+/* Durée du stage en gris clair */
 .cand-duree { color: #c4a898; font-size: .82rem; }
 
+/* Groupe de droite : date + badge de statut.
+   align-items: flex-end = aligné sur le bord droit.
+   flex-shrink: 0 = ne rétrécit pas */
 .cand-meta { display: flex; flex-direction: column; align-items: flex-end; gap: .4rem; flex-shrink: 0; }
+
+/* Date de candidature en gris clair */
 .cand-date { font-size: .8rem; color: #c4a898; }
 
+
+/* ===== BADGES DE STATUT ===== */
+
+/* Style commun des badges (pilule colorée) */
 .badge { display: inline-block; padding: .25rem .75rem; border-radius: 20px; font-size: .78rem; font-weight: 600; }
+
+/* Badge "En attente" : fond jaune pâle, texte brun-ambre */
 .badge-en_attente { background: #fef3c7; color: #b45309; }
+
+/* Badge "Acceptée" : fond vert très pâle, texte vert foncé */
 .badge-acceptee   { background: #dcfce7; color: #166534; }
+
+/* Badge "Refusée" : fond rouge très pâle, texte rouge foncé */
 .badge-refusee    { background: #fee2e2; color: #991b1b; }
 
+
+/* ===== ÉTAT VIDE (aucune candidature) ===== */
+
+/* Carte affichée quand l'étudiant n'a pas encore de candidature */
 .empty-state {
     background: rgba(255, 255, 255, 0.95);
     border-radius: 12px;
@@ -110,6 +196,11 @@
     color: var(--text-muted);
 }
 
+
+/* ===== BOUTON "EXPLORER LES STAGES" ===== */
+
+/* Bouton pilule marron, utilisé dans l'état vide pour inciter à chercher des stages.
+   border-radius: 999px = forme pilule parfaite. */
 .btn-explore {
     display: inline-block;
     margin-top: 1rem;
@@ -123,8 +214,21 @@
     box-shadow: 0 4px 14px rgba(124, 61, 18, 0.3);
 }
 
+/* Au survol : ombre agrandie + légère montée */
 .btn-explore:hover { box-shadow: 0 6px 20px rgba(124, 61, 18, 0.45); transform: translateY(-1px); }
 
+/* Variante compacte du bouton explorer (plus petit padding et texte) */
+.btn-explore-sm { margin-top: 0; padding: .3rem .9rem; font-size: .72rem; }
+
+/* Variante avec marge en haut */
+.btn-explore--mt { margin-top: .5rem; }
+
+
+/* ===== BOUTON "RETIRER UN FAVORI" ===== */
+
+/* Petit bouton discret dans la carte de favori.
+   background: none = transparent.
+   transition = animation couleur rouge au survol. */
 .btn-retirer {
     background: none;
     border: 1.5px solid var(--marron-bordure);
@@ -135,34 +239,45 @@
     padding: .28rem .7rem;
     transition: border-color .15s, color .15s;
 }
+
+/* Au survol : bordure et texte deviennent rouge (action de suppression) */
 .btn-retirer:hover { border-color: #ef4444; color: #ef4444; }
 
-/* Lien sans décoration dans les cartes */
+
+/* ===== LIENS DANS LES CARTES ===== */
+
+/* Lien sur le titre de l'offre, sans décoration et même couleur que le texte */
 .cand-titre-link { text-decoration: none; color: inherit; }
 
-/* Bouton explorer en version compacte */
-.btn-explore-sm { margin-top: 0; padding: .3rem .9rem; font-size: .72rem; }
-.btn-explore--mt { margin-top: .5rem; }
 
+/* ===== MEDIA QUERY — MOBILE (< 600px) ===== */
+
+/* Sur petits écrans : l'en-tête du profil passe en colonne centrée.
+   Les cartes de candidature s'empilent également. */
 @media (max-width: 600px) {
     .profil-header { flex-direction: column; text-align: center; }
     .candidature-card { flex-direction: column; align-items: flex-start; }
-    .cand-meta { align-items: flex-start; }
+    .cand-meta { align-items: flex-start; } /* date et badge alignés à gauche */
 }
 
-/* Champs éditables profil */
+
+/* ===== CHAMPS ÉDITABLES DU PROFIL ===== */
+
+/* Section de modification des informations du profil (prénom, email...) */
 .profil-fields {
   display: flex;
   flex-direction: column;
-  gap: .75rem;
+  gap: .75rem; /* espace entre chaque champ modifiable */
 }
 
+/* Groupe label + ligne input + bouton */
 .profil-field-form {
   display: flex;
   flex-direction: column;
   gap: .3rem;
 }
 
+/* Label du champ en petites majuscules atténuées */
 .profil-field-label {
   font-size: .72rem;
   font-weight: 600;
@@ -171,7 +286,8 @@
   letter-spacing: .04em;
 }
 
-/* ligne input + bouton */
+/* Ligne horizontale contenant l'input + bouton "Modifier".
+   flex-wrap: wrap = se coupe sur 2 lignes sur petits écrans. */
 .profil-field-row {
   display: flex;
   gap: .5rem;
@@ -179,8 +295,11 @@
   flex-wrap: wrap;
 }
 
+/* Champ de saisie modifiable.
+   flex: 1 = prend tout l'espace disponible à gauche du bouton.
+   transition: border-color anime le focus. */
 .profil-field-input {
-  flex: 1;
+  flex: 1; /* occupe tout l'espace restant à gauche du bouton */
   padding: .45rem .75rem;
   border: 1.5px solid var(--marron-bordure);
   border-radius: 8px;
@@ -190,51 +309,80 @@
   transition: border-color .15s;
 }
 
+/* Au focus : bordure marron, suppression du contour natif */
 .profil-field-input:focus {
   outline: none;
   border-color: var(--marron);
 }
 
+/* Variante petit bouton (utilisé pour les boutons "Modifier" inline) */
 .btn-sm {
   padding: .4rem .85rem;
   font-size: .75rem;
 }
 
-/* ── Responsive mobile sur champs profil ── */
+
+/* ===== MEDIA QUERY — MOBILE CHAMPS PROFIL (< 520px) ===== */
+
+/* Sur très petits écrans, le champ et le bouton passent en colonne */
 @media (max-width: 520px) {
   .profil-field-row {
     flex-direction: column;
-    align-items: stretch;
+    align-items: stretch; /* les enfants s'étirent sur toute la largeur */
   }
 
   .profil-field-input {
     width: 100%;
   }
 
+  /* Bouton aligné à gauche (pas centré) sur mobile */
   .profil-field-form .btn-sm {
     align-self: flex-start;
     margin-top: .3rem;
   }
 }
 
-/* ── Formulaire mot de passe ── */
+
+/* ===== FORMULAIRE DE CHANGEMENT DE MOT DE PASSE ===== */
+
+/* Formulaire de modification du mot de passe (ancien + nouveau + confirmation) */
 .profil-mdp-form { display: flex; flex-direction: column; gap: 1rem; }
+
+/* Ligne de champs côte à côte (nouveau mdp + confirmation).
+   flex-wrap: wrap = se coupe sur 2 lignes si nécessaire. */
 .profil-mdp-form .frow { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+/* Groupe label + input dans la ligne.
+   flex: 1 = parts égales. min-width: 180px = ne descend pas en dessous de 180px. */
 .profil-mdp-form .fgrp { flex: 1; min-width: 180px; display: flex; flex-direction: column; gap: .3rem; }
+
+/* Label du champ de mot de passe */
 .profil-mdp-form label { font-size: .75rem; font-weight: 600; color: var(--text-muted); }
+
+/* Champ de saisie du mot de passe */
 .profil-mdp-form input {
     padding: .45rem .75rem;
     border: 1.5px solid var(--marron-bordure);
     border-radius: 8px;
     font: 500 .85rem 'DM Sans', sans-serif;
 }
+
+/* Au focus : bordure marron */
 .profil-mdp-form input:focus { outline: none; border-color: var(--marron); }
 
-/* ── Zone dangereuse ── */
+
+/* ===== ZONE DANGEREUSE (SUPPRESSION DU COMPTE) ===== */
+
+/* Carte encadrée en rouge pâle pour alerter de la dangerosité de l'action.
+   !important est utilisé pour forcer le style par-dessus la carte générique. */
 .danger-zone-section { border: 1.5px solid #fca5a5 !important; background: #fff8f8; }
+
+/* Texte descriptif de la zone de danger (ex: "Cette action est irréversible") */
 .danger-desc { font-size: .82rem; color: #7f1d1d; margin-bottom: .75rem; }
+
+/* Bouton "Supprimer mon compte" en rouge vif */
 .btn-danger {
-    background: #ef4444;
+    background: #ef4444; /* rouge vif */
     color: #fff;
     border: none;
     border-radius: 8px;
@@ -243,14 +391,24 @@
     cursor: pointer;
     transition: background .15s;
 }
+
+/* Au survol : rouge plus foncé */
 .btn-danger:hover { background: #dc2626; }
 
-/* ── Alerts ── */
+
+/* ===== ALERTES PROFIL ===== */
+
+/* Alerte de succès (ex: "Profil mis à jour") */
 .alert { border-radius: 10px; padding: .7rem 1rem; font-size: .82rem; margin-bottom: .5rem; }
 .alert-success { background: #f0fdf4; border: 1.5px solid #86efac; color: #166534; }
+
+/* Alerte d'erreur (ex: "Mot de passe incorrect") */
 .alert-error   { background: #fef2f2; border: 1.5px solid #fca5a5; color: #991b1b; }
 
-/* ── Page etudiant_offres ── */
+
+/* ===== PAGE OFFRES D'UN ÉTUDIANT (etudiant_offres.twig) ===== */
+
+/* Lien "< Retour" en haut de la page des offres d'un étudiant spécifique */
 .eo-btn-retour {
     display: inline-block;
     margin-bottom: .75rem;
@@ -260,11 +418,20 @@
     text-decoration: none;
     transition: color .15s;
 }
+
+/* Au survol : texte plus foncé */
 .eo-btn-retour:hover {
     color: var(--dark);
 }
 
-/* ── Modal CV ── */
+
+/* ===== MODALE D'APERÇU DU CV ===== */
+
+/* Overlay (fond sombre flou) de la modale CV.
+   Même principe que confirm-modal.css :
+   position: fixed + inset: 0 = couvre tout l'écran.
+   opacity: 0 + pointer-events: none = caché sans display:none.
+   backdrop-filter: blur(5px) = flou de l'arrière-plan. */
 .eo-cv-overlay {
     position: fixed;
     inset: 0;
@@ -272,17 +439,23 @@
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
     display: grid;
-    place-items: center;
+    place-items: center; /* centre la modale dans l'overlay */
     z-index: 9999;
     padding: 1rem;
     opacity: 0;
     pointer-events: none;
     transition: opacity .2s ease;
 }
+
+/* Classe ajoutée par JS pour afficher l'overlay */
 .eo-cv-overlay.eo-cv-visible {
     opacity: 1;
     pointer-events: auto;
 }
+
+/* Carte blanche de la modale CV.
+   transform: translateY(16px) scale(0.96) = état initial légèrement décalé.
+   cubic-bezier(.34,1.56,.64,1) = courbe de rebond pour l'animation d'entrée. */
 .eo-cv-modal {
     background: var(--white);
     border-radius: var(--r);
@@ -290,14 +463,18 @@
     max-width: 420px;
     width: 100%;
     box-shadow: 0 24px 64px rgba(26, 10, 4, 0.22);
-    transform: translateY(16px) scale(0.96);
+    transform: translateY(16px) scale(0.96); /* état initial pour l'animation */
     opacity: 0;
     transition: transform .25s cubic-bezier(.34,1.56,.64,1), opacity .2s ease;
 }
+
+/* Quand la modale devient visible : position et opacité normales */
 .eo-cv-overlay.eo-cv-visible .eo-cv-modal {
     transform: translateY(0) scale(1);
     opacity: 1;
 }
+
+/* Cercle d'icône dans la modale CV (fond crème) */
 .eo-cv-icon {
     width: 3rem;
     height: 3rem;
@@ -308,27 +485,39 @@
     background: var(--marron-clair);
     color: var(--marron-vif);
 }
+
+/* Taille de l'icône SVG */
 .eo-cv-icon svg {
     width: 1.4rem;
     height: 1.4rem;
 }
+
+/* Titre de la modale CV */
 .eo-cv-title {
     font: 700 1.1rem 'DM Sans', sans-serif;
     color: var(--dark);
     margin: 0 0 .5rem;
 }
+
+/* Message descriptif de la modale */
 .eo-cv-message {
     font: 400 .875rem 'DM Sans', sans-serif;
     color: var(--text-muted);
     margin: 0 0 1.75rem;
     line-height: 1.6;
 }
+
+/* Texte en gras dans le message (ex: nom du fichier CV) */
 .eo-cv-message strong { color: var(--dark); font-weight: 600; }
+
+/* Boutons de la modale alignés à droite */
 .eo-cv-actions {
     display: flex;
     gap: .625rem;
     justify-content: flex-end;
 }
+
+/* Bouton de confirmation de la modale CV */
 .eo-cv-confirm {
     padding: .55rem 1.25rem;
     border-radius: 2rem;
@@ -340,17 +529,27 @@
     transition: background .15s, box-shadow .15s;
     line-height: 1;
 }
+
+/* Au survol : marron encore plus foncé + ombre */
 .eo-cv-confirm:hover {
     background: var(--marron-profond);
     box-shadow: 0 4px 14px rgba(124,61,18,0.35);
 }
 
+
+/* ===== AFFICHAGE DE LA LETTRE DE MOTIVATION ===== */
+
+/* Section qui affiche la lettre de motivation d'une candidature.
+   Positionnée sous la carte principale avec un fond crème très léger.
+   border-radius sur les coins inférieurs uniquement (0 0 12px 12px). */
 .eo-lettre {
     padding: 1rem 1.25rem;
-    border-top: 1.5px solid var(--marron-bordure);
-    background: #fdf8f5;
-    border-radius: 0 0 12px 12px;
+    border-top: 1.5px solid var(--marron-bordure); /* séparateur avec la carte du dessus */
+    background: #fdf8f5; /* crème très légère */
+    border-radius: 0 0 12px 12px; /* coins inférieurs arrondis uniquement */
 }
+
+/* Étiquette "LETTRE DE MOTIVATION" en petites majuscules atténuées */
 .eo-lettre-titre {
     font-size: .72rem;
     font-weight: 700;
@@ -359,10 +558,13 @@
     color: var(--text-muted);
     margin: 0 0 .5rem;
 }
+
+/* Texte de la lettre de motivation.
+   white-space: pre-wrap conserve les sauts de ligne et espaces du texte original. */
 .eo-lettre-texte {
     font-size: .85rem;
     color: var(--dark);
     line-height: 1.6;
     margin: 0;
-    white-space: pre-wrap;
+    white-space: pre-wrap; /* respecte les retours à la ligne du texte source */
 }

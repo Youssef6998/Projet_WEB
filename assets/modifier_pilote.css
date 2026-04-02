@@ -1,15 +1,33 @@
+/* ═══════════════════════════════════════════════════════════════════
+   modifier_pilote.css — Styles spécifiques à la modification d'un pilote
+   Utilisé par : modifier_pilote.twig.html
+   Complète modifier_entreprise.css ou style-stage.css pour la section
+   mot de passe dans le formulaire de modification d'un compte pilote.
+   Dépend de : /assets/css/variables.css (--marron-bordure, --text-muted...)
+   ═══════════════════════════════════════════════════════════════════ */
+
+
+/* ===== SECTION MOT DE PASSE ===== */
+
+/* Bloc de changement de mot de passe, séparé du reste du formulaire
+   par une ligne horizontale en haut (border-top).
+   La ligne sert de séparateur visuel sans élément HTML supplémentaire. */
 .mdp-section {
-    border-top: 1px solid var(--marron-bordure);
+    border-top: 1px solid var(--marron-bordure); /* ligne de séparation fine */
     margin: 1.25rem 0 1rem;
     padding-top: 1.25rem;
 }
 
+/* Étiquette "Changer le mot de passe" ou titre équivalent.
+   Petit texte atténué, non en majuscules (style sobre). */
 .mdp-section-label {
     font-size: .75rem;
     color: var(--text-muted);
     margin: 0 0 .75rem;
 }
 
+/* Indication supplémentaire sous l'étiquette (ex: "Laissez vide pour ne pas changer").
+   font-weight: 400 = texte normal (contraste avec le label en gras par défaut). */
 .mdp-section-hint {
     font-weight: 400;
 }

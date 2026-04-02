@@ -5,6 +5,14 @@ require_once __DIR__ . '/BaseController.php';
 /**
  * Contrôleur de gestion des évaluations d'entreprises.
  *
+ * Une évaluation lie une entreprise à un auteur (admin ou pilote) et contient :
+ *  - Une note entière entre 1 et 5.
+ *  - Un texte "attendus" décrivant les compétences ou attentes constatées.
+ *
+ * Deux niveaux de lecture sont disponibles :
+ *  - Vue résumée (showList) : une ligne agrégée par entreprise.
+ *  - Vue détaillée (showDetail) : toutes les évaluations d'une entreprise.
+ *
  * Les évaluations sont des notes (1 à 5) et un commentaire libre ("attendus")
  * rédigés par un admin ou un pilote sur une entreprise partenaire.
  * Elles peuvent être consultées sous forme de résumé (une ligne par entreprise)

@@ -1,25 +1,53 @@
+{#
+    pilote_list.twig.html — Liste et gestion des pilotes (enseignants référents)
+    Accessible aux admins uniquement.
+    Hérite de base.twig.html.
+
+    Variables Twig reçues (AdminController::piloteList) :
+      - pilotes      : tableau d'objets pilotes. Chaque objet contient :
+                         id_utilisateur, prenom, nom, email, telephone,
+                         promotion, centre, nb_etudiants (nombre d'étudiants supervisés)
+      - totalPilotes : nombre total de pilotes (pour le badge)
+      - totalPages   : nombre de pages de pagination
+      - currentPage  : page courante
+      - prenom, nom  : filtres de recherche actifs
+      - success      : message de confirmation ('cree', 'supprime', 'modifie')
+      - csrf_token   : jeton CSRF pour les formulaires de suppression
+#}
 {% extends "base.twig.html" %}
+
+{# Bloc CSS : ajoute le CSS spécifique à la liste des pilotes (.pilote-actions) #}
 {% block css %}
 <link rel="stylesheet" href="/assets/css/variables.css">
 {{ parent() }}
 <link rel="stylesheet" href="/assets/pilote_list.css">
 {% endblock %}
+
 {% block title %}Gestion des pilotes – Stage Finder{% endblock %}
+
 {% block content %}
 <div class="page">
 
+    {# ===== BARRE DE RECHERCHE ET EN-TÊTE ===== #}
     <div class="search-card search-card--mb">
         <div class="search-head">
+            {# Badge fixe "Administration" (page réservée aux admins) #}
             <span class="pill pill-r">Administration</span>
+            {# Compteur total avec pluriel conditionnel #}
             <span class="pill pill-count">{{ totalPilotes }} pilote{{ totalPilotes != 1 ? 's' : '' }}</span>
         </div>
+
+        {# Titre + bouton de création #}
         <div class="list-header">
             <div>
                 <h2 class="list-title">Gestion des Pilotes</h2>
                 <p class="list-subtitle">Créez, consultez et supprimez les comptes pilotes.</p>
             </div>
+            {# Bouton de création d'un nouveau pilote — redirige vers le formulaire d'inscription avec type=pilote #}
             <a href="/?uri=register&type=pilote" class="btn btn-fill">+ Créer un pilote</a>
         </div>
+
+        {# Formulaire de recherche par prénom/nom — méthode GET #}
         <form action="/?uri=pilote_list" method="get" class="search-form">
             <input type="hidden" name="uri" value="pilote_list">
             <div class="field-grid-4">
@@ -43,6 +71,7 @@
         </form>
     </div>
 
+    {# ===== MESSAGES DE CONFIRMATION ===== #}
     {% if success == 'cree' %}
     <div class="alert alert-success">Le compte a bien été créé.</div>
     {% endif %}
@@ -53,31 +82,48 @@
     <div class="alert alert-success">Le compte pilote a bien été modifié.</div>
     {% endif %}
 
+    {# ===== LISTE DES PILOTES ===== #}
     <div class="stages-list">
         {% for p in pilotes %}
         <article class="stage-card">
+
+            {# Informations du pilote #}
             <div class="stage-info">
                 <div class="stage-top">
+                    {# Nom complet en grand (classe .mgmt-name plus lisible que .stage-company) #}
                     <span class="mgmt-name">{{ p.prenom }} {{ p.nom }}</span>
+                    {# Badge indiquant le nombre d'étudiants supervisés #}
                     <span class="stage-type">{{ p.nb_etudiants }} étudiant{{ p.nb_etudiants != 1 ? 's' : '' }}</span>
                 </div>
+
+                {# Coordonnées du pilote #}
                 <p class="stage-desc">
                     {{ p.email }}
                     {% if p.telephone %} · {{ p.telephone }}{% endif %}
                 </p>
+
+                {# Tags promotion et centre (affichés seulement s'ils sont renseignés) #}
                 {% if p.promotion or p.centre %}
                 <div class="tag-list">
+                    {# Promotion (ex: "FISE A4") en tag crème #}
                     {% if p.promotion %}
                     <span class="tag-promo">{{ p.promotion }}</span>
                     {% endif %}
+                    {# Centre de formation en tag bleu #}
                     {% if p.centre %}
                     <span class="tag-info">{{ p.centre }}</span>
                     {% endif %}
                 </div>
                 {% endif %}
             </div>
+
+            {# ===== ACTIONS (Modifier / Supprimer) ===== #}
+            {# .pilote-actions de pilote_list.css aligne les boutons à droite en colonne #}
             <div class="stage-right pilote-actions">
                 <a href="/?uri=pilote_update&id={{ p.id_utilisateur }}" class="btn btn-ghost">Modifier</a>
+
+                {# Formulaire de suppression avec modale de confirmation.
+                   Les étudiants supervisés seront désaffectés mais pas supprimés. #}
                 <form method="POST" action="/?uri=pilote_delete"
                       data-confirm-title="Supprimer le compte pilote"
                       data-confirm-name="{{ p.prenom }} {{ p.nom }}"
@@ -87,12 +133,15 @@
                     <button type="submit" class="btn btn-ghost btn-danger">Supprimer</button>
                 </form>
             </div>
+
         </article>
         {% else %}
+        {# Affiché si aucun pilote n'est enregistré ou si la recherche ne donne rien #}
         <p class="liste-vide">Aucun pilote enregistré.</p>
         {% endfor %}
     </div>
 
+    {# ===== PAGINATION ===== #}
     {% if totalPages > 1 %}
     <div class="pagination">
         {% if currentPage > 1 %}

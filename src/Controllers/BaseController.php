@@ -7,6 +7,12 @@
  * protection CSRF, rendu Twig, redirections HTTP et vérification des rôles
  * utilisateur stockés en session. Chaque contrôleur concret doit étendre
  * cette classe plutôt que de réimplémenter ces mécanismes.
+ *
+ * Architecture :
+ *  - La session PHP doit être démarrée avant d'instancier tout contrôleur.
+ *  - Le moteur Twig est injecté par le conteneur d'application (index.php).
+ *  - Les rôles reconnus sont : 'admin', 'pilote', 'etudiant'.
+ *    Tout autre valeur est traitée comme "non connecté".
  */
 abstract class BaseController {
 

@@ -5,6 +5,17 @@ require_once __DIR__ . '/BaseController.php';
 /**
  * Contrôleur de gestion des offres de stage.
  *
+ * Les offres de stage sont le cœur de la plateforme. Ce contrôleur gère :
+ *  - La recherche publique avec filtres (domaine, ville, durée, compétence, tri).
+ *  - L'affichage détaillé d'une offre avec les indicateurs "favori" et "déjà candidaté".
+ *  - La candidature (upload CV + lettre de motivation) pour les étudiants.
+ *  - La gestion de la wishlist personnelle de l'étudiant (bascule ajout/retrait).
+ *  - La création, modification et suppression d'offres réservées aux admins/pilotes.
+ *  - Un tableau de bord statistique des candidatures par offre.
+ *
+ * Toutes les actions POST sont protégées par une vérification CSRF.
+ * Les vues publiques (index, show) n'exigent aucun rôle particulier.
+ *
  * Regroupe toutes les actions liées aux offres de stage :
  * - Consultation publique et recherche filtrée avec pagination.
  * - Détail d'une offre, gestion de la wishlist et candidature (étudiants).

@@ -1,31 +1,57 @@
+{#
+    modifier_etudiant.twig.html — Formulaire de modification d'un compte étudiant
+    Hérite de base.twig.html.
+    Accessible aux admins et pilotes.
+
+    Variables Twig reçues (AdminController / PiloteController ::etudiantUpdate) :
+      - etudiant    : objet étudiant à modifier. Propriétés :
+                        id_utilisateur, prenom, nom, email, telephone,
+                        formation, niveau_etude
+      - erreur      : message d'erreur de validation côté serveur
+      - csrf_token  : jeton CSRF pour le formulaire POST
+#}
 {% extends "base.twig.html" %}
+
+{# Bloc CSS : hérite du parent et charge modifier_pilote.css (partagé entre les deux formulaires) #}
 {% block css %}
 <link rel="stylesheet" href="/assets/css/variables.css">
 {{ parent() }}
 <link rel="stylesheet" href="/assets/modifier_pilote.css">
 {% endblock %}
+
 {% block title %}Modifier l'étudiant – Stage Finder{% endblock %}
+
 {% block content %}
 
+    {# mgmt-wrap = conteneur principal centré des pages de gestion #}
     <div class="mgmt-wrap">
 
+        {# ===== EN-TÊTE DE LA PAGE ===== #}
         <div class="mgmt-header">
             <span class="mgmt-eyebrow">Étudiant</span>
             <h1>Modifier un compte Étudiant</h1>
+            {# Affiche le nom de l'étudiant en gras pour contextualiser l'action #}
             <p>Mettez à jour les informations de <strong>{{ etudiant.prenom }} {{ etudiant.nom }}</strong>.</p>
         </div>
 
         <div class="mgmt-card">
+            {# Lien de retour vers la liste des étudiants #}
             <a href="/?uri=etudiant_list" class="mgmt-back">← Retour à la liste</a>
 
+            {# Message d'erreur de validation (ex: "Cet email est déjà utilisé") #}
             {% if erreur %}
             <div class="alert alert-error">{{ erreur }}</div>
             {% endif %}
 
+            {# ===== FORMULAIRE DE MODIFICATION ===== #}
             <form method="POST" action="/?uri=etudiant_update">
+                {# Jeton CSRF anti-falsification #}
                 <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                {# ID de l'étudiant à mettre à jour en BDD #}
                 <input type="hidden" name="id" value="{{ etudiant.id_utilisateur }}">
 
+                {# ── Ligne Nom + Prénom ── #}
+                {# frow = flex row (deux champs côte à côte sur bureau) #}
                 <div class="frow">
                     <div class="fgrp">
                         <label>Nom *</label>
@@ -37,21 +63,30 @@
                     </div>
                 </div>
 
+                {# ── Email ── #}
+                {# type="email" = validation native du navigateur #}
                 <div class="fgrp">
                     <label>Email *</label>
                     <input type="email" name="email" value="{{ etudiant.email }}" placeholder="etudiant@example.fr" required>
                 </div>
 
+                {# ── Téléphone ── #}
+                {# type="tel" = clavier numérique sur mobile, non requis #}
                 <div class="fgrp">
                     <label>Téléphone</label>
                     <input type="tel" name="telephone" value="{{ etudiant.telephone }}" placeholder="+33 6 12 34 56 78">
                 </div>
 
+                {# ── Formation ── #}
+                {# Saisie libre : nom du cursus suivi (ex: "BUT Informatique", "Master Marketing") #}
                 <div class="fgrp">
                     <label>Formation</label>
                     <input type="text" name="formation" value="{{ etudiant.formation }}" placeholder="Ex : BUT Informatique">
                 </div>
 
+                {# ── Niveau d'étude ── #}
+                {# Liste déroulante des niveaux Bac+1 à Bac+5.
+                   La comparaison etudiant.niveau_etude == n sélectionne l'option courante. #}
                 <div class="fgrp">
                     <label>Niveau d'étude</label>
                     <select name="niveau_etude">
@@ -63,6 +98,7 @@
                     </select>
                 </div>
 
+                {# Bouton de sauvegarde #}
                 <button type="submit" class="mgmt-submit">Enregistrer les modifications</button>
             </form>
         </div>

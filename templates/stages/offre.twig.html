@@ -1,52 +1,100 @@
+{#
+    offre.twig.html — Page de détail d'une offre de stage
+    Hérite de base.twig.html.
+    Affiche toutes les informations d'une offre et permet à un étudiant connecté de candidater.
+
+    Variables Twig reçues (OffreController::detail) :
+      - offre           : objet offre complet. Propriétés :
+                            id_offre, titre, company, company_desc, description,
+                            ville, duree, base_remuneration, nb_places,
+                            date_offre (début), date_publication,
+                            tags[] (tableau de compétences),
+                            email_contact, telephone_contact,
+                            id_entreprise (pour le lien vers la page entreprise)
+      - en_favori       : booléen — true si l'étudiant connecté a mis cette offre en favori
+      - deja_candidate  : booléen — true si l'étudiant a déjà soumis une candidature pour cette offre
+      - candidature_ok  : booléen — true juste après un envoi de candidature réussi
+      - csrf_token      : jeton CSRF pour tous les formulaires POST de la page
+      - session_user    : utilisateur connecté (null si visiteur)
+#}
 {% extends "base.twig.html" %}
+
+{# Bloc CSS : charge style-stage.css (grille, boutons), offre.css (mise en page spécifique) et favoris.css (animation cœur) #}
 {% block css %}
 <link rel="stylesheet" href="/assets/css/variables.css">
 <link rel="stylesheet" href="/assets/style-stage.css">
 <link rel="stylesheet" href="/assets/offre.css">
 <link rel="stylesheet" href="/assets/favoris.css">
 {% endblock %}
+
+{# Titre de l'onglet : nom du poste + "Stage Finder" #}
 {% block title %}{{ offre.titre }} – Stage Finder{% endblock %}
 
 {% block content %}
 <div class="offre-page">
 
-    {# Breadcrumb #}
+    {# ===== NAVIGATION DE RETOUR ===== #}
+    {# data-fallback = URL de secours utilisée par le JS si l'historique navigateur est vide
+       (ex : accès direct à la page via un lien). Le JS tente d'abord history.back(). #}
     <nav class="breadcrumb">
         <a href="#" class="btn-back" data-fallback="/?uri=stages">← Retour aux offres</a>
     </nav>
 
-    {# Confirmation candidature #}
+    {# ===== CONFIRMATION APRÈS CANDIDATURE ===== #}
+    {# candidature_ok est passé par le contrôleur après une redirection POST → GET réussie.
+       Ce pattern évite de re-soumettre le formulaire si l'utilisateur actualise la page. #}
     {% if candidature_ok %}
     <div class="alert-success">
         Votre candidature a bien été envoyée !
     </div>
     {% endif %}
 
+    {# ===== MISE EN PAGE : GRILLE 2 COLONNES ===== #}
+    {# offre-layout = CSS Grid défini dans offre.css :
+       - colonne gauche (offre-main) : large, contient le détail de l'offre
+       - colonne droite (offre-aside) : étroite, contient les actions et le récapitulatif #}
     <div class="offre-layout">
 
-        {# Colonne principale #}
+        {# ===== COLONNE PRINCIPALE ===== #}
         <div class="offre-main">
 
-            {# En-tête offre #}
+            {# ── Carte d'en-tête de l'offre ── #}
+            {# Contient : nom de l'entreprise, badge "Stage", bouton favori, titre, méta-chips, tags #}
             <div class="offre-header card">
                 <div class="offre-header-top">
                     <div>
+                        {# Nom de l'entreprise en petites majuscules espacées #}
                         <span class="stage-company">{{ offre.company }}</span>
+                        {# Badge fixe "Stage" (type de contrat) #}
                         <span class="stage-type">Stage</span>
                     </div>
-                    {# Bouton favori (étudiants connectés seulement) #}
+
+                    {# Bouton favori — visible uniquement pour les étudiants connectés.
+                       Utilise un formulaire POST classique (pas d'AJAX ici) avec redirection.
+                       Le champ "redirect" indique au contrôleur où renvoyer après l'action,
+                       ici vers la même page offre pour maintenir la position. #}
                     {% if session_user and session_user.role == 'etudiant' %}
                     <form method="post" action="/?uri=wishlist-toggle">
                         <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                        {# ID de l'offre pour que le contrôleur sache quelle offre toggle #}
                         <input type="hidden" name="id_offre" value="{{ offre.id_offre }}">
+                        {# Redirection vers cette même page après l'action favori #}
                         <input type="hidden" name="redirect" value="/?uri=offre&id={{ offre.id_offre }}">
+                        {# Classe "actif" = bouton en état "déjà en favori" (style marron).
+                           Le texte change également selon l'état. #}
                         <button type="submit" class="btn-favori {{ en_favori ? 'actif' : '' }}" title="{{ en_favori ? 'Retirer des favoris' : 'Ajouter aux favoris' }}">
                             {{ en_favori ? 'Favori' : 'Ajouter aux favoris' }}
                         </button>
                     </form>
                     {% endif %}
                 </div>
+
+                {# Titre principal de l'offre (h1 pour le SEO) #}
                 <h1 class="offre-titre">{{ offre.titre }}</h1>
+
+                {# Ligne de méta-données : chips d'informations rapides.
+                   Chaque meta-chip n'est affiché que si la valeur est renseignée.
+                   |number_format(0, ',', ' ') = formatte la rémunération (ex: "1 500 €/mois"). #}
                 <div class="offre-meta-row">
                     {% if offre.duree %}
                     <span class="meta-chip">{{ offre.duree }}</span>
@@ -55,12 +103,17 @@
                     <span class="meta-chip">{{ offre.base_remuneration|number_format(0, ',', ' ') }} €/mois</span>
                     {% endif %}
                     {% if offre.nb_places %}
+                    {# Pluriel conditionnel : "1 place" vs "3 places" #}
                     <span class="meta-chip">{{ offre.nb_places }} place{{ offre.nb_places > 1 ? 's' : '' }}</span>
                     {% endif %}
                     {% if offre.date_offre %}
+                    {# |date('d/m/Y') = filtre Twig qui formate la date en format français #}
                     <span class="meta-chip">Début {{ offre.date_offre|date('d/m/Y') }}</span>
                     {% endif %}
                 </div>
+
+                {# Tags de compétences (ex: Python, React, SQL...).
+                   offre.tags est un tableau PHP, itéré par Twig. #}
                 {% if offre.tags %}
                 <div class="stage-tags offre-tags">
                     {% for tag in offre.tags %}
@@ -70,32 +123,39 @@
                 {% endif %}
             </div>
 
-
-            <!-- Description du poste -->
-            {# Description #}
+            {# ── Carte Description du poste ── #}
+            {# |nl2br = filtre Twig qui convertit les sauts de ligne \n en balises <br>.
+               Cela préserve la mise en forme du texte saisi dans le formulaire de création. #}
             <div class="card">
                 <h2 class="section-title">Description du poste</h2>
                 <p class="offre-description">{{ offre.description|nl2br }}</p>
             </div>
 
-
-            <!-- Petite description de l'entreprise-->
-            {# Entreprise #}
+            {# ── Carte À propos de l'entreprise ── #}
+            {# Contient : description courte, email de contact (lien mailto), téléphone,
+               et un bouton vers la page complète de l'entreprise. #}
             <div class="card">
                 <h2 class="section-title">À propos de {{ offre.company }}</h2>
+                {# Description de l'entreprise (optionnelle) #}
                 {% if offre.company_desc %}
                 <p class="offre-description">{{ offre.company_desc }}</p>
                 {% endif %}
+
+                {# Email de contact : lien mailto pour ouvrir le client de messagerie #}
                 <div class="entreprise-contact">
                     {% if offre.email_contact %}
                     <span><a href="mailto:{{ offre.email_contact }}">mail : {{ offre.email_contact }}</a></span>
                     {% endif %}
                 </div>
+
+                {# Numéro de téléphone de contact (texte simple, non cliquable) #}
                 <div class="entreprise-contact">
                     {% if offre.telephone_contact %}
                     <span>Numéro de téléphone : {{ offre.telephone_contact }}</span>
                     {% endif %}
                 </div>
+
+                {# Lien vers la page détail de l'entreprise (toutes ses offres, évaluations...) #}
                 <div class="entreprise-contact">
                 <a href="/?uri=entreprise&id={{ offre.id_entreprise }}" class="btn btn-dark">Voir l'entreprise</a>
                 </div>
@@ -103,50 +163,63 @@
 
         </div>
 
-
-        <!-- case en haut à gauche--> 
-
-        {# Colonne latérale #}
+        {# ===== COLONNE LATÉRALE (ASIDE) ===== #}
+        {# Cette colonne affiche un contenu différent selon l'état de l'utilisateur :
+           1. Visiteur non connecté → invitation à se connecter
+           2. Connecté mais pas étudiant (admin/pilote) → message informatif
+           3. Étudiant ayant déjà candidaté → badge de confirmation + lien profil
+           4. Étudiant pouvant candidater → formulaire de candidature #}
         <aside class="offre-aside">
 
-
-            <!-- Si tu n'es pas connecté -->
+            {# ── CAS 1 : Visiteur non connecté ── #}
             {% if not session_user %}
-            {# Non connecté #}
             <div class="card aside-card">
                 <p class="aside-hint">Connectez-vous pour candidater ou ajouter aux favoris.</p>
+                {# btn-block = bouton pleine largeur (défini dans offre.css) #}
                 <a href="/?uri=login" class="btn btn-fill btn-block">Se connecter</a>
             </div>
 
+            {# ── CAS 2 : Connecté mais rôle ≠ 'etudiant' (admin ou pilote) ── #}
             {% elseif session_user.role != 'etudiant' %}
-            {# Pas étudiant #}
             <div class="card aside-card">
                 <p class="aside-hint">Seuls les étudiants peuvent candidater ou ajouter des favoris.</p>
             </div>
 
+            {# ── CAS 3 : Étudiant ayant déjà postulé ── #}
+            {# deja_candidate = true si une candidature existe déjà en base pour cet étudiant + cette offre #}
             {% elseif deja_candidate %}
-            {# Déjà candidaté #}
             <div class="card aside-card">
+                {# Badge d'état : style badge-en_attente (fond beige/marron clair) défini dans offre.css #}
                 <div class="badge badge-en_attente">Candidature envoyée</div>
+                {# Lien vers le profil pour suivre l'état de la candidature #}
                 <p class="aside-hint">Vous avez déjà postulé à cette offre. Suivez l'état depuis votre <a href="/?uri=profil">profil</a>.</p>
             </div>
 
+            {# ── CAS 4 : Étudiant connecté, pas encore candidaté ── #}
             {% else %}
 
-            <!-- Formulaire de candidature -->
-            {# Formulaire de candidature #}
+            {# Formulaire de candidature.
+               id="form-candidature" permet à un éventuel lien "#form-candidature" d'y scroller.
+               enctype="multipart/form-data" est obligatoire pour l'upload de fichier (CV). #}
             <div class="card aside-card" id="form-candidature">
                 <h2 class="section-title">Candidater</h2>
                 <form method="post" action="/?uri=candidater" enctype="multipart/form-data">
+                    {# Jeton CSRF anti-falsification de requête inter-sites #}
                     <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                    {# ID de l'offre — identifie à quelle offre cette candidature est associée #}
                     <input type="hidden" name="id_offre" value="{{ offre.id_offre }}">
 
+                    {# Champ upload CV — requis, accepte PDF/DOC/DOCX uniquement.
+                       accept= filtre côté client (le contrôleur revalide côté serveur). #}
                     <div class="form-group">
                         <label for="cv">CV <span class="required">*</span></label>
                         <input type="file" id="cv" name="cv" accept=".pdf,.doc,.docx" required class="input-file">
                         <small>Formats acceptés : PDF, DOC, DOCX</small>
                     </div>
 
+                    {# Lettre de motivation — champ optionnel (pas de "required").
+                       rows="6" = hauteur visible en lignes.
+                       Le placeholder guide l'étudiant sur ce qui est attendu. #}
                     <div class="form-group">
                         <label for="lettre_motivation">Lettre de motivation</label>
                         <textarea id="lettre_motivation" name="lettre_motivation" rows="6"
@@ -154,6 +227,7 @@
                             class="input-textarea"></textarea>
                     </div>
 
+                    {# Bouton de soumission — btn-block = pleine largeur #}
                     <button type="submit" class="btn btn-fill btn-block">
                         Envoyer ma candidature
                     </button>
@@ -161,27 +235,37 @@
             </div>
             {% endif %}
 
-
-                <!-- Info rapide à bas à gauche-->
-                {# Infos rapides #}
-                <div class="card aside-card aside-info">
-                    <h3>Récapitulatif</h3>
-                    <ul class="info-list">
-                        <li><span class="info-label">Entreprise</span><span>{{ offre.company }}</span></li>
-                        {% if offre.ville %}
-                            <li><span class="info-label">Ville</span><span>{{ offre.ville }}</span></li>
-                        {% endif %}
-                        {% if offre.duree %}<li><span class="info-label">Durée</span><span>{{ offre.duree }}</span></li>{% endif %}
-                        {% if offre.base_remuneration %}<li><span class="info-label">Rémunération</span><span>{{ offre.base_remuneration|number_format(0, ',', ' ') }} €/mois</span></li>{% endif %}
-                        {% if offre.nb_places %}<li><span class="info-label">Places</span><span>{{ offre.nb_places }}</span></li>{% endif %}
-                        {% if offre.date_offre %}<li><span class="info-label">Début</span><span>{{ offre.date_offre|date('d/m/Y') }}</span></li>{% endif %}
-                        {% if offre.date_publication %}<li><span class="info-label">Publié le</span><span>{{ offre.date_publication|date('d/m/Y') }}</span></li>{% endif %}
-                    </ul>
-                </div>
-
+            {# ── Carte Récapitulatif ── #}
+            {# Visible pour tous les états (connecté ou non).
+               Reprend les informations clés de l'offre sous forme de liste clé/valeur.
+               info-label = style en gras/marron pour l'étiquette, valeur en texte normal. #}
+            <div class="card aside-card aside-info">
+                <h3>Récapitulatif</h3>
+                <ul class="info-list">
+                    {# Entreprise — toujours présente #}
+                    <li><span class="info-label">Entreprise</span><span>{{ offre.company }}</span></li>
+                    {# Ville — conditionnelle #}
+                    {% if offre.ville %}
+                        <li><span class="info-label">Ville</span><span>{{ offre.ville }}</span></li>
+                    {% endif %}
+                    {# Durée — conditionnelle #}
+                    {% if offre.duree %}<li><span class="info-label">Durée</span><span>{{ offre.duree }}</span></li>{% endif %}
+                    {# Rémunération mensuelle formatée — conditionnelle #}
+                    {% if offre.base_remuneration %}<li><span class="info-label">Rémunération</span><span>{{ offre.base_remuneration|number_format(0, ',', ' ') }} €/mois</span></li>{% endif %}
+                    {# Nombre de places disponibles — conditionnel #}
+                    {% if offre.nb_places %}<li><span class="info-label">Places</span><span>{{ offre.nb_places }}</span></li>{% endif %}
+                    {# Date de début du stage en format français dd/mm/yyyy — conditionnelle #}
+                    {% if offre.date_offre %}<li><span class="info-label">Début</span><span>{{ offre.date_offre|date('d/m/Y') }}</span></li>{% endif %}
+                    {# Date de publication de l'annonce — conditionnelle #}
+                    {% if offre.date_publication %}<li><span class="info-label">Publié le</span><span>{{ offre.date_publication|date('d/m/Y') }}</span></li>{% endif %}
+                </ul>
+            </div>
 
         </aside>
     </div>
 </div>
+
+{# favoris.js gère le bouton cœur via AJAX — chargé en bas de page pour ne pas bloquer le rendu.
+   Il lit les attributs data-offre-id pour envoyer des requêtes vers /?uri=wishlist-toggle. #}
 <script src="/assets/js/favoris.js"></script>
 {% endblock %}

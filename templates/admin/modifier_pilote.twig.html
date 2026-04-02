@@ -1,31 +1,56 @@
+{#
+    modifier_pilote.twig.html — Formulaire de modification d'un compte pilote
+    Hérite de base.twig.html.
+    Accessible aux admins uniquement.
+
+    Variables Twig reçues (AdminController::piloteUpdate) :
+      - pilote      : objet pilote à modifier. Propriétés :
+                        id_utilisateur, prenom, nom, email, telephone, promotion
+      - erreur      : message d'erreur de validation côté serveur
+      - csrf_token  : jeton CSRF pour le formulaire POST
+#}
 {% extends "base.twig.html" %}
+
+{# Bloc CSS : hérite du parent et charge modifier_pilote.css (styles du formulaire) #}
 {% block css %}
 <link rel="stylesheet" href="/assets/css/variables.css">
 {{ parent() }}
 <link rel="stylesheet" href="/assets/modifier_pilote.css">
 {% endblock %}
+
 {% block title %}Modifier le pilote – Stage Finder{% endblock %}
+
 {% block content %}
 
+    {# mgmt-wrap = conteneur principal centré des pages de gestion #}
     <div class="mgmt-wrap">
 
+        {# ===== EN-TÊTE DE LA PAGE ===== #}
         <div class="mgmt-header">
             <span class="mgmt-eyebrow">Pilote</span>
             <h1>Modifier un compte Pilote</h1>
+            {# Affiche le nom du pilote en gras pour contextualiser l'action #}
             <p>Mettez à jour les informations de <strong>{{ pilote.prenom }} {{ pilote.nom }}</strong>.</p>
         </div>
 
         <div class="mgmt-card">
+            {# Lien de retour vers la liste des pilotes #}
             <a href="/?uri=pilote_list" class="mgmt-back">← Retour à la liste</a>
 
+            {# Message d'erreur de validation (ex: "L'email est déjà utilisé") #}
             {% if erreur %}
             <div class="alert alert-error">{{ erreur }}</div>
             {% endif %}
 
+            {# ===== FORMULAIRE DE MODIFICATION ===== #}
             <form method="POST" action="/?uri=pilote_update">
+                {# Jeton CSRF anti-falsification #}
                 <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                {# ID du pilote à mettre à jour en BDD #}
                 <input type="hidden" name="id" value="{{ pilote.id_utilisateur }}">
 
+                {# ── Ligne Nom + Prénom ── #}
+                {# frow = flex row (deux champs côte à côte sur bureau) #}
                 <div class="frow">
                     <div class="fgrp">
                         <label>Nom *</label>
@@ -37,16 +62,22 @@
                     </div>
                 </div>
 
+                {# ── Email ── #}
+                {# type="email" = validation native du navigateur #}
                 <div class="fgrp">
                     <label>Email *</label>
                     <input type="email" name="email" value="{{ pilote.email }}" placeholder="pilote@stageconnect.fr" required>
                 </div>
 
+                {# ── Téléphone ── #}
                 <div class="fgrp">
                     <label>Téléphone</label>
                     <input type="tel" name="telephone" value="{{ pilote.telephone }}" placeholder="+33 6 12 34 56 78">
                 </div>
 
+                {# ── Promotion ── #}
+                {# Liste des promotions disponibles.
+                   La comparaison pilote.promotion == p sélectionne la promotion actuelle du pilote. #}
                 <div class="fgrp">
                     <label>Promotion *</label>
                     <select name="promotion" required>
@@ -58,6 +89,11 @@
                     </select>
                 </div>
 
+                {# ── Section changement de mot de passe ── #}
+                {# Cette section est optionnelle : si les champs sont laissés vides,
+                   le mot de passe actuel est conservé (géré par le contrôleur).
+                   autocomplete="new-password" désactive la complétion automatique du navigateur
+                   pour éviter de pré-remplir le champ avec un ancien mot de passe mémorisé. #}
                 <div class="mdp-section">
                     <p class="mdp-section-label">
                         Nouveau mot de passe
@@ -75,6 +111,7 @@
                     </div>
                 </div>
 
+                {# Bouton de sauvegarde #}
                 <button type="submit" class="mgmt-submit">Enregistrer les modifications</button>
             </form>
         </div>

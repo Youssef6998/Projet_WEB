@@ -1,10 +1,33 @@
+{#
+    stats_offres.twig.html — Tableau de bord statistiques des offres de stage
+    Hérite de base.twig.html.
+    Accessible aux admins et pilotes uniquement.
+    Affiche des KPI globaux (totaux) + une liste paginée par offre avec ses métriques.
+
+    Variables Twig reçues (StageController::statsOffres) :
+      - stats        : objet de statistiques globales. Propriétés :
+                         nb_offres (nombre total d'offres publiées),
+                         nb_candidatures (total des candidatures tous types),
+                         nb_wishlist (total des mises en favoris),
+                         remuneration_moyenne (float, moyenne des rémunérations en €/mois)
+      - statsOffres  : tableau des offres avec leurs métriques individuelles. Chaque objet :
+                         id_offre, titre, entreprise,
+                         nb_candidatures (candidatures reçues pour cette offre),
+                         nb_wishlist (fois mis en favori pour cette offre)
+      - totalPages   : nombre total de pages pour la pagination
+      - currentPage  : numéro de la page courante
+      - session_user : utilisateur connecté (role: 'admin' ou 'pilote')
+#}
 {% extends "base.twig.html" %}
 {% block title %}Statistiques des offres – Stage Finder{% endblock %}
+
 {% block content %}
 <div class="page">
 
+    {# ===== EN-TÊTE ===== #}
     <div class="search-card search-card--mb">
         <div class="search-head">
+            {# Badge rôle : "Administration" pour admin, "Pilote" pour pilote #}
             <span class="pill pill-r">{% if session_user.role == 'admin' %}Administration{% else %}Pilote{% endif %}</span>
         </div>
         <div class="list-info">
@@ -13,62 +36,94 @@
         </div>
     </div>
 
+    {# ===== GRILLE DE KPI GLOBAUX ===== #}
+    {# stats-grid = 4 colonnes de cartes KPI (défini dans stats.css).
+       Chaque article affiche un indicateur clé de la plateforme. #}
     <div class="stats-grid">
+        {# KPI 1 : Nombre total d'offres publiées #}
         <article class="stage-card stat-kpi">
             <span class="stat-kpi-label">Total offres</span>
             <span class="stat-kpi-value">{{ stats.nb_offres }}</span>
         </article>
+
+        {# KPI 2 : Nombre total de candidatures reçues (toutes offres confondues) #}
         <article class="stage-card stat-kpi">
             <span class="stat-kpi-label">Candidatures</span>
             <span class="stat-kpi-value">{{ stats.nb_candidatures }}</span>
         </article>
+
+        {# KPI 3 : Nombre total de mises en favoris (wishlist) #}
         <article class="stage-card stat-kpi">
             <span class="stat-kpi-label">Favoris</span>
             <span class="stat-kpi-value">{{ stats.nb_wishlist }}</span>
         </article>
+
+        {# KPI 4 : Rémunération moyenne en €/mois.
+           |number_format(0, ',', ' ') = formate le nombre : 0 décimale, séparateur décimal ',',
+           séparateur de milliers ' ' (espace insécable) → ex: "1 250 €" #}
         <article class="stage-card stat-kpi">
             <span class="stat-kpi-label">Rémun. moyenne</span>
             <span class="stat-kpi-value">{{ stats.remuneration_moyenne|number_format(0, ',', ' ') }} €</span>
         </article>
     </div>
 
+    {# ===== LISTE DES OFFRES AVEC MÉTRIQUES INDIVIDUELLES ===== #}
+    {# Chaque offre affiche son titre, son entreprise, et ses propres compteurs
+       (candidatures reçues et fois mis en favori). #}
     <div class="stages-list">
         {% for o in statsOffres %}
         <article class="stage-card">
+            {# Informations d'identification de l'offre #}
             <div class="stage-info">
                 <div class="stage-top">
+                    {# Titre du poste dans le style "entreprise" (pour l'importance visuelle) #}
                     <span class="stage-company">{{ o.titre }}</span>
+                    {# Nom de l'entreprise comme badge secondaire #}
                     <span class="stage-type">{{ o.entreprise }}</span>
                 </div>
             </div>
+
+            {# Métriques de l'offre + bouton vers son détail #}
             <div class="stat-row">
+                {# Colonne candidatures de cette offre #}
                 <div class="stat-col">
                     <span class="stat-col-value">{{ o.nb_candidatures }}</span>
                     <span class="stat-col-label">Candidatures</span>
                 </div>
+                {# Colonne favoris de cette offre #}
                 <div class="stat-col">
                     <span class="stat-col-value">{{ o.nb_wishlist }}</span>
                     <span class="stat-col-label">Favoris</span>
                 </div>
+                {# Bouton vers la page de détail publique de l'offre #}
                 <div class="stat-row-action">
                     <a href="/?uri=offre&id={{ o.id_offre }}" class="btn btn-dark">Voir l'offre</a>
                 </div>
             </div>
         </article>
         {% else %}
+        {# Affiché si le tableau statsOffres est vide (aucune offre publiée) #}
         <p class="liste-vide">Aucune offre.</p>
         {% endfor %}
     </div>
 
+    {# ===== PAGINATION ===== #}
+    {# Affichée uniquement s'il y a plus d'une page.
+       Pas de paramètres de filtre à conserver ici (pas de recherche sur cette page). #}
     {% if totalPages > 1 %}
     <div class="pagination">
+        {# Bouton page précédente — visible seulement si on n'est pas sur la première page #}
         {% if currentPage > 1 %}
             <a href="/?uri=stats_offres&page={{ currentPage - 1 }}" class="page-btn arrow">←</a>
         {% endif %}
+
+        {# Boutons numérotés — la page courante reçoit la classe 'active' #}
         {% for i in 1..totalPages %}
             <a href="/?uri=stats_offres&page={{ i }}"
                class="page-btn {{ i == currentPage ? 'active' : '' }}">{{ i }}</a>
         {% endfor %}
+
+        {# Bouton page suivante — visible seulement si on n'est pas sur la dernière page #}
         {% if currentPage < totalPages %}
             <a href="/?uri=stats_offres&page={{ currentPage + 1 }}" class="page-btn arrow">→</a>
         {% endif %}

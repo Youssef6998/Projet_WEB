@@ -1,14 +1,33 @@
+/* ═══════════════════════════════════════════════════════════════════
+   nous.css — Page "À propos / Notre équipe"
+   Utilisé par : nous.twig.html
+   Présente l'équipe, la mission et les valeurs du projet.
+   Dépend de : /assets/css/variables.css (--marron*, --dark, --text-muted, --r...)
+   ═══════════════════════════════════════════════════════════════════ */
 
+
+/* ===== CARTE GÉNÉRIQUE ===== */
+
+/* Boîte blanche semi-transparente réutilisable sur la page.
+   Utilisée ici pour des blocs de contenu généraux.
+   animation: up = apparition avec glissement depuis le bas (définie en fin de fichier). */
 .card {
   background: rgba(255, 255, 255, 0.95);
   border-radius: 18px;
   margin-top: 40px;
   margin-bottom: 40px;
   padding: 40px;
-  box-shadow: 0 8px 30px rgba(124, 61, 18, 0.07);
+  box-shadow: 0 8px 30px rgba(124, 61, 18, 0.07); /* ombre légère teintée marron */
   border: 1.5px solid var(--marron-bordure);
 }
 
+
+/* ===== SECTION HÉRO (bannière d'introduction) ===== */
+
+/* Grande bannière d'introduction avec fond dégradé crème.
+   max-width: 900px centré horizontalement.
+   border-radius: var(--r) = rayon commun de 1.1rem.
+   clamp(2rem, 5vw, 3rem) = titre adaptatif entre 2rem et 3rem selon la largeur. */
 .about-hero {
     background: linear-gradient(135deg, #faeee4 0%, #fdf4ed 100%);
     padding: 4rem 1rem 3rem;
@@ -19,12 +38,30 @@
     border: 1.5px solid var(--marron-bordure);
 }
 
+/* Titre principal de la section héro.
+   clamp() adapte la taille de la police à la largeur de l'écran (responsive). */
 .about-hero h1 { color: var(--dark); font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 1rem; font-weight: 700; }
 
+
+/* ===== SECTION MISSION ===== */
+
+/* Bloc de texte décrivant la mission du projet.
+   max-width: 900px + margin: 0 auto = centré avec largeur limitée. */
 .mission { max-width: 900px; margin: 0 auto 4rem; padding: 0 1rem; }
+
+/* Titre de la section mission en marron vif */
 .mission h2 { color: var(--marron-vif); font-size: 1.8rem; text-align: center; margin-bottom: 2rem; }
+
+/* Paragraphes de description avec line-height généreux pour la lisibilité */
 .mission p { color: var(--text-muted); line-height: 1.8; font-size: 1rem; margin-bottom: 1rem; }
 
+
+/* ===== GRILLE DE L'ÉQUIPE ===== */
+
+/* Grille responsive qui adapte automatiquement le nombre de colonnes.
+   repeat(auto-fit, minmax(280px, 1fr)) = autant de colonnes que possible,
+   chaque colonne faisant au minimum 280px.
+   Sur grand écran : 3 colonnes. Sur mobile : 1 colonne. */
 .team-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -34,6 +71,8 @@
     padding: 0 1rem;
 }
 
+/* Carte d'un membre de l'équipe.
+   transition: all 0.3s ease = anime tous les changements de style au survol. */
 .team-card {
     background: var(--white);
     padding: 2rem;
@@ -44,30 +83,46 @@
     transition: all 0.3s ease;
 }
 
+/* Au survol : la carte se lève légèrement et l'ombre s'intensifie.
+   transform: translateY(-5px) = montée de 5px.
+   border-color: var(--marron-mid) = la bordure devient beige moyen accentué. */
 .team-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 20px 50px rgba(124, 61, 18, 0.13);
     border-color: var(--marron-mid);
 }
 
+/* Avatar circulaire du membre de l'équipe.
+   Fond dégradé crème-beige.
+   display: flex + align/justify: center = centre l'icône/emoji dans le cercle. */
 .team-photo {
     width: 100px;
     height: 100px;
-    border-radius: 50%;
+    border-radius: 50%; /* cercle parfait */
     background: linear-gradient(135deg, #faeee4, #e8c4a4);
-    margin: 0 auto 1rem;
+    margin: 0 auto 1rem; /* centré horizontalement */
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2rem;
+    font-size: 2rem; /* taille de l'emoji/icône */
     color: var(--marron);
-    border: 3px solid var(--marron-mid);
+    border: 3px solid var(--marron-mid); /* bordure beige autour du cercle */
 }
 
+/* Nom du membre de l'équipe */
 .team-card h3 { font-size: 1.05rem; font-weight: 700; color: var(--dark); margin-bottom: .3rem; }
+
+/* Rôle/poste du membre en petites majuscules marron vif */
 .team-role { font-size: .82rem; font-weight: 600; color: var(--marron-vif); margin-bottom: .5rem; text-transform: uppercase; letter-spacing: .04em; }
+
+/* Description courte du membre en texte atténué */
 .team-desc { font-size: .85rem; color: var(--text-muted); line-height: 1.55; }
 
+
+/* ===== SECTION VALEURS ===== */
+
+/* Bloc des valeurs du projet (ex: Transparence, Proximité, Excellence).
+   max-width: 900px + padding généreux. */
 .values {
     background: var(--white);
     margin: 4rem auto;
@@ -77,8 +132,12 @@
     border: 1.5px solid var(--marron-bordure);
     box-shadow: 0 15px 40px rgba(124, 61, 18, 0.06);
 }
+
+/* Titre de la section valeurs en marron vif centré */
 .values h2 { color: var(--marron-vif); font-size: 1.8rem; text-align: center; margin-bottom: 2rem; }
 
+/* Grille des valeurs : adapte automatiquement le nombre de colonnes.
+   minmax(250px, 1fr) = minimum 250px par colonne. */
 .values-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -86,23 +145,31 @@
     margin-top: 2rem;
 }
 
+/* Chaque élément de valeur, centré */
 .value-item { text-align: center; padding: 1.5rem; }
 .value-item h3 { font-size: 1.1rem; font-weight: 700; color: var(--dark); margin-bottom: .5rem; }
 .value-item p { font-size: .9rem; color: var(--text-muted); line-height: 1.6; }
 
+/* Icône circulaire de valeur avec dégradé marron foncé.
+   display: flex + align/justify: center = centre l'icône dans le cercle. */
 .value-icon {
     width: 60px;
     height: 60px;
     background: linear-gradient(135deg, var(--marron) 0%, var(--marron-profond) 100%);
-    border-radius: 50%;
-    margin: 0 auto 1rem;
+    border-radius: 50%; /* cercle parfait */
+    margin: 0 auto 1rem; /* centré horizontalement */
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
-    box-shadow: 0 6px 20px rgba(124, 61, 18, 0.25);
+    color: white; /* icône blanche sur fond marron */
+    box-shadow: 0 6px 20px rgba(124, 61, 18, 0.25); /* ombre colorée sous le cercle */
 }
 
+
+/* ===== SECTION STATISTIQUES ===== */
+
+/* Grille des statistiques du site (ex: "1200 stages", "350 entreprises"...).
+   repeat(auto-fit, minmax(200px, 1fr)) = adapte le nombre de colonnes. */
 .stats {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -112,6 +179,7 @@
     padding: 0 1rem;
 }
 
+/* Chaque chiffre clé avec fond dégradé crème */
 .stat-item {
     text-align: center;
     padding: 2rem;
@@ -120,9 +188,23 @@
     border: 1.5px solid var(--marron-bordure);
 }
 
+/* Grand chiffre en marron vif (ex: "1200+").
+   display: block = occupe sa propre ligne. */
 .stat-number { font-size: 3rem; font-weight: 700; color: var(--marron-vif); display: block; }
 
+
+/* ===== ANIMATIONS D'ENTRÉE ===== */
+
+/* Animation "up" : les éléments remontent depuis le bas et montent en opacité.
+   from → to : de translateY(14px) opacité 0 vers position normale opacité 1. */
 @keyframes up { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+
+/* La carte apparaît en premier (pas de délai) */
 .card { animation: up .4s ease both; }
+
+/* La section héro apparaît avec un léger délai (0.06s) après la carte */
 .about-hero { animation: up .4s ease .06s both; }
+
+/* Les statistiques apparaissent après le héro (0.12s de délai).
+   "both" = l'animation s'applique avant ET après son exécution (garde l'état final). */
 .stats { animation: up .4s ease .12s both; }
