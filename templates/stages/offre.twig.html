@@ -37,6 +37,7 @@
                     {# Bouton favori (étudiants connectés seulement) #}
                     {% if session_user and session_user.role == 'etudiant' %}
                     <form method="post" action="/?uri=wishlist-toggle">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                         <input type="hidden" name="id_offre" value="{{ offre.id_offre }}">
                         <input type="hidden" name="redirect" value="/?uri=offre&id={{ offre.id_offre }}">
                         <button type="submit" class="btn-favori {{ en_favori ? 'actif' : '' }}" title="{{ en_favori ? 'Retirer des favoris' : 'Ajouter aux favoris' }}">
@@ -137,6 +138,7 @@
             <div class="card aside-card" id="form-candidature">
                 <h2 class="section-title">Candidater</h2>
                 <form method="post" action="/?uri=candidater" enctype="multipart/form-data">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                     <input type="hidden" name="id_offre" value="{{ offre.id_offre }}">
 
                     <div class="form-group">

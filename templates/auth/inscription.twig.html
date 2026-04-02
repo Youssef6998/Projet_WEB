@@ -48,6 +48,7 @@
     {% endif %}
 
     <form method="POST" action="/?uri=register" id="form-creation">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
       <input type="hidden" name="type" id="input-type" value="{{ type ?: 'etudiant' }}">
 
       <div class="champ">

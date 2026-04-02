@@ -13,6 +13,14 @@ require_once __DIR__ . '/Controllers/PiloteController.php';
 require_once __DIR__ . '/Controllers/EvaluationController.php';
 require_once __DIR__ . '/Controllers/StatsController.php';
 
+/**
+ * Front controller / request dispatcher.
+ *
+ * Reads the `uri` query parameter set by the Apache rewrite rule, resolves the
+ * matching controller action through a single match expression, and echoes the
+ * rendered HTML response.  All models and controllers are instantiated once in
+ * the constructor and reused for every request.
+ */
 class Router {
 
     private \Twig\Environment $twig;
@@ -25,9 +33,19 @@ class Router {
     private EvaluationController $evaluation;
     private StatsController      $stats;
 
+    /**
+     * Instantiates all models and injects them into their respective controllers.
+     *
+     * Models are created once here so they are never duplicated when a controller
+     * needs a model that is also used by another controller (e.g. EvaluationModel
+     * is shared between EntrepriseController and EvaluationController).
+     *
+     * @param \Twig\Environment $twig Twig rendering environment shared by all controllers.
+     */
     public function __construct(\Twig\Environment $twig) {
         $this->twig = $twig;
 
+        // Instantiate models once; share instances across controllers where needed.
         $stageModel      = new StageModel();
         $entrepriseModel = new EntrepriseModel();
         $userModel       = new UserModel();
@@ -42,9 +60,22 @@ class Router {
         $this->stats      = new StatsController($twig, new StatsModel());
     }
 
+    /**
+     * Resolves and executes the controller action for the current HTTP request.
+     *
+     * The routing table is encoded as a single `match` expression evaluated
+     * top-to-bottom.  Each arm checks the URI slug (and optionally the HTTP
+     * method) to select the correct action.  The rendered string returned by
+     * every action is echoed at the end; static pages are rendered inline
+     * because they need no controller logic.
+     *
+     * @return void
+     */
     public function dispatch(): void {
+        // The rewrite rule maps every path to index.php?uri=<slug>.
         $uri    = $_GET['uri'] ?? 'cherche-stage';
         $method = $_SERVER['REQUEST_METHOD'];
+        // Clamp page to at least 1; individual controllers further clamp to totalPages.
         $page   = max(1, (int)($_GET['page'] ?? 1));
         $id     = (int)($_GET['id'] ?? 0);
 
@@ -62,7 +93,7 @@ class Router {
             $uri === 'register'
                 => $this->auth->showRegister(),
 
-            // Stages
+            // Stages — 'cherche-stage', 'stages' and 'home' all map to the same listing page.
             in_array($uri, ['cherche-stage', 'stages', 'home'])
                 => $this->stage->index($page),
             $uri === 'offre'
@@ -154,17 +185,18 @@ class Router {
             $uri === 'stats'
                 => $this->stats->show(),
 
-            // Pages statiques
+            // Pages statiques — rendered directly; no controller logic required.
             $uri === 'mentions'
-                => $this->twig->render('mentions.twig.html', ['uri' => $uri, 'session_user' => $_SESSION['user'] ?? null]),
+                => $this->twig->render('mentions.twig.html', ['uri' => $uri, 'session_user' => $_SESSION['user'] ?? null, 'csrf_token' => $_SESSION['csrf_token'] ?? '']),
             $uri === 'nous'
-                => $this->twig->render('nous.twig.html',     ['uri' => $uri, 'session_user' => $_SESSION['user'] ?? null]),
+                => $this->twig->render('nous.twig.html',     ['uri' => $uri, 'session_user' => $_SESSION['user'] ?? null, 'csrf_token' => $_SESSION['csrf_token'] ?? '']),
 
-            // 404
+            // 404 — catch-all for any unrecognised URI slug.
             default
-                => $this->twig->render('404.twig.html', ['uri' => $uri, 'session_user' => $_SESSION['user'] ?? null]),
+                => $this->twig->render('404.twig.html', ['uri' => $uri, 'session_user' => $_SESSION['user'] ?? null, 'csrf_token' => $_SESSION['csrf_token'] ?? '']),
         };
 
+        // Controllers that perform redirects return null; only echo when there is content.
         if ($output !== null) {
             echo $output;
         }

@@ -86,6 +86,7 @@
                     <form method="POST" action="/?uri=evaluation_delete" class="form-clean"
                           data-confirm-title="Supprimer l'évaluation"
                           data-confirm-detail="Cette évaluation sera définitivement supprimée.">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                         <input type="hidden" name="id" value="{{ ev.id_evaluation }}">
                         <input type="hidden" name="redirect" value="/?uri=evaluation_detail&id={{ detail.id_entreprise }}">
                         <button type="submit" class="btn btn-ghost btn-sm btn-danger-sm">Supprimer</button>

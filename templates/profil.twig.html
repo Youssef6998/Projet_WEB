@@ -34,6 +34,7 @@
         <div class="profil-fields">
             {% for champ, label in {nom: 'Nom', prenom: 'Prénom', email: 'Email', telephone: 'Téléphone'} %}
             <form method="POST" action="/?uri=profil_update" class="profil-field-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                 <input type="hidden" name="champ" value="{{ champ }}">
                 <label class="profil-field-label">{{ label }}</label>
                 <div class="profil-field-row">
@@ -46,6 +47,7 @@
 
             {% if user.role == 'pilote' %}
             <form method="POST" action="/?uri=profil_update" class="profil-field-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                 <input type="hidden" name="champ" value="promotion">
                 <label class="profil-field-label">Promotion</label>
                 <div class="profil-field-row">
@@ -66,6 +68,7 @@
     <section class="candidatures-section">
         <h2>Changer le mot de passe</h2>
         <form method="POST" action="/?uri=profil_update" class="profil-mdp-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
             <input type="hidden" name="champ" value="mot_de_passe">
             <div class="frow">
                 <div class="fgrp">
@@ -139,6 +142,7 @@
                         <div class="actions-row">
                             <a href="/?uri=offre&id={{ w.id_offre }}" class="btn-explore btn-explore-sm">Voir</a>
                             <form method="post" action="/?uri=wishlist-toggle" class="form-clean">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                                 <input type="hidden" name="id_offre" value="{{ w.id_offre }}">
                                 <input type="hidden" name="redirect" value="/?uri=profil">
                                 <button type="submit" class="btn-retirer" title="Retirer des favoris">Retirer</button>
@@ -189,6 +193,7 @@
               data-confirm-title="Supprimer mon compte"
               data-confirm-detail="Vos données personnelles seront effacées et votre accès révoqué. Vos candidatures restent conservées."
               data-confirm-label="Supprimer mon compte">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
             <button type="submit" class="btn-danger">Supprimer mon compte</button>
         </form>
     </section>

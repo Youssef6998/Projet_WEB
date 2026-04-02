@@ -1,3 +1,17 @@
+/**
+ * favoris.js
+ *
+ * Gère les interactions utilisateur liées à la wishlist (favoris) :
+ *  - Toast animé "Retiré des favoris" avec callback post-animation.
+ *  - Animation du bouton "Ajouter aux favoris" (classe 'adding' temporaire).
+ *  - Interception du formulaire .btn-favori (page détail offre) pour animer
+ *    avant de soumettre.
+ *  - Bouton cœur AJAX (.btn-heart) sur la liste des stages : bascule le favori
+ *    sans rechargement de page, en incluant le token CSRF depuis la meta tag.
+ *  - Interception du bouton .btn-retirer (page profil) pour animer avant
+ *    de soumettre la suppression du favori.
+ */
+
 (function () {
 
     // ── Toast "Retiré des favoris" ────────────────────────────────────────────
@@ -68,8 +82,10 @@
             // Désactive pendant la requête
             btn.disabled = true;
 
+            var csrfToken = (document.querySelector('meta[name="csrf-token"]') || {}).content || '';
             var body = new URLSearchParams();
             body.append('id_offre', idOffre);
+            body.append('csrf_token', csrfToken);
 
             fetch('/?uri=wishlist-toggle', {
                 method: 'POST',

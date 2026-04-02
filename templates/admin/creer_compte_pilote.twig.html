@@ -18,6 +18,7 @@
             {% endif %}
 
             <form method="POST" action="/?uri=pilote_create">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                 <div class="frow">
                     <div class="fgrp">
                         <label>Nom *</label>

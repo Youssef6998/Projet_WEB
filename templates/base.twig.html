@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="csrf-token" content="{{ csrf_token }}">
     <title>{% block title %}Stage Finder{% endblock %}</title>
 {% block css %}
 <link rel="stylesheet" href="/assets/css/variables.css">
@@ -73,7 +74,6 @@
             </div>
             {% endif %}
 
-            <a href="/?uri=stats" class="{% if uri == 'stats' %}active{% endif %}">Statistiques</a>
             <a href="/?uri=nous" class="{% if uri == 'nous' %}active{% endif %}">À propos</a>
         </nav>
         <div class="hdr-btns">
@@ -100,7 +100,6 @@
       <a href="/?uri=cherche-stage" class="{% if uri == 'cherche-stage' or uri == 'home' %}active{% endif %}">Accueil</a>
       <a href="/?uri=stages" class="{% if uri == 'stages' %}active{% endif %}">Stages</a>
       <a href="/?uri=entreprises" class="{% if uri == 'entreprises' %}active{% endif %}">Entreprises</a>
-      <a href="/?uri=stats" class="{% if uri == 'stats' %}active{% endif %}">Statistiques</a>
 {% if session_user and session_user.role in ['admin', 'pilote'] %}
   <div class="nav-mobile-dropdown">
     <button class="nav-mobile-dropdown-btn" type="button">Gestion</button>

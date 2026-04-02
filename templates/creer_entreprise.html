@@ -27,6 +27,7 @@
         </div>
 
         <form method="POST" action="/?uri=entreprise_create">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
 
             <div class="input-group">
                 <label for="nom">Nom de l'entreprise *</label>

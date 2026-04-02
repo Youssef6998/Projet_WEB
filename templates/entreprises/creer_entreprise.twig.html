@@ -18,6 +18,7 @@
         {% endif %}
 
         <form method="POST" action="/?uri=entreprise_create">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
             <div class="fgrp">
                 <label>Nom de l'entreprise *</label>
                 <input type="text" name="nom" placeholder="Ex : TechCorp" required>

@@ -26,6 +26,7 @@
         {% endif %}
 
         <form method="POST" action="/?uri=avis_create">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
 
             <div class="fgrp">
                 <label>Entreprise *</label>

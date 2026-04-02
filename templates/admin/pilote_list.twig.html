@@ -82,6 +82,7 @@
                       data-confirm-title="Supprimer le compte pilote"
                       data-confirm-name="{{ p.prenom }} {{ p.nom }}"
                       data-confirm-detail="Les données personnelles seront effacées. Ses étudiants seront désaffectés.">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                     <input type="hidden" name="id" value="{{ p.id_utilisateur }}">
                     <button type="submit" class="btn btn-ghost btn-danger">Supprimer</button>
                 </form>

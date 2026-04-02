@@ -18,7 +18,8 @@ Application web de gestion d'offres de stages, de candidatures étudiantes et d'
 10. [Base de données](#10-base-de-données)
 11. [Uploads de fichiers](#11-uploads-de-fichiers)
 12. [SEO — robots.txt et sitemap.xml](#12-seo--robotstxt-et-sitemapxml)
-13. [Notes importantes](#13-notes-importantes)
+13. [Tests unitaires (PHPUnit)](#13-tests-unitaires-phpunit)
+14. [Notes importantes](#14-notes-importantes)
 
 ---
 
@@ -31,6 +32,7 @@ Application web de gestion d'offres de stages, de candidatures étudiantes et d'
 | Templating | Twig 3.23+ |
 | Serveur web | Apache 2.4 |
 | Gestion des dépendances | Composer |
+| Tests unitaires | PHPUnit 11 |
 | Front-end | HTML5, CSS3, JavaScript vanilla (aucun framework) |
 
 ---
@@ -133,11 +135,16 @@ Projet_WEB/
 
 ## 3. Prérequis
 
-- **PHP** ≥ 8.1 avec les extensions : `pdo`, `pdo_mysql`, `fileinfo`, `mbstring`
+- **PHP** ≥ 8.1 avec les extensions : `pdo`, `pdo_mysql`, `fileinfo`, `mbstring`, `xml`, `dom`
 - **MySQL** ≥ 8.0
 - **Apache** 2.4
 - **Composer**
 - **Git** (optionnel)
+
+> Les extensions `mbstring`, `xml` et `dom` sont requises par PHPUnit. Sur Ubuntu/Debian :
+> ```bash
+> sudo apt-get install -y php8.4-xml php8.4-mbstring
+> ```
 
 ---
 
@@ -457,7 +464,117 @@ Les CVs sont stockés dans `uploads/cv/`.
 
 ---
 
-## 13. Notes importantes
+## 13. Tests unitaires (PHPUnit)
+
+Le projet inclut une suite de tests unitaires couvrant `StatsController`.
+
+### Prérequis système
+
+PHPUnit nécessite les extensions PHP suivantes :
+
+```bash
+sudo apt-get install -y php8.4-xml php8.4-mbstring
+```
+
+> Adapter `8.4` à votre version PHP (`php --version` pour vérifier).
+
+### Installation des dépendances de test
+
+PHPUnit est déclaré dans `composer.json` en tant que dépendance de développement. Il s'installe avec :
+
+```bash
+composer install
+```
+
+Ou si `vendor/` est déjà présent mais que PHPUnit est absent :
+
+```bash
+composer install --ignore-platform-reqs
+```
+
+### Lancer les tests
+
+Depuis la racine du projet :
+
+```bash
+composer test
+```
+
+Résultat attendu :
+
+```
+PHPUnit 11.x.x by Sebastian Bergmann and contributors.
+
+Runtime: PHP 8.4.x
+
+.............                                             13 / 13 (100%)
+
+Time: 00:00.xxx, Memory: xx.xx MB
+
+Stats Controller
+   Show redirectVersLogin siNonConnecte
+   Show redirectVersLogin siEtudiant
+   Show retourneHtml siAdmin
+   Show retourneHtml siPilote
+   Show passesNbOffres auTemplate
+   Show passesMoyCandidatures auTemplate
+   Show passesRepartition auTemplate
+   Show passesTopWishlist auTemplate
+   Show passesUri stats auTemplate
+   Show appelleGetTopWishlist avecLimite5
+   Show appelleGetNbOffresTotal uneFois
+   Show appelleGetMoyenneCandidatures uneFois
+   Show appelleGetRepartitionParDuree uneFois
+
+OK (13 tests, 28 assertions)
+```
+
+### Ce qui est testé
+
+Les tests se trouvent dans `tests/StatsControllerTest.php`.
+
+**Contrôle d'accès** — vérification que les rôles non autorisés sont redirigés :
+
+| Test | Scénario |
+|------|----------|
+| `test_show_redirectVersLogin_siNonConnecte` | Aucune session → redirection vers `/login` |
+| `test_show_redirectVersLogin_siEtudiant` | Rôle `etudiant` → accès refusé |
+
+**Accès autorisé** — vérification que les rôles admin et pilote accèdent bien à la page :
+
+| Test | Scénario |
+|------|----------|
+| `test_show_retourneHtml_siAdmin` | Rôle `admin` → retourne du HTML |
+| `test_show_retourneHtml_siPilote` | Rôle `pilote` → retourne du HTML |
+
+**Données transmises au template** — vérification que chaque clé est bien passée à Twig :
+
+| Test | Clé vérifiée |
+|------|-------------|
+| `test_show_passesNbOffres_auTemplate` | `nb_offres` |
+| `test_show_passesMoyCandidatures_auTemplate` | `moy_candidatures` |
+| `test_show_passesRepartition_auTemplate` | `repartition` |
+| `test_show_passesTopWishlist_auTemplate` | `top_wishlist` |
+| `test_show_passesUri_stats_auTemplate` | `uri = 'stats'` |
+
+**Appels au modèle** — vérification que chaque méthode du modèle est bien appelée :
+
+| Test | Méthode vérifiée |
+|------|-----------------|
+| `test_show_appelleGetTopWishlist_avecLimite5` | `getTopWishlist(5)` avec la limite exacte |
+| `test_show_appelleGetNbOffresTotal_uneFois` | `getNbOffresTotal()` appelé 1 fois |
+| `test_show_appelleGetMoyenneCandidatures_uneFois` | `getMoyenneCandidaturesParOffre()` appelé 1 fois |
+| `test_show_appelleGetRepartitionParDuree_uneFois` | `getRepartitionParDuree()` appelé 1 fois |
+
+### Architecture des tests
+
+- **`tests/bootstrap.php`** : initialise la session, définit un stub `Database` qui empêche toute connexion réelle à MySQL, puis charge les classes sources.
+- **`TestableStatsController`** : sous-classe de `StatsController` définie dans le fichier de test, qui surcharge `redirect()` pour lever une `RuntimeException` au lieu d'appeler `header()+exit()`. Cela permet de tester les refus d'accès sans terminer le processus PHP.
+- **`phpunit.xml`** : configuration PHPUnit (bootstrap, couleurs, répertoire des tests).
+
+---
+
+## 14. Notes importantes
 
 - Les mots de passe sont hashés avec `password_hash(PASSWORD_DEFAULT)` (bcrypt)
 - Les credentials BDD sont dans `src/Database.php` — à adapter sur chaque machine

@@ -23,6 +23,7 @@
             {% endif %}
 
             <form method="POST" action="/?uri=etudiant_update">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                 <input type="hidden" name="id" value="{{ etudiant.id_utilisateur }}">
 
                 <div class="frow">

@@ -96,11 +96,13 @@
                           data-confirm-detail="Cet étudiant sera retiré de votre liste de supervision."
                           data-confirm-type="warning"
                           data-confirm-label="Retirer">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                         <input type="hidden" name="id_etudiant" value="{{ e.id_utilisateur }}">
                         <button type="submit" class="btn btn-ghost btn-sm btn-danger-sm">Retirer</button>
                     </form>
                     {% else %}
                     <form method="POST" action="/?uri=etudiant_affecter" class="form-clean">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                         <input type="hidden" name="id_etudiant" value="{{ e.id_utilisateur }}">
                         <button type="submit" class="btn btn-fill btn-sm">+ Ajouter</button>
                     </form>
@@ -119,6 +121,7 @@
                       data-confirm-title="Supprimer le compte étudiant"
                       data-confirm-name="{{ e.prenom }} {{ e.nom }}"
                       data-confirm-detail="Les données personnelles seront effacées. Les candidatures sont conservées pour les statistiques.">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                     <input type="hidden" name="id" value="{{ e.id_utilisateur }}">
                     <button type="submit" class="btn btn-ghost btn-sm btn-danger-sm">Supprimer</button>
                 </form>

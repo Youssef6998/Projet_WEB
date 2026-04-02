@@ -61,6 +61,7 @@
                       data-confirm-title="Supprimer l'entreprise"
                       data-confirm-name="{{ e.nom }}"
                       data-confirm-detail="Toutes ses offres et les candidatures associées seront définitivement supprimées.">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                     <input type="hidden" name="id" value="{{ e.id_entreprise }}">
                     <button type="submit" class="btn btn-ghost btn-danger">Supprimer</button>
                 </form>

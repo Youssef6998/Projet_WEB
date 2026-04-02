@@ -122,6 +122,7 @@
                       data-confirm-title="Supprimer l'offre"
                       data-confirm-name="{{ stage.title }}"
                       data-confirm-detail="Les candidatures associées à cette offre seront également supprimées.">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                     <input type="hidden" name="id" value="{{ stage.id }}">
                     <button type="submit" class="btn btn-ghost btn-danger">Supprimer</button>
                 </form>

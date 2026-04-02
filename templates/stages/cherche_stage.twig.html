@@ -24,6 +24,7 @@
           <span class="pill pill-r">Recherche de stage</span>
         </div>
         <form action="#" method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
         <div class="field">
             <label for="pet-select">Domaine</label>
                 <div class="field-input field-row">
